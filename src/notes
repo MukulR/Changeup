@@ -1,0 +1,61 @@
+
+const double ROBOT_LENGTH = 11.25; 
+double arcRadius = (ROBOT_LENGTH / 2);
+const double DIAMETER = 3.25;
+
+pros::ADIEncoder encoder ('H', 'G', false);
+
+double degreesToRadians(double degree){
+	return (degree * (PI / 180));
+}
+
+double encoderDistance() {
+	return (encoder.get_value() / 360) * PI * DIAMETER;
+}
+
+void turn(double theta) {
+	double distanceToTravel = arcRadius * degreesToRadians(theta);
+	std::cout << distanceToTravel << "\n";
+	std::cout << encoderDistance() << "\n";
+	encoder.reset();
+	// if (theta > 0) {
+	// 	mtrDefs.left_mtr_t->move(30);
+	// 	mtrDefs.left_mtr_b->move(30);
+	// 	mtrDefs.right_mtr_t->move(-30);
+	// 	mtrDefs.right_mtr_b->move(-30);
+	// 	while (encoderDistance() <= distanceToTravel) {
+	// 		std::cout << distanceToTravel << "\n";
+	// 		pros::Task::delay(5);
+	// 	}
+	// 	mtrDefs.left_mtr_t->move(-30);
+	// 	mtrDefs.left_mtr_b->move(-30);
+	// 	mtrDefs.right_mtr_t->move(30);
+	// 	mtrDefs.right_mtr_b->move(30);
+	// 	pros::Task::delay(50);
+	// 	mtrDefs.left_mtr_t->move(0);
+	// 	mtrDefs.left_mtr_b->move(0);
+	// 	mtrDefs.right_mtr_t->move(0);
+	// 	mtrDefs.right_mtr_b->move(0);
+	// } else {
+	// 	mtrDefs.left_mtr_t->move(0);
+	// 	mtrDefs.left_mtr_b->move(0);
+	// 	mtrDefs.right_mtr_t->move(0);
+	// 	mtrDefs.right_mtr_b->move(0);
+	// 	while (encoderDistance() <= distanceToTravel) {
+	// 		pros::Task::delay(5);
+	// 	}
+	// 	mtrDefs.left_mtr_t->move(30);
+	// 	mtrDefs.left_mtr_b->move(30);
+	// 	mtrDefs.right_mtr_t->move(-30);
+	// 	mtrDefs.right_mtr_b->move(-30);
+	// 	pros::Task::delay(50);
+	// 	mtrDefs.left_mtr_t->move(0);
+	// 	mtrDefs.left_mtr_b->move(0);
+	// 	mtrDefs.right_mtr_t->move(0);
+	// 	mtrDefs.right_mtr_b->move(0);
+	// }
+}
+
+
+
+
