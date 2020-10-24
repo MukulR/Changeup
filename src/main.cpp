@@ -82,113 +82,73 @@ void competition_initialize() {}
  */
 
 
-pros::Imu imu(11);
-const int TURN_SPEED = 30;
+const double SLOW_DOWN_DISTANCE = 0.75;
 
-void brakeMotors() {
-	mtrDefs.left_mtr_t->move(-TURN_SPEED);
-    mtrDefs.left_mtr_b->move(-TURN_SPEED);
-    mtrDefs.right_mtr_t->move(TURN_SPEED);
-    mtrDefs.right_mtr_b->move(TURN_SPEED);
-    pros::Task::delay(100);
-    mtrDefs.left_mtr_t->move(0);
-    mtrDefs.left_mtr_b->move(0);
-    mtrDefs.right_mtr_t->move(0);
-    mtrDefs.right_mtr_b->move(0);
-}
-
-void turnRight(double degrees) {
-	// input degrees is 90.
-	imu.reset();
-	std::cout << imu.get_rotation() << "\n";
-	std::cout << degrees << "\n";
-	// asign power to move right
-    mtrDefs.left_mtr_t->move(TURN_SPEED); 
-    mtrDefs.left_mtr_b->move(TURN_SPEED);
-    mtrDefs.right_mtr_t->move(-TURN_SPEED);
-    mtrDefs.right_mtr_b->move(-TURN_SPEED);
-    while (imu.get_rotation() < degrees){
-		std::cout << imu.get_rotation() << "\n";
-		pros::Task::delay(10);
-	}
-	brakeMotors();
-}
-
-pros::ADIEncoder encoder ('E', 'F', false);
-
-double degreesToRadians(double degree){
-	return (degree * (PI / 180));
-}
-
-const double LENGTH = 9.5;
-const double ARC_RADIUS = (LENGTH / 2);
-const double WHEEL_CIRCUMFERENCE =  PI * 3.25;
-
-void turnWithTracker(double degrees) {
-	double radians = degreesToRadians(degrees);
-	double distanceToTravel = ARC_RADIUS * radians;
-	std::cout << distanceToTravel << "\n";
-
-	encoder.reset();
-
-	double encoderDistance = abs((encoder.get_value() / 360.0) * WHEEL_CIRCUMFERENCE);
-
-	if (degrees > 0) {
-		mtrDefs.left_mtr_t->move(-TURN_SPEED); 
-		mtrDefs.left_mtr_b->move(-TURN_SPEED);
-		mtrDefs.right_mtr_t->move(TURN_SPEED);
-		mtrDefs.right_mtr_b->move(TURN_SPEED);
-	} else {
-		mtrDefs.left_mtr_t->move(TURN_SPEED); 
-		mtrDefs.left_mtr_b->move(TURN_SPEED);
-		mtrDefs.right_mtr_t->move(-TURN_SPEED);
-		mtrDefs.right_mtr_b->move(-TURN_SPEED);
-	}
-	while(encoderDistance <= distanceToTravel) {
-		encoderDistance = abs((encoder.get_value() / 360.0) * WHEEL_CIRCUMFERENCE);
-		std::cout << distanceToTravel << " : " << encoderDistance << "\n";
-		pros::Task::delay(10);
-	}
-
-	if (degrees > 0) {
-		mtrDefs.left_mtr_t->move(TURN_SPEED); 
-		mtrDefs.left_mtr_b->move(TURN_SPEED);
-		mtrDefs.right_mtr_t->move(-TURN_SPEED);
-		mtrDefs.right_mtr_b->move(-TURN_SPEED);
-	} else {
-		mtrDefs.left_mtr_t->move(-TURN_SPEED); 
-		mtrDefs.left_mtr_b->move(-TURN_SPEED);
-		mtrDefs.right_mtr_t->move(TURN_SPEED);
-		mtrDefs.right_mtr_b->move(TURN_SPEED);
-	}
-	pros::Task::delay(TURN_SPEED);
-	mtrDefs.left_mtr_t->move(0); 
-	mtrDefs.left_mtr_b->move(0);
-	mtrDefs.right_mtr_t->move(0);
-	mtrDefs.right_mtr_b->move(0);
-}
-
-void printVals() {
-	double encoderDistance = ((encoder.get_value() / 360.0) * WHEEL_CIRCUMFERENCE);
-	while (encoderDistance <= 3) {
-		encoderDistance = ((encoder.get_value() / 360.0) * WHEEL_CIRCUMFERENCE);
-		if (encoderDistance != 0.0) {
-			std::cout << encoderDistance << "\n";
+void driveRobot(double degrees, int speed){
+	int delay_ms = speed; // delay units eq. to speed
+	mtrDefs.left_mtr_t->tare_position();
+	mtrDefs.right_mtr_t->tare_position();
+	int setSpeed = speed;
+	mtrDefs.left_mtr_t->move(setSpeed);
+	mtrDefs.left_mtr_b->move(setSpeed);
+	mtrDefs.right_mtr_t->move(setSpeed);
+	mtrDefs.right_mtr_b->move(setSpeed);
+	while(true){
+		int degreesTraveled = (mtrDefs.left_mtr_t->get_position() + mtrDefs.right_mtr_t->get_position()) / 2;
+		if (degreesTraveled >= degrees){
+			mtrDefs.left_mtr_t->move(-setSpeed);
+			mtrDefs.left_mtr_b->move(-setSpeed);
+			mtrDefs.right_mtr_t->move(-setSpeed);
+			mtrDefs.right_mtr_b->move(-setSpeed);
+			pros::Task::delay(delay_ms);
+			mtrDefs.left_mtr_t->move(0);
+			mtrDefs.left_mtr_b->move(0);
+			mtrDefs.right_mtr_t->move(0);
+			mtrDefs.right_mtr_b->move(0);
+			break;
+		} else if (degreesTraveled >= degrees * SLOW_DOWN_DISTANCE){ // slow down after traveling 3/4 of the distance
+			setSpeed = speed / 2;
+			mtrDefs.left_mtr_t->move(setSpeed);
+			mtrDefs.left_mtr_b->move(setSpeed);
+			mtrDefs.right_mtr_t->move(setSpeed);
+			mtrDefs.right_mtr_b->move(setSpeed);
 		}
-		//std::cout << (encoder.get_value() / 360.0) << "\n";
-		pros::Task::delay(10);
 	}
 }
 
+void driveRobotBack(double degrees, int speed){
+	int delay_ms = speed; // delay units eq. to speed
+	mtrDefs.left_mtr_t->tare_position();
+	mtrDefs.right_mtr_t->tare_position();
+	int setSpeed = speed;
+	mtrDefs.left_mtr_t->move(-setSpeed);
+	mtrDefs.left_mtr_b->move(-setSpeed);
+	mtrDefs.right_mtr_t->move(-setSpeed);
+	mtrDefs.right_mtr_b->move(-setSpeed);
+	while(true){
+		int degreesTraveled = (abs(mtrDefs.left_mtr_t->get_position()) + abs(mtrDefs.right_mtr_t->get_position())) / 2;
+		if (abs(degreesTraveled) >= abs(degrees)){
+			mtrDefs.left_mtr_t->move(setSpeed);
+			mtrDefs.left_mtr_b->move(setSpeed);
+			mtrDefs.right_mtr_t->move(setSpeed);
+			mtrDefs.right_mtr_b->move(setSpeed);
+			pros::Task::delay(delay_ms);
+			mtrDefs.left_mtr_t->move(0);
+			mtrDefs.left_mtr_b->move(0);
+			mtrDefs.right_mtr_t->move(0);
+			mtrDefs.right_mtr_b->move(0);
+			break;
+		} else if (abs(degreesTraveled) >= abs(degrees) * SLOW_DOWN_DISTANCE){ // slow down after traveling 3/4 of the distance
+			setSpeed = speed / 2;
+			mtrDefs.left_mtr_t->move(-speed);
+			mtrDefs.left_mtr_b->move(-speed);
+			mtrDefs.right_mtr_t->move(-speed);
+			mtrDefs.right_mtr_b->move(-speed);
+		}
+	}
+}
 
-
-void turnWithoutSensors(double angle, int multiplier) {
-	const double TURN_SCALE_FACTOR = 480.0 / 90.0;
-	double scaled_angle = TURN_SCALE_FACTOR * angle;
-    mtrDefs.left_mtr_t->move_relative(scaled_angle * multiplier, 200);
-    mtrDefs.left_mtr_b->move_relative(scaled_angle * multiplier, 200);
-    mtrDefs.right_mtr_t->move_relative(-scaled_angle * multiplier, 200);
-    mtrDefs.right_mtr_b->move_relative(-scaled_angle * multiplier, 200);
+void waitForCompletion() {
 	while((abs(mtrDefs.right_mtr_b->get_position() - mtrDefs.right_mtr_b->get_target_position()) + 
         abs(mtrDefs.left_mtr_b->get_position() - mtrDefs.left_mtr_b->get_target_position()) +
         abs(mtrDefs.left_mtr_t->get_position() - mtrDefs.left_mtr_t->get_target_position()) +
@@ -197,12 +157,33 @@ void turnWithoutSensors(double angle, int multiplier) {
     }
 }
 
+void turnWithoutSensors(double angle, int multiplier) {
+	mtrDefs.left_mtr_t->tare_position();
+	mtrDefs.right_mtr_t->tare_position();
+	mtrDefs.left_mtr_b->tare_position();
+	mtrDefs.right_mtr_b->tare_position();
+
+	const double TURN_SCALE_FACTOR = 480.0 / 90.0;
+	double scaled_angle = TURN_SCALE_FACTOR * angle;
+    mtrDefs.left_mtr_t->move_relative(scaled_angle * multiplier, 200);
+    mtrDefs.left_mtr_b->move_relative(scaled_angle * multiplier, 200);
+    mtrDefs.right_mtr_t->move_relative(-scaled_angle * multiplier, 200);
+    mtrDefs.right_mtr_b->move_relative(-scaled_angle * multiplier, 200);
+}
+
+
+
 
 
 void autonomous() {
-	//turnWithTracker(90.0);
+	driveRobot(300, 80);
+	pros::Task::delay(100);
 	turnWithoutSensors(90, 1);
-	//printVals();
+	waitForCompletion();
+	pros::Task::delay(100);
+	driveRobot(300, 80);
+	
+	
 }
 
 /**

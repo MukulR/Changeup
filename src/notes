@@ -1,61 +1,97 @@
+pros::Imu imu(11);
+const int TURN_SPEED = 30;
 
-const double ROBOT_LENGTH = 11.25; 
-double arcRadius = (ROBOT_LENGTH / 2);
-const double DIAMETER = 3.25;
+void brakeMotors() {
+	mtrDefs.left_mtr_t->move(-TURN_SPEED);
+    mtrDefs.left_mtr_b->move(-TURN_SPEED);
+    mtrDefs.right_mtr_t->move(TURN_SPEED);
+    mtrDefs.right_mtr_b->move(TURN_SPEED);
+    pros::Task::delay(100);
+    mtrDefs.left_mtr_t->move(0);
+    mtrDefs.left_mtr_b->move(0);
+    mtrDefs.right_mtr_t->move(0);
+    mtrDefs.right_mtr_b->move(0);
+}
 
-pros::ADIEncoder encoder ('H', 'G', false);
+void turnRight(double degrees) {
+	// input degrees is 90.
+	imu.reset();
+	std::cout << imu.get_rotation() << "\n";
+	std::cout << degrees << "\n";
+	// asign power to move right
+    mtrDefs.left_mtr_t->move(TURN_SPEED); 
+    mtrDefs.left_mtr_b->move(TURN_SPEED);
+    mtrDefs.right_mtr_t->move(-TURN_SPEED);
+    mtrDefs.right_mtr_b->move(-TURN_SPEED);
+    while (imu.get_rotation() < degrees){
+		std::cout << imu.get_rotation() << "\n";
+		pros::Task::delay(10);
+	}
+	brakeMotors();
+}
+
+pros::ADIEncoder encoder ('E', 'F', false);
 
 double degreesToRadians(double degree){
 	return (degree * (PI / 180));
 }
 
-double encoderDistance() {
-	return (encoder.get_value() / 360) * PI * DIAMETER;
-}
+const double LENGTH = 9.5;
+const double ARC_RADIUS = (LENGTH / 2);
+const double WHEEL_CIRCUMFERENCE =  PI * 3.25;
 
-void turn(double theta) {
-	double distanceToTravel = arcRadius * degreesToRadians(theta);
+void turnWithTracker(double degrees) {
+	double radians = degreesToRadians(degrees);
+	double distanceToTravel = ARC_RADIUS * radians;
 	std::cout << distanceToTravel << "\n";
-	std::cout << encoderDistance() << "\n";
+
 	encoder.reset();
-	// if (theta > 0) {
-	// 	mtrDefs.left_mtr_t->move(30);
-	// 	mtrDefs.left_mtr_b->move(30);
-	// 	mtrDefs.right_mtr_t->move(-30);
-	// 	mtrDefs.right_mtr_b->move(-30);
-	// 	while (encoderDistance() <= distanceToTravel) {
-	// 		std::cout << distanceToTravel << "\n";
-	// 		pros::Task::delay(5);
-	// 	}
-	// 	mtrDefs.left_mtr_t->move(-30);
-	// 	mtrDefs.left_mtr_b->move(-30);
-	// 	mtrDefs.right_mtr_t->move(30);
-	// 	mtrDefs.right_mtr_b->move(30);
-	// 	pros::Task::delay(50);
-	// 	mtrDefs.left_mtr_t->move(0);
-	// 	mtrDefs.left_mtr_b->move(0);
-	// 	mtrDefs.right_mtr_t->move(0);
-	// 	mtrDefs.right_mtr_b->move(0);
-	// } else {
-	// 	mtrDefs.left_mtr_t->move(0);
-	// 	mtrDefs.left_mtr_b->move(0);
-	// 	mtrDefs.right_mtr_t->move(0);
-	// 	mtrDefs.right_mtr_b->move(0);
-	// 	while (encoderDistance() <= distanceToTravel) {
-	// 		pros::Task::delay(5);
-	// 	}
-	// 	mtrDefs.left_mtr_t->move(30);
-	// 	mtrDefs.left_mtr_b->move(30);
-	// 	mtrDefs.right_mtr_t->move(-30);
-	// 	mtrDefs.right_mtr_b->move(-30);
-	// 	pros::Task::delay(50);
-	// 	mtrDefs.left_mtr_t->move(0);
-	// 	mtrDefs.left_mtr_b->move(0);
-	// 	mtrDefs.right_mtr_t->move(0);
-	// 	mtrDefs.right_mtr_b->move(0);
-	// }
+
+	double encoderDistance = abs((encoder.get_value() / 360.0) * WHEEL_CIRCUMFERENCE);
+
+	if (degrees > 0) {
+		mtrDefs.left_mtr_t->move(-TURN_SPEED); 
+		mtrDefs.left_mtr_b->move(-TURN_SPEED);
+		mtrDefs.right_mtr_t->move(TURN_SPEED);
+		mtrDefs.right_mtr_b->move(TURN_SPEED);
+	} else {
+		mtrDefs.left_mtr_t->move(TURN_SPEED); 
+		mtrDefs.left_mtr_b->move(TURN_SPEED);
+		mtrDefs.right_mtr_t->move(-TURN_SPEED);
+		mtrDefs.right_mtr_b->move(-TURN_SPEED);
+	}
+	while(encoderDistance <= distanceToTravel) {
+		encoderDistance = abs((encoder.get_value() / 360.0) * WHEEL_CIRCUMFERENCE);
+		std::cout << distanceToTravel << " : " << encoderDistance << "\n";
+		pros::Task::delay(10);
+	}
+
+	if (degrees > 0) {
+		mtrDefs.left_mtr_t->move(TURN_SPEED); 
+		mtrDefs.left_mtr_b->move(TURN_SPEED);
+		mtrDefs.right_mtr_t->move(-TURN_SPEED);
+		mtrDefs.right_mtr_b->move(-TURN_SPEED);
+	} else {
+		mtrDefs.left_mtr_t->move(-TURN_SPEED); 
+		mtrDefs.left_mtr_b->move(-TURN_SPEED);
+		mtrDefs.right_mtr_t->move(TURN_SPEED);
+		mtrDefs.right_mtr_b->move(TURN_SPEED);
+	}
+	pros::Task::delay(TURN_SPEED);
+	mtrDefs.left_mtr_t->move(0); 
+	mtrDefs.left_mtr_b->move(0);
+	mtrDefs.right_mtr_t->move(0);
+	mtrDefs.right_mtr_b->move(0);
 }
 
-
-
-
+void printVals() {
+	double encoderDistance = ((encoder.get_value() / 360.0) * WHEEL_CIRCUMFERENCE);
+	while (encoderDistance <= 3) {
+		encoderDistance = ((encoder.get_value() / 360.0) * WHEEL_CIRCUMFERENCE);
+		if (encoderDistance != 0.0) {
+			std::cout << encoderDistance << "\n";
+		}
+		//std::cout << (encoder.get_value() / 360.0) << "\n";
+		pros::Task::delay(10);
+	}
+}

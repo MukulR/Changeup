@@ -52,7 +52,7 @@ void intake(void* param) {
 	MotorDefs* mtrDefs = (MotorDefs*)param;
 	while(true) {
 		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
-			stopAll(mtrDefs);
+			//stopAll(mtrDefs);
 			mtrDefs->intake_r->move(-127);
 			mtrDefs->intake_l->move(127);
 			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
@@ -63,7 +63,7 @@ void intake(void* param) {
 		}
 
 		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
-			stopAll(mtrDefs);
+			//stopAll(mtrDefs);
 			mtrDefs->intake_r->move(127);
 			mtrDefs->intake_l->move(-127);
 			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
@@ -79,7 +79,7 @@ void rollers(void* param) {
 	MotorDefs* mtrDefs = (MotorDefs*)param;
 	while(true) {
 		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-			stopAll(mtrDefs);
+			//stopAll(mtrDefs);
 			mtrDefs->roller_t->move(-127);
 			mtrDefs->roller_b->move(-127);
 			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
@@ -90,7 +90,7 @@ void rollers(void* param) {
 		}
 
 		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
-			stopAll(mtrDefs);
+			//stopAll(mtrDefs);
 			mtrDefs->roller_t->move(127);
 			mtrDefs->roller_b->move(-127);
 			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R2)){
@@ -126,12 +126,12 @@ void index(void *param){
 				mtrDefs->intake_r->move(0);
 			}
 
-			if (line_t.get_value() <= 2800 && line_m.get_value() >= 2860){
+			if (line_t.get_value() <= 2800 && line_m.get_value() >= 2750){
 				std::cout << "Here2" << "\n";
 				mtrDefs->intake_l->move(127);
 				mtrDefs->intake_r->move(-127);
 				mtrDefs->roller_b->move(-80);
-				while(line_m.get_value() >= 2860 && detection_enabled) {
+				while(line_m.get_value() >= 2750 && detection_enabled) {
 					if (!detection_enabled){
 						return;
 					}
@@ -141,15 +141,16 @@ void index(void *param){
 				mtrDefs->roller_t->move(0);
 				mtrDefs->intake_l->move(0);
 				mtrDefs->intake_r->move(0);
+				detection_enabled = false;
 			}
 
-			if (line_t.get_value() >= 2800 && line_m.get_value() < 2860){
+			if (line_t.get_value() >= 2800 && line_m.get_value() < 2750){
 				std::cout << "Here3" << "\n";
 				mtrDefs->intake_l->move(127);
 				mtrDefs->intake_r->move(-127);
 				mtrDefs->roller_t->move(-80);
 				mtrDefs->roller_b->move(-80);
-				while(line_t.get_value() >= 2860 && detection_enabled) {
+				while(line_t.get_value() >= 2750 && detection_enabled) {
 					if (!detection_enabled){
 						return;
 					}
@@ -168,6 +169,11 @@ void index(void *param){
 void control(void* param) {
 	MotorDefs* mtrDefs = (MotorDefs*)param;
 	while(true) {
+		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+			detection_enabled = false;
+			stopAll(mtrDefs);
+		}
+
 		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
 			detection_enabled = true;
 			std::cout << detection_enabled;
@@ -175,14 +181,55 @@ void control(void* param) {
 
 		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
 			detection_enabled = false;
-			mtrDefs->roller_t->move_relative(-800, 12000);
-			mtrDefs->roller_b->move_relative(100, 200);
+
+			mtrDefs->intake_r->move(60);
+			mtrDefs->intake_l->move(-60);
+			pros::Task::delay(200);
+			mtrDefs->intake_r->move(0);
+			mtrDefs->intake_l->move(0);
+
+			mtrDefs->roller_b->move(80);
+			pros::Task::delay(100);
+			mtrDefs->roller_b->move(0);
+
+			pros::Task::delay(50);
+
+			mtrDefs->roller_t->move(-127);
+			pros::Task::delay(300);
+			mtrDefs->roller_t->move(0);
 		}
 
 		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) {
-			detection_enabled = false;
-			mtrDefs->roller_b->move_relative(-2400, 12000);
-			mtrDefs->roller_t->move_relative(-2400, 12000);
+			// detection_enabled = false;
+			// mtrDefs->roller_t->move(-127);
+			// pros::Task::delay(500);
+			// mtrDefs->roller_b->move(-127);
+			// pros::Task::delay(300);
+			// mtrDefs->roller_b->move(0);
+			// mtrDefs->roller_t->move(0);
+
+			mtrDefs->intake_r->move(60);
+			mtrDefs->intake_l->move(-60);
+			pros::Task::delay(200);
+			mtrDefs->intake_r->move(0);
+			mtrDefs->intake_l->move(0);
+
+			mtrDefs->roller_b->move(80);
+			pros::Task::delay(200);
+			mtrDefs->roller_b->move(15);
+			
+			mtrDefs->roller_t->move(-127);
+			pros::Task::delay(300);
+			mtrDefs->roller_t->move(0);
+
+			pros::Task::delay(50);
+
+			mtrDefs->roller_b->move(-127);
+			mtrDefs->roller_t->move(-127);
+			pros::Task::delay(300);
+			mtrDefs->roller_b->move(0);
+			pros::Task::delay(600);
+			mtrDefs->roller_t->move(0);
 		}
 	}
 }
