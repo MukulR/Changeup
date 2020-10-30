@@ -1,3 +1,9 @@
+COMMANDS:
+
+cmd.exe /c prosv5 upload
+cmd.exe /c prosv5 terminal
+prosv5 make
+prosv5 make clean
 
 const double ROBOT_LENGTH = 11.25; 
 double arcRadius = (ROBOT_LENGTH / 2);
@@ -55,7 +61,3 @@ void turn(double theta) {
 	// 	mtrDefs.right_mtr_b->move(0);
 	// }
 }
-
-
-
-
