@@ -13,8 +13,49 @@ AutonUtils::AutonUtils(MotorDefs* mtrDefs, Sensors* sensors) {
 
 AutonUtils::~AutonUtils() {}
 
-void AutonUtils::translate(double units) {
+void AutonUtils::resetDriveEncoders(){
+    mtrDefs->left_mtr_b->tare_position();
+    mtrDefs->left_mtr_t->tare_position();
+    mtrDefs->right_mtr_b->tare_position();
+    mtrDefs->right_mtr_t->tare_position();
+}
 
+double AutonUtils::avgDriveEncoderValue() {
+    return (fabs(mtrDefs->left_mtr_b->get_position()) + 
+            fabs(mtrDefs->left_mtr_t->get_position()) + 
+            fabs(mtrDefs->right_mtr_b->get_position()) + 
+            fabs(mtrDefs->right_mtr_t->get_position())) / 4;
+}
+
+void AutonUtils::translate(int units) {
+    // Motor power for drive
+    int voltage = 50;
+
+    // Reset drive encoders
+    resetDriveEncoders();
+
+    // Direction of movement
+    int direction = abs(units) / units;
+    double velocityScale = 4.1415926;
+
+    // drive forward units
+    while(avgDriveEncoderValue() < fabs(units)){
+        // When turning left, the imu returns a negative value so we subtract a negative number(add) to speed up the left and slow down the right.
+        // When turning right, the imu returns a positive value so we add a positive number to speed up the right and slow down the left.
+        double leftVoltage = (direction * voltage) - (sensors->imu->get_rotation() * velocityScale);
+        double rightVoltage = (direction * voltage) + (sensors->imu->get_rotation() * velocityScale);
+
+        assignMotors(leftVoltage, rightVoltage);
+        
+        pros::delay(10);
+    }
+
+    // brake
+    assignMotors(-20 * direction, -20 * direction);
+    pros::delay(50);
+
+    // set drive to neutral
+    assignMotors(0, 0);
 }
 
 void AutonUtils::assignMotors(int leftVoltage, int rightVoltage) {
