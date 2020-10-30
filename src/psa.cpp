@@ -16,8 +16,24 @@ void ProgrammingSkillsAuton::runAuton(){
     Sensors sensors;
     AutonUtils au(mtrDefs, &sensors);
 
-    au.translate(-1000);
+    au.translate(4000);
     pros::Task::delay(100);
-    au.rotate(-180, 50);
+    au.rotate(-90, 50);
+    pros::Task::delay(100);
+    /*
+    au.translate(4000);
+    pros::Task::delay(100);
+    au.rotate(90, 50);
+    pros::Task::delay(100);
+
+    au.translate(4000);
+    pros::Task::delay(100);
+    au.rotate(90, 50);
+    pros::Task::delay(100);
+
+    au.translate(4000);
+    pros::Task::delay(100);
+    au.rotate(90, 50);
+    */
 }
 

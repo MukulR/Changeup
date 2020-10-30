@@ -69,7 +69,10 @@ void AutonUtils::rotate(int degrees, int voltage) {
     // determine the direction of the turn
     int direction = abs(degrees) / degrees;
 
+    // reset IMU;
+    //sensors->imu->reset();
     double imuVal = 0.0;
+
     std::cout << sensors->imu->get_rotation() << endl;
     // assign power to start the turn
     assignMotors(-voltage * direction, voltage * direction);
