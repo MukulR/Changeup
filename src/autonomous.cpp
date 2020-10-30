@@ -1,8 +1,13 @@
+#include <iostream>
+
 #include "main.h"
 #include "okapi/api.hpp"
 #include "motordefs.hpp"
 #include "psa.hpp"
 #include "auton.hpp"
+
+using std::endl;
+
 
 
 /**
@@ -20,5 +25,12 @@
 void noAuton(){}
 
 void autonomous() {
-	
+    std::cout << "hi" << endl;
+    MotorDefs mtrDefs;
+    ProgrammingSkillsAuton psa(&mtrDefs, true);
+    psa.runAuton();
+    // mtrDefs.left_mtr_t->move(70);
+    // mtrDefs.left_mtr_b->move(70);
+    // mtrDefs.right_mtr_t->move(70);
+    // mtrDefs.right_mtr_b->move(70);
 } 
