@@ -74,12 +74,14 @@ void intake(void* param) {
 }
 
 void rollers(void* param) {
-	
+	double curVelocity = 0.0;
 	while(true) {
 		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
 			mtrDefs.roller_t->move(-127);
-			mtrDefs.roller_b->move(-127);
+			mtrDefs.roller_b->move(-50);
 			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+				curVelocity = mtrDefs.roller_b->get_actual_velocity();
+				mtrDefs.roller_b->move(-(50 + (100 - abs(curVelocity))));
 				pros::Task::delay(10);
 			}
 			mtrDefs.roller_t->move(0);
