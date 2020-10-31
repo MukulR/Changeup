@@ -20,6 +20,9 @@ class AutonUtils {
         void resetDriveEncoders();
         double avgDriveEncoderValue();
         void rotate(int degrees, int voltage);
+        void globalTurn(double angle);
+        bool determineTurnDirection(double angle_current, double angle_desired);
+        void turnInGivenDirection(double angle, double direction);
 };
 
 #endif // _AUTON_UTILS_HPP_

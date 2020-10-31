@@ -15,27 +15,19 @@ ProgrammingSkillsAuton::~ProgrammingSkillsAuton() {
 void ProgrammingSkillsAuton::runAuton(){
     Sensors sensors;
     AutonUtils au(mtrDefs, &sensors);
+    std::cout << "ready" << "\n";
 
-    au.translate(4000);
-    pros::Task::delay(100);
-    au.rotate(-90, 50);
-    pros::Task::delay(100);
-    au.translate(4000);
-
-    /*
-    au.translate(4000);
-    pros::Task::delay(100);
-    au.rotate(90, 50);
-    pros::Task::delay(100);
-
-    au.translate(4000);
-    pros::Task::delay(100);
-    au.rotate(90, 50);
-    pros::Task::delay(100);
-
-    au.translate(4000);
-    pros::Task::delay(100);
-    au.rotate(90, 50);
-    */
+    pros::delay(5000);
+    au.globalTurn(90.0);
+    pros::delay(5000);
+    au.globalTurn(0.0);
+    pros::delay(5000);
+    au.globalTurn(180.0);
+    pros::delay(5000);
+    au.globalTurn(0.0);
+    pros::delay(5000);
+    au.globalTurn(270.0);
+    pros::delay(5000);
+    au.globalTurn(0.0);
 }
 
