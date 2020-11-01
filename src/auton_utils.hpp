@@ -24,6 +24,9 @@ class AutonUtils {
         bool determineTurnDirection(double angle_current, double angle_desired);
         void turnInGivenDirection(double angle, double direction);
 
+        void oneShot();
+        void doubleShot();
+
         static void indexTop(void* param);
         static void indexMid(void* param);
 
@@ -36,9 +39,8 @@ class AutonUtils {
         static void startIntakes(MotorDefs* mtrDefs);
         static void stopIntakes(MotorDefs* mtrDefs);
         static void stopRollers(MotorDefs* mtrDefs);
-
-        void oneShot();
-        void doubleShot();
+        static void startOuttake(MotorDefs* mtrDefs);
+        static void filter(void* param);
 };
 
 #endif // _AUTON_UTILS_HPP_

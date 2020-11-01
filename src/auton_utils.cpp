@@ -212,77 +212,6 @@ void AutonUtils::rotate(int degrees, int voltage) {
     // }
 }
 
-/*
-bool detectionEnabled = false;
-
-void AutonUtils::index(void* params){
-    MotorDefs *mtrDefs = (MotorDefs*)params;
-    while (true) {
-		//std::cout << detectionEnabled << "\n";
-        if (!(line_top.get_value() < 2800 && line_mid.get_value() < 2750)) {
-			if (line_top.get_value() >= 2800 && line_mid.get_value() >= 2750){
-				std::cout << "Here1" << "\n";
-				mtrDefs->intake_l->move(127);
-				mtrDefs->intake_r->move(-127);
-				mtrDefs->roller_b->move(-80);
-				mtrDefs->roller_t->move(-80);
-				while(line_top.get_value() >= 2800 && detectionEnabled) {
-					if (!detectionEnabled){
-						return;
-					}
-					pros::Task::delay(10);
-				}
-				mtrDefs->roller_b->move(0);
-				mtrDefs->roller_t->move(0);
-				mtrDefs->intake_l->move(0);
-				mtrDefs->intake_r->move(0);
-			}
-
-			if (line_top.get_value() <= 2800 && line_mid.get_value() >= 2750){
-				std::cout << "Here2" << "\n";
-				mtrDefs->intake_l->move(127);
-				mtrDefs->intake_r->move(-127);
-				mtrDefs->roller_b->move(-80);
-				while(line_mid.get_value() >= 2750 && detectionEnabled) {
-					if (!detectionEnabled){
-						return;
-					}
-					pros::Task::delay(10);
-				}
-				mtrDefs->roller_b->move(0);
-				mtrDefs->roller_t->move(0);
-				mtrDefs->intake_l->move(0);
-				mtrDefs->intake_r->move(0);
-				detectionEnabled = false;
-			}
-
-			if (line_top.get_value() >= 2800 && line_mid.get_value() < 2750){
-				std::cout << "Here3" << "\n";
-				mtrDefs->intake_l->move(127);
-				mtrDefs->intake_r->move(-127);
-				mtrDefs->roller_t->move(-80);
-				mtrDefs->roller_b->move(-80);
-				while(line_top.get_value() >= 2750 && detectionEnabled) {
-					if (!detectionEnabled){
-						return;
-					}
-					pros::Task::delay(10);
-				}
-				mtrDefs->roller_b->move(0);
-				mtrDefs->roller_t->move(0);
-				mtrDefs->intake_l->move(0);
-				mtrDefs->intake_r->move(0);
-				detectionEnabled = false;
-			}
-		}
-        pros::Task::delay(10);
-	}
-}
-
-void AutonUtils::stopIndex() {
-    detectionEnabled = false;
-}
-*/
 
 bool indexingTop = false;
 bool indexingMid = false;
@@ -329,7 +258,7 @@ void AutonUtils::indexMid(void* param) {
     MotorDefs* mtrDefs = (MotorDefs*)param;
     while (true) {
         // Case when top is full, and we need to fill the middle spot.
-        if (line_top.get_value() <= 2800 && line_mid.get_value() >= 2750){
+        if (line_top.get_value() <= 2800 && line_mid.get_value() >= 2750 && indexingMid){
             mtrDefs->intake_l->move(127);
             mtrDefs->intake_r->move(-127);
             mtrDefs->roller_b->move(-80);
@@ -352,6 +281,10 @@ void AutonUtils::startIntakes(MotorDefs* mtrDefs) {
     mtrDefs->intake_r->move(-127);
 }
 
+void AutonUtils::startOuttake(MotorDefs* mtrDefs) {
+    mtrDefs->intake_l->move(-127);
+    mtrDefs->intake_r->move(127);
+}
 
 void AutonUtils::stopIntakes(MotorDefs* mtrDefs) {
     mtrDefs->intake_l->move(0);
@@ -379,5 +312,39 @@ void AutonUtils::oneShot() {
 
     mtrDefs->roller_t->move(-127);
     pros::Task::delay(300);
+    mtrDefs->roller_t->move(0);
+}
+
+void AutonUtils::doubleShot() {
+    mtrDefs->intake_r->move(60);
+    mtrDefs->intake_l->move(-60);
+    pros::Task::delay(200);
+    mtrDefs->intake_r->move(0);
+    mtrDefs->intake_l->move(0);
+
+    mtrDefs->roller_b->move(80);
+    pros::Task::delay(200);
+    mtrDefs->roller_b->move(15);
+    
+    mtrDefs->roller_t->move(-127);
+    pros::Task::delay(300);
+    mtrDefs->roller_t->move(0);
+
+    pros::Task::delay(50);
+
+    mtrDefs->roller_b->move(-127);
+    mtrDefs->roller_t->move(-127);
+    pros::Task::delay(300);
+    mtrDefs->roller_b->move(0);
+    pros::Task::delay(600);
+    mtrDefs->roller_t->move(0);
+}
+
+void AutonUtils::filter(void* param){
+    MotorDefs* mtrDefs = (MotorDefs*)param;
+    mtrDefs->roller_b->move(-80);
+    mtrDefs->roller_t->move(127);
+    pros::Task::delay(1500);
+    mtrDefs->roller_b->move(0);
     mtrDefs->roller_t->move(0);
 }
