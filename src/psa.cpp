@@ -43,6 +43,7 @@ void ProgrammingSkillsAuton::runAuton(){
     pros::Task::delay(50);
     // Advance towards the goal
     au.translate(1975);
+    au.assignMotors(30, 30);
     pros::Task::delay(50);
     // Shoot one out of 3 red balls
     au.oneShot();
@@ -54,6 +55,7 @@ void ProgrammingSkillsAuton::runAuton(){
     pros::Task::delay(1000);
     AutonUtils::stopIntakes(mtrDefs);
     pros::Task::delay(50);
+    au.assignMotors(0, 0);
     au.translate(-500);
 
     // ---------
@@ -63,16 +65,20 @@ void ProgrammingSkillsAuton::runAuton(){
     au.globalTurn(270);
     AutonUtils::stopIntakes(mtrDefs);
     pros::Task::delay(50);
-    au.translate(2750);
+    au.translate(2875);
     pros::Task::delay(50);
+
+    // -------------------
     au.globalTurn(180);
     pros::Task::delay(50);
     au.translate(500);
+    au.assignMotors(30, 30);
     pros::Task::delay(50);
     au.doubleShot();
     AutonUtils::startIntakes(mtrDefs);
-    pros::Task::delay(1000);
+    pros::Task::delay(500);
     AutonUtils::stopIntakes(mtrDefs);
+    au.assignMotors(0, 0);
     // -----------
 
     au.translate(-300);
@@ -85,13 +91,22 @@ void ProgrammingSkillsAuton::runAuton(){
     AutonUtils::startIntakes(mtrDefs);
     pros::Task filtering(AutonUtils::filter, mtrDefs);
 
-    au.translate(2800);
+    au.translate(2875);
     AutonUtils::enableTopIndex();
     pros::Task::delay(50);
     au.globalTurn(225);
     AutonUtils::stopIntakes(mtrDefs);
     au.translate(600);
+    au.assignMotors(30, 30);
     pros::Task::delay(50);
     au.oneShot();
+    AutonUtils::startIntakes(mtrDefs);
+    au.assignMotors(0, 0);
+
+    // ---------------------
+
+    au.translate(-300);
+    pros::Task::delay(50);
+    au.globalTurn(0);
 }
 
