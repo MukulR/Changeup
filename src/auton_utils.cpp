@@ -28,6 +28,9 @@ double AutonUtils::avgDriveEncoderValue() {
 }
 
 void AutonUtils::translate(int units) {
+    // Initial imu rotation used for alignment
+    double imu_initial = sensors->imu->get_rotation();
+
     // Motor power for drive
     int voltage = 50;
 
@@ -42,8 +45,8 @@ void AutonUtils::translate(int units) {
     while(avgDriveEncoderValue() < fabs(units)){
         // When turning left, the imu returns a negative value so we subtract a negative number(add) to speed up the left and slow down the right.
         // When turning right, the imu returns a positive value so we add a positive number to speed up the right and slow down the left.
-        double leftVoltage = (direction * voltage) - (sensors->imu->get_rotation() * velocityScale);
-        double rightVoltage = (direction * voltage) + (sensors->imu->get_rotation() * velocityScale);
+        double leftVoltage = (direction * voltage) - ((sensors->imu->get_rotation() - imu_initial) * velocityScale);
+        double rightVoltage = (direction * voltage) + ((sensors->imu->get_rotation() - imu_initial) * velocityScale);
 
         assignMotors(leftVoltage, rightVoltage);
         
