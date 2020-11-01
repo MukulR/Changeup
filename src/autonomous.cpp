@@ -26,8 +26,8 @@ void noAuton(){}
 
 void autonomous() {
     std::cout << "hi" << endl;
-    MotorDefs mtrDefs;
-    ProgrammingSkillsAuton psa(&mtrDefs, true);
+    MotorDefs* mtrDefs = new MotorDefs();
+    ProgrammingSkillsAuton psa(mtrDefs, true);
     psa.runAuton();
     // mtrDefs.left_mtr_t->move(70);
     // mtrDefs.left_mtr_b->move(70);

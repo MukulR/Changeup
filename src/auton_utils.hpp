@@ -23,6 +23,22 @@ class AutonUtils {
         void globalTurn(double angle);
         bool determineTurnDirection(double angle_current, double angle_desired);
         void turnInGivenDirection(double angle, double direction);
+
+        static void indexTop(void* param);
+        static void indexMid(void* param);
+
+        static void enableTopIndex();
+        static void disableTopIndexing();
+
+        static void enableMidIndex();
+        static void disableMidIndexing();
+
+        static void startIntakes(MotorDefs* mtrDefs);
+        static void stopIntakes(MotorDefs* mtrDefs);
+        static void stopRollers(MotorDefs* mtrDefs);
+
+        void oneShot();
+        void doubleShot();
 };
 
 #endif // _AUTON_UTILS_HPP_
