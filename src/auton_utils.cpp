@@ -215,6 +215,7 @@ void AutonUtils::rotate(int degrees, int voltage) {
 
 bool indexingTop = false;
 bool indexingMid = false;
+bool filteringEnabled = false;
 
 void AutonUtils::enableTopIndex() {
     indexingTop = true;
@@ -230,6 +231,10 @@ void AutonUtils::enableMidIndex() {
 
 void AutonUtils::disableMidIndexing() {
     indexingMid = false;
+}
+
+void AutonUtils::enableFiltering() {
+    filteringEnabled = true;
 }
 
 void AutonUtils::indexTop(void* param) {
@@ -273,6 +278,21 @@ void AutonUtils::indexMid(void* param) {
     }
 }
 
+void AutonUtils::filter(void* param){
+    MotorDefs* mtrDefs = (MotorDefs*)param;
+    while(true) {
+        if (filteringEnabled) {
+            mtrDefs->roller_b->move(-80);
+            mtrDefs->roller_t->move(127);
+            pros::Task::delay(1500);
+            filteringEnabled = false;
+            mtrDefs->roller_b->move(0);
+            mtrDefs->roller_t->move(0);
+        }
+        pros::Task::delay(10);
+        
+    }
+}
 
 // ----------------------------------------
 
@@ -337,14 +357,5 @@ void AutonUtils::doubleShot() {
     pros::Task::delay(300);
     mtrDefs->roller_b->move(0);
     pros::Task::delay(600);
-    mtrDefs->roller_t->move(0);
-}
-
-void AutonUtils::filter(void* param){
-    MotorDefs* mtrDefs = (MotorDefs*)param;
-    mtrDefs->roller_b->move(-80);
-    mtrDefs->roller_t->move(127);
-    pros::Task::delay(1500);
-    mtrDefs->roller_b->move(0);
     mtrDefs->roller_t->move(0);
 }

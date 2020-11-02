@@ -20,6 +20,7 @@ void ProgrammingSkillsAuton::runAuton(){
     //pros::Task(AutonUtils::index, mtrDefs);
     pros::Task(AutonUtils::indexTop, mtrDefs);
     pros::Task(AutonUtils::indexMid, mtrDefs);
+    pros::Task(AutonUtils::filter, mtrDefs);
 
     AutonUtils::enableTopIndex();
     AutonUtils::enableMidIndex();
@@ -35,7 +36,7 @@ void ProgrammingSkillsAuton::runAuton(){
     au.translate(1550);
     pros::Task::delay(50);
     // The ball is now collected, return backwards
-    au.translate(-1200);
+    au.translate(-1300);
     pros::Task::delay(50);
     // Turn to face the goal, and stop the intakes
     au.globalTurn(135);
@@ -65,7 +66,7 @@ void ProgrammingSkillsAuton::runAuton(){
     au.globalTurn(270);
     AutonUtils::stopIntakes(mtrDefs);
     pros::Task::delay(50);
-    au.translate(2875);
+    au.translate(2925);
     pros::Task::delay(50);
 
     // -------------------
@@ -74,39 +75,71 @@ void ProgrammingSkillsAuton::runAuton(){
     au.translate(500);
     au.assignMotors(30, 30);
     pros::Task::delay(50);
-    au.doubleShot();
     AutonUtils::startIntakes(mtrDefs);
     pros::Task::delay(500);
     AutonUtils::stopIntakes(mtrDefs);
+    au.oneShot();
+    AutonUtils::enableTopIndex();
+    AutonUtils::enableMidIndex();
+    pros::Task::delay(100);
     au.assignMotors(0, 0);
     // -----------
 
-    au.translate(-300);
+    au.translate(-400);
     pros::Task::delay(50);
 
     au.globalTurn(270);
     pros::Task::delay(50);
 
     // filter ball
-    AutonUtils::startIntakes(mtrDefs);
-    pros::Task filtering(AutonUtils::filter, mtrDefs);
-
-    au.translate(2875);
     AutonUtils::enableTopIndex();
+    AutonUtils::enableMidIndex();
+    // Replace below delay with booleans that tell us when indexing is finished.
+    pros::Task::delay(500);
+    AutonUtils::enableFiltering();
+    
+
+    pros::Task::delay(200);
+
+    // start the intake before moving forward
+    AutonUtils::startIntakes(mtrDefs);
+
+    // move forward
+    au.translate(2700);
     pros::Task::delay(50);
-    au.globalTurn(225);
+    // stop the intakes, because the balls are in the magazine, and then index the balls
+    // to the proper position
     AutonUtils::stopIntakes(mtrDefs);
+    AutonUtils::enableTopIndex();
+    AutonUtils::enableMidIndex();
+    // the balls are indexing to the right spot, turn to face the corner goal
+    au.globalTurn(225);
+    pros::Task::delay(50);
+    // move to the corner goal and hold position there.
     au.translate(600);
     au.assignMotors(30, 30);
     pros::Task::delay(50);
+    // shoot the ball, and index the remaining balls into the correct position.
     au.oneShot();
-    AutonUtils::startIntakes(mtrDefs);
+    AutonUtils::enableTopIndex();
+    AutonUtils::enableMidIndex();
+    pros::Task::delay(100);
     au.assignMotors(0, 0);
 
     // ---------------------
 
-    au.translate(-300);
+
+    AutonUtils::enableTopIndex();
+    AutonUtils::enableMidIndex();    
+
+    au.translate(-500);
     pros::Task::delay(50);
     au.globalTurn(0);
+    AutonUtils::enableFiltering();
+    pros::Task::delay(300);
+    AutonUtils::startIntakes(mtrDefs);
+    au.translate(2875);
+    pros::Task::delay(50);
+    au.globalTurn(270);
 }
 

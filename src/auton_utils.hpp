@@ -36,6 +36,8 @@ class AutonUtils {
         static void enableMidIndex();
         static void disableMidIndexing();
 
+        static void enableFiltering();
+
         static void startIntakes(MotorDefs* mtrDefs);
         static void stopIntakes(MotorDefs* mtrDefs);
         static void stopRollers(MotorDefs* mtrDefs);
