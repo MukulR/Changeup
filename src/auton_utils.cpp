@@ -331,7 +331,7 @@ void AutonUtils::oneShot() {
     pros::Task::delay(50);
 
     mtrDefs->roller_t->move(-127);
-    pros::Task::delay(300);
+    pros::Task::delay(350);
     mtrDefs->roller_t->move(0);
 }
 
