@@ -4,6 +4,7 @@
 namespace pros {
     class Imu;
     class ADIAnalogIn;
+    class ADIDigitalIn;
 }
 
 class Sensors {
@@ -11,6 +12,7 @@ class Sensors {
         pros::Imu* imu;
         pros::ADIAnalogIn* line_t;
         pros::ADIAnalogIn* line_m;
+        pros::ADIDigitalIn* limit_t;
 
         Sensors();
         ~Sensors();

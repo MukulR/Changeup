@@ -29,6 +29,7 @@ class AutonUtils {
 
         static void indexTop(void* param);
         static void indexMid(void* param);
+        static void filter(void* param);
 
         static void enableTopIndex();
         static void disableTopIndexing();
@@ -37,12 +38,18 @@ class AutonUtils {
         static void disableMidIndexing();
 
         static void enableFiltering();
+        static void waitUntilFiltered();
+        static void waitUntilTopIndexed();
+        static void waitUntilMidIndexed();
 
         static void startIntakes(MotorDefs* mtrDefs);
         static void stopIntakes(MotorDefs* mtrDefs);
         static void stopRollers(MotorDefs* mtrDefs);
         static void startOuttake(MotorDefs* mtrDefs);
-        static void filter(void* param);
+
+        // void filter();
+        // void indexTop();
+        // void indexMid();
 };
 
 #endif // _AUTON_UTILS_HPP_

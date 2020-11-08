@@ -3,6 +3,7 @@
 
 class MotorDefs;
 class AutonUtils;
+class Sensors;
 
 /**
  * Changeup Skills autonomous
@@ -10,17 +11,22 @@ class AutonUtils;
 class ProgrammingSkillsAuton {
     private:
         MotorDefs *mtrDefs;
+        Sensors *sensors;
+        AutonUtils *au;
         bool redAlliance;
     public:
         ProgrammingSkillsAuton(MotorDefs *mtrDefs, bool ra);
         ~ProgrammingSkillsAuton();
         void runAuton();
     private:
-        void captureFirstGoal(AutonUtils au);
-        void left_corner_right_center(AutonUtils au);
-        void left_center_right_corner(AutonUtils au);
-        void startHoldInGoal(AutonUtils au);
-        void stopHoldInGoal(AutonUtils au);
+        void captureFirstGoal();
+        void left_corner_right_center();
+        void left_center_right_corner();
+        void startHoldInGoal();
+        void stopHoldInGoal();
+
+        // Repeated sequences
+        void oneShotSequence(bool intakeAfterIndex, bool corner);
 };
 
 #endif // _PROGRAMMINGSKILLSAUTON_HPP_
