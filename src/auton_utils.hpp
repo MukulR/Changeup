@@ -25,11 +25,18 @@ class AutonUtils {
         void turnInGivenDirection(double angle, double direction);
 
         void oneShot();
+        void slowOneShot();
         void doubleShot();
 
+        void indexTop();
+        void indexMid();
+        void filter();
+
+            /*
         static void indexTop(void* param);
         static void indexMid(void* param);
         static void filter(void* param);
+        */
 
         static void enableTopIndex();
         static void disableTopIndexing();
@@ -41,15 +48,13 @@ class AutonUtils {
         static void waitUntilFiltered();
         static void waitUntilTopIndexed();
         static void waitUntilMidIndexed();
+        static void waitUntilIntaked();
+    
 
         static void startIntakes(MotorDefs* mtrDefs);
         static void stopIntakes(MotorDefs* mtrDefs);
         static void stopRollers(MotorDefs* mtrDefs);
-        static void startOuttake(MotorDefs* mtrDefs);
-
-        // void filter();
-        // void indexTop();
-        // void indexMid();
+        static void startOuttake(MotorDefs* mtrDefs);        
 };
 
 #endif // _AUTON_UTILS_HPP_

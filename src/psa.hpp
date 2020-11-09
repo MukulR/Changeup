@@ -20,13 +20,20 @@ class ProgrammingSkillsAuton {
         void runAuton();
     private:
         void captureFirstGoal();
-        void left_corner_right_center();
-        void left_center_right_corner();
+        void captureSecondGoal();
+        void captureThirdGoal();
+        void captureFourthGoal();
+        void captureFifthGoal();
+        void captureSixthGoal();
+
+
         void startHoldInGoal();
         void stopHoldInGoal();
 
         // Repeated sequences
-        void oneShotSequence(bool intakeAfterIndex, bool corner);
+        void threeShotSequence();
+        void twoShotSequence();
+        void oneShotSequence(bool slowShot);
 };
 
 #endif // _PROGRAMMINGSKILLSAUTON_HPP_
