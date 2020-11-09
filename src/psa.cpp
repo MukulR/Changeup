@@ -103,13 +103,18 @@ void ProgrammingSkillsAuton::runAuton(){
     // pros::Task(AutonUtils::indexMid, mtrDefs);
     // pros::Task(AutonUtils::filter, mtrDefs);
 
-    // Auton movements start here
+    // Auton movements start here,uncomment the below 6 lines
     captureFirstGoal();
     captureSecondGoal();
     captureThirdGoal();
     captureFourthGoal();
     captureFifthGoal();
     captureSixthGoal();
+
+    // Testing intake stopping
+    // AutonUtils::startIntakes(mtrDefs);
+    // AutonUtils::waitUntilIntaked();
+    // AutonUtils::stopIntakes(mtrDefs);
     //twoShotSequence();
 }
 
@@ -228,7 +233,7 @@ void ProgrammingSkillsAuton::captureFourthGoal() {
     pros::Task::delay(50);
 
     // Face right heading for the next goal
-    au->globalTurn(0);
+    au->globalTurn(358);
     pros::Task::delay(50);
     // Filter out the blue ball that we extract from the tower.
     au->filter();
@@ -265,7 +270,7 @@ void ProgrammingSkillsAuton::captureSixthGoal() {
 
     // Index the ball we pick up while moving to the next corner goal.
     au->indexTop();
-    au->globalTurn(1);
+    au->globalTurn(2);
 
     // Go to the goal
     au->translate(400);

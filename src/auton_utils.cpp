@@ -294,7 +294,10 @@ void AutonUtils::waitUntilMidIndexed() {
 }
 
 void AutonUtils::waitUntilIntaked(){
-    while(line_bot.get_value() > 2800) {
+    int sensVal = line_bot.get_value();
+    while(sensVal > 2750) {
+        std::cout << sensVal << endl;
+        sensVal = line_bot.get_value();
         pros::Task::delay(5);
     }
 }
