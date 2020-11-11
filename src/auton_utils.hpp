@@ -21,6 +21,10 @@ class AutonUtils {
         double avgDriveEncoderValue();
         void rotate(int degrees, int voltage);
         void globalTurn(double angle);
+        
+        void turnRightToZeroHeading();
+        void turnLeftToZeroHeading();
+
         bool determineTurnDirection(double angle_current, double angle_desired);
         void turnInGivenDirection(double angle, double direction);
 
@@ -30,6 +34,7 @@ class AutonUtils {
 
         void indexTop();
         void indexMid();
+        void indexMidRollers();
         void filter();
 
             /*
@@ -48,7 +53,8 @@ class AutonUtils {
         static void waitUntilFiltered();
         static void waitUntilTopIndexed();
         static void waitUntilMidIndexed();
-        static void waitUntilIntaked();
+
+        void waitUntilIntaked(bool darkGoal);
     
 
         static void startIntakes(MotorDefs* mtrDefs);

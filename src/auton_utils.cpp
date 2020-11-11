@@ -37,7 +37,7 @@ void AutonUtils::translate(int units) {
     double imu_initial = sensors->imu->get_rotation();
 
     // Motor power for drive
-    int voltage = 50;
+    int voltage = 80;
 
     // Reset drive encoders
     resetDriveEncoders();
@@ -214,6 +214,42 @@ void AutonUtils::rotate(int degrees, int voltage) {
     // }
 }
 
+void AutonUtils::turnRightToZeroHeading() {
+	assignMotors(50, -50);
+	while (true){
+		if (sensors->imu->get_heading() >= 0 && sensors->imu->get_heading() < 180){ // brake the robot when heading reaches the right hemisphere
+			assignMotors(-50, 50);
+			pros::Task::delay(50);
+			assignMotors(0, 0);
+			break;
+		}
+	}
+    while (sensors->imu->get_heading() >= 0 && sensors->imu->get_heading() < 180){
+        assignMotors(-25, 25);
+    }
+    assignMotors(25, -25);
+    pros::Task::delay(50);
+    assignMotors(0, 0);
+}
+
+void AutonUtils::turnLeftToZeroHeading() {
+	assignMotors(-50, 50);
+	while (true){
+		if (sensors->imu->get_heading() <= 360 && sensors->imu->get_heading() > 180){ // brake the robot when heading reaches the right hemisphere
+			assignMotors(50, -50);
+			pros::Task::delay(50);
+			assignMotors(0, 0);
+			break;
+		}
+	}
+    while (sensors->imu->get_heading() <= 360 && sensors->imu->get_heading() > 180){
+        assignMotors(25, -25);
+    }
+    assignMotors(-25, 25);
+    pros::Task::delay(50);
+    assignMotors(0, 0);
+}
+
 
 void AutonUtils::filter() {
     mtrDefs->roller_b->move(-80);
@@ -249,6 +285,7 @@ void AutonUtils::indexMid() {
     }
     pros::Task::delay(50);
 }
+
 
 bool indexingTop = false;
 bool indexingMid = false;
@@ -293,9 +330,15 @@ void AutonUtils::waitUntilMidIndexed() {
     }
 }
 
-void AutonUtils::waitUntilIntaked(){
+void AutonUtils::waitUntilIntaked(bool darkGoal){
     int sensVal = line_bot.get_value();
-    while(sensVal > 2750) {
+    int threshold = 2700;
+
+    if (darkGoal) {
+        threshold = 2700;
+    }
+
+    while(sensVal > threshold) {
         std::cout << sensVal << endl;
         sensVal = line_bot.get_value();
         pros::Task::delay(5);
@@ -390,7 +433,7 @@ void AutonUtils::stopRollers(MotorDefs* mtrDefs) {
 
 void AutonUtils::oneShot() {
     mtrDefs->roller_t->move(-127);
-    while (!limit_t.get_value() && line_top.get_value() <= 2800) {
+    while (limit_t.get_value() && line_top.get_value() <= 2800) {
         pros::Task::delay(10);
     }
     pros::Task::delay(300);
@@ -400,7 +443,7 @@ void AutonUtils::oneShot() {
 
 void AutonUtils::slowOneShot() {
     mtrDefs->roller_t->move(-100);
-    while (!limit_t.get_value() && line_top.get_value() <= 2800) {
+    while (limit_t.get_value() && line_top.get_value() <= 2800) {
         pros::Task::delay(10);
     }
     pros::Task::delay(300);
