@@ -128,27 +128,15 @@ void AutonUtils::turnInGivenDirection(double angle, double direction){
         // Correct undershoot at a slower speed
         assignMotors(-voltageForCorrection, voltageForCorrection);
 
-        if(angle != 0.0){
-            while(sensors->imu->get_heading() > angle) {
-                pros::Task::delay(10);
-            }
-        } else {
-            while(sensors->imu->get_heading() > 1.0) {
-                pros::Task::delay(10);
-            }
+        while(sensors->imu->get_heading() > angle) {
+            pros::Task::delay(10);
         }
     } else if (!determineTurnDirection(sensors->imu->get_heading(), angle)) {
         // Correct any overshoot at a slower speed
         assignMotors(voltageForCorrection, -voltageForCorrection);
 
-        if(angle != 0.0){
-            while(sensors->imu->get_heading() < angle) {
-                pros::Task::delay(10);
-            }
-        } else {
-            while(sensors->imu->get_heading() < 359.0) {
-                pros::Task::delay(10);
-            }
+        while(sensors->imu->get_heading() < angle) {
+            pros::Task::delay(10);
         }
     }
     // If anything needed to be corrected, it is corrected
@@ -433,6 +421,7 @@ void AutonUtils::stopRollers(MotorDefs* mtrDefs) {
 
 void AutonUtils::oneShot() {
     mtrDefs->roller_t->move(-127);
+    mtrDefs->roller_b->move(20);
     while (limit_t.get_value() && line_top.get_value() <= 2800) {
         pros::Task::delay(10);
     }
