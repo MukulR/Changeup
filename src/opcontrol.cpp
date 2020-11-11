@@ -6,6 +6,8 @@ pros::Controller master(pros::E_CONTROLLER_MASTER);
 
 pros::ADIAnalogIn line_t ('D');
 pros::ADIAnalogIn line_m ('B');
+pros::Optical optical (6);
+pros::ADIDigitalIn limit('A');
 
 MotorDefs mtrDefs;
 
@@ -51,7 +53,7 @@ void stopAll() {
 void intake(void* param) {
 	
 	while(true) {
-		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
+		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
 			mtrDefs.intake_r->move(-127);
 			mtrDefs.intake_l->move(127);
 			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
@@ -75,7 +77,7 @@ void intake(void* param) {
 
 void rollers(void* param) {
 	while(true) {
-		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
 			mtrDefs.roller_t->move(-127);
 			mtrDefs.roller_b->move(-127);
 			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
@@ -229,11 +231,75 @@ void control(void* param) {
 	}
 }
 
+void autoShoot(void* param) {
+	while(true) {
+		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+			// Stop running motors from previous tasks.
+			stopAll();
+			
+			// Start intakes and rollers
+			mtrDefs.intake_r->move(-127);
+			mtrDefs.intake_l->move(127);
+			mtrDefs.roller_t->move(-127);
+			mtrDefs.roller_b->move(-127);
+
+			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+				// Turn on light for better readings
+				optical.set_led_pwm(100);
+				// If blue, filter
+
+				if (line_m.get_value() >= 2750) {
+					mtrDefs.roller_t->move(-127);
+					mtrDefs.roller_b->move(-127);
+				} else if (optical.get_hue() > 50.0 && optical.get_hue() < 359.0){
+					mtrDefs.roller_t->move(127);
+					mtrDefs.roller_b->move(-127);
+				} else {
+					// Keep shooting until ball goes out.
+					mtrDefs.roller_t->move(-127);
+
+					// Use limit switch to make sure ball was shot out
+					while (!limit.get_value()) {
+						// If the next ball is blue keep it down so we don't shoot it out
+						if (optical.get_hue() > 50.0 && optical.get_hue() < 359.0) {
+							mtrDefs.roller_b->move(35);
+							mtrDefs.intake_r->move(0);
+							mtrDefs.intake_l->move(0);
+						} else {
+							mtrDefs.roller_b->move(-127);
+							mtrDefs.intake_r->move(-127);
+							mtrDefs.intake_l->move(127);
+						}
+
+						pros::Task::delay(10);
+					}
+
+					// Make the bottom roller start spinning again.
+					mtrDefs.roller_b->move(-127);
+
+					// Since the limit switch wasn't at the very top, delay a little.
+					pros::Task::delay(100);
+				}
+				pros::Task::delay(10);
+			}
+
+			// Turn off light because it could affect the line tracker on the other side
+			optical.set_led_pwm(0);
+			// Stop intakes and rollers
+			mtrDefs.intake_r->move(0);
+			mtrDefs.intake_l->move(0);
+			mtrDefs.roller_t->move(0);
+			mtrDefs.roller_b->move(0);
+		}
+	}
+}
+
 void opcontrol() {
 	pros::Task driveTask(drive);
 	pros::Task intakeTask(intake);
 	pros::Task rollerTask(rollers);
 	pros::Task indexTask(index);
+	pros::Task autoShootTask(autoShoot);
 	pros::Task controlTask(control);
 }
 
