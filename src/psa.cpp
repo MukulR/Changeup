@@ -69,7 +69,8 @@ void ProgrammingSkillsAuton::oneShotSequence(bool slowShot) {
 
     // Give the ball a short burst of power to hit the bottom roller
     AutonUtils::startIntakes(mtrDefs);
-    pros::Task::delay(500);
+    au->waitUntilIntaked(false);
+    pros::Task::delay(200);
     AutonUtils::stopIntakes(mtrDefs);
 
     // Shoot the top red ball
@@ -113,6 +114,9 @@ void ProgrammingSkillsAuton::runAuton(){
     captureFourthGoal();
     captureFifthGoal();
     captureSixthGoal();
+    captureSeventhGoal();
+    captureEighthGoal();
+    captureNinthGoal();
 }
 
 void ProgrammingSkillsAuton::captureFirstGoal(){
@@ -228,7 +232,7 @@ void ProgrammingSkillsAuton::captureFourthGoal() {
     // -----------
 
     // Backout from the goal
-    au->translate(-50);
+    
     pros::Task::delay(50);
 
     // Face right heading for the next goal
@@ -251,39 +255,117 @@ void ProgrammingSkillsAuton::captureFifthGoal() {
     // Shoot the ball and intake the blue ball
     oneShotSequence(true);
     // Back out of the corner goal
-    au->translate(-225);
+    au->translate(-295);
     // Out take the blue ball that we got from the tower
-    AutonUtils::startOuttake(mtrDefs);
-    pros::Task::delay(400);
+    AutonUtils::startIntakes(mtrDefs);
+    mtrDefs->roller_b->move(-127);
+    mtrDefs->roller_t->move(127);
     // Turn to get ready for the next goal
     au->globalTurn(90);
-    pros::Task::delay(50);
+    pros::Task::delay(500);
     AutonUtils::stopIntakes(mtrDefs);
+    AutonUtils::stopRollers(mtrDefs);
 }
 
 void ProgrammingSkillsAuton::captureSixthGoal() {
     AutonUtils::startIntakes(mtrDefs);
-    au->translate(2850);
+    au->translate(2750);
     AutonUtils::stopIntakes(mtrDefs);
-    pros::Task::delay(50);
 
     // Index the ball we pick up while moving to the next corner goal.
     au->indexTop();
     au->turnLeftToZeroHeading();
 
     // Go to the goal
-    au->translate(400);
+    au->translate(450);
     // Shoot the ball and intake the blue ball
     oneShotSequence(false);
     // Back out of the corner goal
-    au->translate(-225);
-    // Out take the blue ball that we got from the tower
-    AutonUtils::startOuttake(mtrDefs);
-    pros::Task::delay(400);
+    au->translate(-185);
+    // Outtake the blue ball that we got from the tower
+    AutonUtils::startIntakes(mtrDefs);
+    mtrDefs->roller_b->move(-127);
+    mtrDefs->roller_t->move(127);
     // Turn to get ready for the next goal
     au->globalTurn(90);
     pros::Task::delay(50);
     AutonUtils::stopIntakes(mtrDefs);
+    AutonUtils::stopRollers(mtrDefs);
+}
+
+void ProgrammingSkillsAuton::captureSeventhGoal() {
+    AutonUtils::startIntakes(mtrDefs);
+    au->translate(2300);
+    pros::Task::delay(50);
+    // Re-index the already indexed ball just in case
+    au->indexTop();
+    // Turn to face the corner goal
+    au->globalTurn(45);
+    // Go to the corner goal
+    au->translate(700);
+    // Shoot the ball and intake the blue ball
+    oneShotSequence(true);
+    // Back out of the corner goal
+    au->translate(-300);
+    // Out take the blue ball that we got from the tower
+    AutonUtils::startIntakes(mtrDefs);
+    mtrDefs->roller_b->move(-127);
+    mtrDefs->roller_t->move(127);
+    // Turn to get ready for the next goal
+    au->globalTurn(180);
+    pros::Task::delay(500);
+    AutonUtils::stopIntakes(mtrDefs);
+    AutonUtils::stopRollers(mtrDefs);
+}
+
+void ProgrammingSkillsAuton::captureEighthGoal() {
+    AutonUtils::startIntakes(mtrDefs);
+    au->translate(2550);
+    pros::Task::delay(500);
+    AutonUtils::stopIntakes(mtrDefs);
+
+    // Index the ball we pick up while moving to the next corner goal.
+    au->indexTop();
+    au->globalTurn(90);
+
+    // Go to the goal
+    au->translate(400);
+    // Shoot the ball and intake the blue ball
+    oneShotSequence(false);
+    // Back out of the corner goal
+    au->translate(-145);
+    // Out take the blue ball that we got from the tower
+    AutonUtils::startOuttake(mtrDefs);
+    pros::Task::delay(400);
+    // Turn to get ready for the next goal
+    au->globalTurn(267);
+    pros::Task::delay(50);
+    AutonUtils::stopIntakes(mtrDefs);
+}
+
+void ProgrammingSkillsAuton::captureNinthGoal() {
+    // Intake the ball and get close to the middle goal
+    AutonUtils::startIntakes(mtrDefs);
+    au->translate(1800);
+    // Slowly drive forward with intakes going slowly to lock into tower
+    au->indexTop();
+    mtrDefs->intake_l->move(30);
+    mtrDefs->intake_r->move(-30);
+    au->assignMotors(40, 40);
+
+    pros::Task::delay(1000);
+    startHoldInGoal();
+    mtrDefs->intake_l->move(0);
+    mtrDefs->intake_r->move(0);
+
+    mtrDefs->intake_l->move(-127);
+    mtrDefs->intake_r->move(127);
+    pros::Task::delay(500);
+    au->oneShot();
+    pros::Task::delay(500);
+    AutonUtils::startOuttake(mtrDefs);
+    au->assignMotors(-40, -40);
+    
 }
 
 void ProgrammingSkillsAuton::startHoldInGoal(){

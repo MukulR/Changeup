@@ -25,6 +25,9 @@ class ProgrammingSkillsAuton {
         void captureFourthGoal();
         void captureFifthGoal();
         void captureSixthGoal();
+        void captureSeventhGoal();
+        void captureEighthGoal();
+        void captureNinthGoal();
 
 
         void startHoldInGoal();
