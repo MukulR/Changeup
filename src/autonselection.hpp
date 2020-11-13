@@ -8,7 +8,7 @@ namespace pros {
     class Imu;
 }
 
-extern pros::Imu *imu;
+extern pros::Imu *inertial_sensor;
 
 
 #endif //_AUTONSELECTION_H_

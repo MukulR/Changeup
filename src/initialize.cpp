@@ -21,6 +21,8 @@ static const char *alliance_map[] = {"Red", "Blue", ""};
 int autonSelected = 2;  // by default no auton
 bool redAlliance = false;
 
+pros::Imu *inertial_sensor;
+
 
 static lv_res_t btnm_action(lv_obj_t *btnm, const char *txt) {
    printf("btnm_action Called \n");
@@ -79,7 +81,14 @@ void disabled() {}
  * starts.
  */
 void competition_initialize() {
+   std::cout << "Initializing IMU" << std::endl;
    // Initialize and calibrate imu/gyro here.
+   inertial_sensor = new pros::Imu(11);
+   inertial_sensor->reset();
+   pros::Task::delay(3000);
+   std::cout << "Finished initializing IMU" << std::endl;
+   std::cout << inertial_sensor->get_heading() << std::endl;
+  
 
 	lv_theme_alien_init(0, NULL);
 	lv_obj_t *title = lv_label_create(lv_scr_act(), NULL);

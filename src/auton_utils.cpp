@@ -251,7 +251,7 @@ void AutonUtils::filter() {
 
 void AutonUtils::indexTop() {
     // Case when we want to load the top ball, and the indexer is fully empty
-    if (line_top.get_value() >= 2800) {
+    if (line_top.get_value() >= 2800 || limit_t.get_value()) {
         mtrDefs->roller_b->move(-100);
         mtrDefs->roller_t->move(-100);
         // Wait until the top ball slot is filled

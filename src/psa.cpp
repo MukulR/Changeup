@@ -170,7 +170,7 @@ void ProgrammingSkillsAuton::captureSecondGoal(){
     // -----------
 
     // Backout from the goal
-    au->translate(-150);
+    au->translate(-100);
     pros::Task::delay(50);
 
     // Face right heading for the next goal
@@ -255,7 +255,7 @@ void ProgrammingSkillsAuton::captureFifthGoal() {
     // Shoot the ball and intake the blue ball
     oneShotSequence(true);
     // Back out of the corner goal
-    au->translate(-295);
+    au->translate(-400);
     // Out take the blue ball that we got from the tower
     AutonUtils::startIntakes(mtrDefs);
     mtrDefs->roller_b->move(-127);
@@ -295,7 +295,7 @@ void ProgrammingSkillsAuton::captureSixthGoal() {
 
 void ProgrammingSkillsAuton::captureSeventhGoal() {
     AutonUtils::startIntakes(mtrDefs);
-    au->translate(2300);
+    au->translate(2250);
     pros::Task::delay(50);
     // Re-index the already indexed ball just in case
     au->indexTop();
@@ -306,7 +306,7 @@ void ProgrammingSkillsAuton::captureSeventhGoal() {
     // Shoot the ball and intake the blue ball
     oneShotSequence(true);
     // Back out of the corner goal
-    au->translate(-300);
+    au->translate(-425);
     // Out take the blue ball that we got from the tower
     AutonUtils::startIntakes(mtrDefs);
     mtrDefs->roller_b->move(-127);

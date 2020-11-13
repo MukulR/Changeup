@@ -47,7 +47,6 @@ void autonomous() {
         pros::Task::delay(10000);
     }
     */
-    std::cout << "hi" << endl;
     MotorDefs* mtrDefs = new MotorDefs();
     ProgrammingSkillsAuton psa(mtrDefs, true);
     psa.runAuton();
