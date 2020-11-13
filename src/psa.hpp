@@ -36,6 +36,7 @@ class ProgrammingSkillsAuton {
         // Repeated sequences
         void threeShotSequence();
         void twoShotSequence(bool darkGoal = false);
+        void thirdGoalSequence();
         void oneShotSequence(bool slowShot);
 };
 

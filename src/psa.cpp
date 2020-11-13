@@ -62,6 +62,46 @@ void ProgrammingSkillsAuton::twoShotSequence(bool darkGoal) {
     stopHoldInGoal();
 }
 
+void ProgrammingSkillsAuton::thirdGoalSequence() {
+    // Hold power once in the goal
+    startHoldInGoal();
+    pros::Task::delay(100);
+
+    // Shoot the top red ball
+    au->oneShot();
+
+     // Index the remaining red ball into the top position
+    au->indexTop();
+
+     // Give the ball a short burst of power to hit the bottom roller
+    AutonUtils::startIntakes(mtrDefs);
+
+    // Release the hold power
+    stopHoldInGoal();
+
+    // Backup so that the ball is relieved from the goal plate
+    au->assignMotors(-30, -30);
+    pros::Task::delay(500);
+    au->assignMotors(0, 0);
+   
+
+
+    // Backout from the goal
+    // Turn on the intakes to remove the bottom blue balls from the robot
+    
+    au->translate(-250);
+
+    mtrDefs->roller_b->move(127);
+    AutonUtils::startOuttake(mtrDefs);
+
+    pros::Task::delay(100);
+    mtrDefs->roller_b->move(0);
+    // Face correct heading for the next goal.
+    au->turnRightToZeroHeading();
+    AutonUtils::stopIntakes(mtrDefs);
+    
+}
+
 void ProgrammingSkillsAuton::oneShotSequence(bool slowShot) {
     // Hold power once in the goal
     startHoldInGoal();
@@ -117,6 +157,9 @@ void ProgrammingSkillsAuton::runAuton(){
     captureSeventhGoal();
     captureEighthGoal();
     captureNinthGoal();
+
+
+    // thirdGoalSequence();
 }
 
 void ProgrammingSkillsAuton::captureFirstGoal(){
@@ -187,7 +230,7 @@ void ProgrammingSkillsAuton::captureThirdGoal() {
     // Filter out blue ball, wait until filtered, then index the emaining balls.
     au->filter();
     // move forward to corner goal
-    au->translate(2200);
+    au->translate(2350);
     // Index the ball we pick up while moving to the next corner goal.
     au->indexTop();
     au->indexMid();
@@ -198,22 +241,13 @@ void ProgrammingSkillsAuton::captureThirdGoal() {
     pros::Task::delay(50);
     // move to the corner goal and hold position there.
     au->translate(700);
-    // Shoot while 2 red balls in robot, dark goal is true.
-    twoShotSequence(true);
-    // ---------------------
-    
-    // Backout from the goal
-    au->translate(-250);
-    pros::Task::delay(50);
-    // Face correct heading for the next goal.
-    au->turnRightToZeroHeading();
-    // Filter out the blue ball that we picked up earlier.
-    au->filter();
+    // Shoot while 2 red balls in robot, dark goal is true
+    thirdGoalSequence();
 }
 
 void ProgrammingSkillsAuton::captureFourthGoal() {
     AutonUtils::startIntakes(mtrDefs);
-    au->translate(2460);
+    au->translate(2660);
     pros::Task::delay(1000);
     AutonUtils::stopIntakes(mtrDefs);
     pros::Task::delay(50);
@@ -244,7 +278,7 @@ void ProgrammingSkillsAuton::captureFourthGoal() {
 
 void ProgrammingSkillsAuton::captureFifthGoal() {
     // move forward to corner goal
-    au->translate(1650);
+    au->translate(1750);
     pros::Task::delay(50);
     // Re-index the already indexed ball just in case
     au->indexTop();
@@ -269,7 +303,7 @@ void ProgrammingSkillsAuton::captureFifthGoal() {
 
 void ProgrammingSkillsAuton::captureSixthGoal() {
     AutonUtils::startIntakes(mtrDefs);
-    au->translate(2750);
+    au->translate(2720);
     AutonUtils::stopIntakes(mtrDefs);
 
     // Index the ball we pick up while moving to the next corner goal.
@@ -295,7 +329,7 @@ void ProgrammingSkillsAuton::captureSixthGoal() {
 
 void ProgrammingSkillsAuton::captureSeventhGoal() {
     AutonUtils::startIntakes(mtrDefs);
-    au->translate(2250);
+    au->translate(2100);
     pros::Task::delay(50);
     // Re-index the already indexed ball just in case
     au->indexTop();
@@ -306,7 +340,7 @@ void ProgrammingSkillsAuton::captureSeventhGoal() {
     // Shoot the ball and intake the blue ball
     oneShotSequence(true);
     // Back out of the corner goal
-    au->translate(-475);
+    au->translate(-495);
     // Out take the blue ball that we got from the tower
     AutonUtils::startIntakes(mtrDefs);
     mtrDefs->roller_b->move(-127);
