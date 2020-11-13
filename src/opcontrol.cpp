@@ -79,7 +79,7 @@ void rollers(void* param) {
 	while(true) {
 		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
 			mtrDefs.roller_t->move(-127);
-			mtrDefs.roller_b->move(-127);
+			mtrDefs.roller_b->move(-80);
 			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
 				pros::Task::delay(10);
 			}
@@ -241,7 +241,7 @@ void autoShoot(void* param) {
 			mtrDefs.intake_r->move(-127);
 			mtrDefs.intake_l->move(127);
 			mtrDefs.roller_t->move(-127);
-			mtrDefs.roller_b->move(-127);
+			mtrDefs.roller_b->move(-80);
 
 			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
 				// Turn on light for better readings
@@ -250,10 +250,10 @@ void autoShoot(void* param) {
 
 				if (line_m.get_value() >= 2750) {
 					mtrDefs.roller_t->move(-127);
-					mtrDefs.roller_b->move(-127);
+					mtrDefs.roller_b->move(-80);
 				} else if (optical.get_hue() > 50.0 && optical.get_hue() < 359.0){
 					mtrDefs.roller_t->move(127);
-					mtrDefs.roller_b->move(-127);
+					mtrDefs.roller_b->move(-80);
 				} else {
 					// Keep shooting until ball goes out.
 					mtrDefs.roller_t->move(-127);
@@ -266,7 +266,7 @@ void autoShoot(void* param) {
 							mtrDefs.intake_r->move(0);
 							mtrDefs.intake_l->move(0);
 						} else {
-							mtrDefs.roller_b->move(-127);
+							mtrDefs.roller_b->move(-80);
 							mtrDefs.intake_r->move(-127);
 							mtrDefs.intake_l->move(127);
 						}
@@ -275,7 +275,7 @@ void autoShoot(void* param) {
 					}
 
 					// Make the bottom roller start spinning again.
-					mtrDefs.roller_b->move(-127);
+					mtrDefs.roller_b->move(-80);
 
 					// Since the limit switch wasn't at the very top, delay a little.
 					pros::Task::delay(100);
