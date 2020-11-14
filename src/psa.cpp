@@ -89,7 +89,7 @@ void ProgrammingSkillsAuton::thirdGoalSequence() {
     // Backout from the goal
     // Turn on the intakes to remove the bottom blue balls from the robot
     
-    au->translate(-250);
+    au->translate(-300);
 
     mtrDefs->roller_b->move(127);
     AutonUtils::startOuttake(mtrDefs);
@@ -163,7 +163,37 @@ void ProgrammingSkillsAuton::runAuton(){
 }
 
 void ProgrammingSkillsAuton::captureFirstGoal(){
-    
+    // Start intakes to pick up the balls
+    AutonUtils::startIntakes(mtrDefs);
+
+    // Move forward to pick up the first ball
+    au->translate(1000);
+    // Index the first ball
+    au->indexTop();
+    // Move forward for the next ball
+    au->translate(1400);
+    // Index next red ball
+    au->indexMid();
+    // Back up from the fence
+    au->translate(-600);
+    // Turn to face the first corner goal
+    au->globalTurn(135);
+    AutonUtils::stopIntakes(mtrDefs);
+
+    // Advance towards the goal
+    au->translate(900);
+    threeShotSequence();
+    // Backup from the goal
+    au->translate(-400);
+    // Get rid of blue ball we picked up
+    AutonUtils::startOuttake(mtrDefs);
+    pros::Task::delay(400);
+    // Turn to get ready for the next goal
+    au->globalTurn(270);
+    pros::Task::delay(50);
+    AutonUtils::stopIntakes(mtrDefs);
+
+    /*    
     // Start indexing first two balls
     AutonUtils::startIntakes(mtrDefs);
     au->indexTop();
@@ -196,6 +226,7 @@ void ProgrammingSkillsAuton::captureFirstGoal(){
     au->globalTurn(270);
     pros::Task::delay(50);
     AutonUtils::stopIntakes(mtrDefs);
+    */
 }
 
 void ProgrammingSkillsAuton::captureSecondGoal(){
@@ -248,7 +279,7 @@ void ProgrammingSkillsAuton::captureThirdGoal() {
 void ProgrammingSkillsAuton::captureFourthGoal() {
     AutonUtils::startIntakes(mtrDefs);
     au->translate(2660);
-    pros::Task::delay(1000);
+    pros::Task::delay(500);
     AutonUtils::stopIntakes(mtrDefs);
     pros::Task::delay(50);
 

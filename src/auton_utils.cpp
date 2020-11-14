@@ -11,6 +11,11 @@ pros::ADIAnalogIn line_mid('B');
 pros::ADIAnalogIn line_bot('H');
 pros::ADIDigitalIn limit_t('A');
 
+const int TURN_VOLTAGE = 50;
+const int CORRECTION_TURN_VOLTAGE = 25;
+
+const int TRANSLATE_VOLTAGE = 80;
+
 AutonUtils::AutonUtils(MotorDefs* mtrDefs, Sensors* sensors) {
     this->mtrDefs = mtrDefs;
     this->sensors = sensors;
@@ -37,7 +42,7 @@ void AutonUtils::translate(int units) {
     double imu_initial = sensors->imu->get_rotation();
 
     // Motor power for drive
-    int voltage = 80;
+    int voltage = TRANSLATE_VOLTAGE;
 
     // Reset drive encoders
     resetDriveEncoders();
@@ -102,7 +107,7 @@ bool AutonUtils::determineTurnDirection(double angle_current, double angle_desir
 // Turns the robot in a given direction
 void AutonUtils::turnInGivenDirection(double angle, double direction){
     // Function constants: voltage - robot speed, angleBuffer - precision of turn.
-    int voltage = 50;
+    int voltage = TURN_VOLTAGE;
     double angleBuffer = 1.0;
 
     // Turn the robot based on direction
@@ -123,7 +128,7 @@ void AutonUtils::turnInGivenDirection(double angle, double direction){
     pros::Task::delay(50);
     assignMotors(0, 0);
 
-    int voltageForCorrection = 0.5 * voltage;
+    int voltageForCorrection = CORRECTION_TURN_VOLTAGE;
     if (determineTurnDirection(sensors->imu->get_heading(), angle)) {
         // Correct undershoot at a slower speed
         assignMotors(-voltageForCorrection, voltageForCorrection);
@@ -144,63 +149,6 @@ void AutonUtils::turnInGivenDirection(double angle, double direction){
     assignMotors(0, 0);
 }
 
-void AutonUtils::rotate(int degrees, int voltage) {
-    // determine the direction of the turn
-    int direction = abs(degrees) / degrees;
-
-    // reset IMU;
-    //sensors->imu->reset();
-    double imuVal = 0.0;
-
-    std::cout << sensors->imu->get_rotation() << endl;
-    // assign power to start the turn
-    assignMotors(-voltage * direction, voltage * direction);
-    //delay until the value of the imu reaches the desired amount
-    while (fabs(imuVal) <= fabs(degrees)) {
-        std::cout << sensors->imu->get_rotation() << endl;
-        pros::Task::delay(10);
-        imuVal = sensors->imu->get_rotation();
-    }
-
-    assignMotors(40, -40);
-    pros::Task::delay(50);
-    assignMotors(0, 0);
-    std::cout << sensors->imu->get_rotation() << endl;
-    // Let the robot decelerate
-
-    // pros::Task::delay(100);
-    // std::cout << sensors->imu->get_rotation() << endl;
-
-    int voltageForCorrection = 0.5 * voltage;
-    if (fabs(sensors->imu->get_rotation()) > abs(degrees)) {
-        std::cout << "Here 1" << endl;
-        // Correct overshoot at a slower speed
-        assignMotors(voltageForCorrection * direction, -voltageForCorrection * direction);
-        while(fabs(imuVal) > fabs(degrees)) {
-            std::cout << sensors->imu->get_rotation() << endl;
-            imuVal = sensors->imu->get_rotation();
-            pros::Task::delay(10);
-        }
-
-    } else if (fabs(sensors->imu->get_rotation()) < fabs(degrees)) {
-        std::cout << "Here 2" << endl;
-        // Correct any undershoot at a slower speed
-        assignMotors(-voltageForCorrection * direction, voltageForCorrection * direction);
-        while(fabs(imuVal) < abs(degrees)) {
-            std::cout << sensors->imu->get_rotation() << endl;
-            pros::Task::delay(10);
-            imuVal = sensors->imu->get_rotation();
-        }
-    }
-
-    // If anything needed to be corrected, it is corrected
-    // and the motors can be stopped.
-    assignMotors(0, 0);
-    // while (true) {
-    //     std::cout << sensors->imu->get_rotation() << endl;
-    //     pros::Task::delay(10);
-    // }
-}
 
 void AutonUtils::turnRightToZeroHeading() {
 	assignMotors(50, -50);
