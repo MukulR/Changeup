@@ -14,7 +14,6 @@ MotorDefs mtrDefs;
 bool detection_enabled = false;
 
 void drive(void* param){
-	std::cout << "Here" << "\n";
 	while(true) {
 		int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
 		int turn = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
@@ -72,6 +71,7 @@ void intake(void* param) {
 			mtrDefs.intake_r->move(0);
 			mtrDefs.intake_l->move(0);
 		}
+		pros::Task::delay(10);
 	}
 }
 
@@ -96,6 +96,7 @@ void rollers(void* param) {
 			mtrDefs.roller_t->move(0);
 			mtrDefs.roller_b->move(0);
 		}
+		pros::Task::delay(10);
 	}
 }
 
@@ -103,10 +104,8 @@ void rollers(void* param) {
 void index(void *param){
 	
 	while (true) {
-		std::cout << detection_enabled << "\n";
 		if (detection_enabled) {
 			if (line_t.get_value() >= 2800 && line_m.get_value() >= 2750){
-				std::cout << "Here1" << "\n";
 				mtrDefs.intake_l->move(127);
 				mtrDefs.intake_r->move(-127);
 				mtrDefs.roller_b->move(-80);
@@ -124,7 +123,6 @@ void index(void *param){
 			}
 
 			if (line_t.get_value() <= 2800 && line_m.get_value() >= 2750){
-				std::cout << "Here2" << "\n";
 				mtrDefs.intake_l->move(127);
 				mtrDefs.intake_r->move(-127);
 				mtrDefs.roller_b->move(-80);
@@ -142,7 +140,6 @@ void index(void *param){
 			}
 
 			if (line_t.get_value() >= 2800 && line_m.get_value() < 2750){
-				std::cout << "Here3" << "\n";
 				mtrDefs.intake_l->move(127);
 				mtrDefs.intake_r->move(-127);
 				mtrDefs.roller_t->move(-80);
@@ -160,11 +157,11 @@ void index(void *param){
 				// detection_enabled = false;
 			}
 		}
+		pros::Task::delay(10);
 	}
 }
 
-void control(void* param) {
-	
+void control(void* param) {	
 	while(true) {
 		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
 			detection_enabled = false;
@@ -173,7 +170,6 @@ void control(void* param) {
 
 		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
 			detection_enabled = true;
-			std::cout << detection_enabled;
 		}
 
 		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
@@ -228,12 +224,17 @@ void control(void* param) {
 			pros::Task::delay(600);
 			mtrDefs.roller_t->move(0);
 		}
+		pros::Task::delay(10);	
 	}
 }
 
 void autoShoot(void* param) {
 	while(true) {
 		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+			// Turn on light for better readings and wait for it to turn on
+			optical.set_led_pwm(100);
+			pros::Task::delay(20);
+
 			// Stop running motors from previous tasks.
 			stopAll();
 			
@@ -244,42 +245,25 @@ void autoShoot(void* param) {
 			mtrDefs.roller_b->move(-80);
 
 			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-				// Turn on light for better readings
-				optical.set_led_pwm(100);
-				// If blue, filter
 
-				if (line_m.get_value() >= 2750) {
-					mtrDefs.roller_t->move(-127);
-					mtrDefs.roller_b->move(-80);
-				} else if (optical.get_hue() > 50.0 && optical.get_hue() < 359.0){
+				if (optical.get_hue() > 180.0 && optical.get_hue() < 280.0) {
+					// If blue filter out the ball
+
 					mtrDefs.roller_t->move(127);
-					mtrDefs.roller_b->move(-80);
-				} else {
-					// Keep shooting until ball goes out.
+				 	mtrDefs.roller_b->move(-127);
+				} else if ((optical.get_hue() > 290.0 && optical.get_hue() <= 359.9999) || (optical.get_hue() >= 0.0 && optical.get_hue() <= 50.0)) {
+					// Shoot out red ball
+
 					mtrDefs.roller_t->move(-127);
+					mtrDefs.roller_b->move(-80);
 
-					// Use limit switch to make sure ball was shot out
-					while (!limit.get_value()) {
-						// If the next ball is blue keep it down so we don't shoot it out
-						if (optical.get_hue() > 50.0 && optical.get_hue() < 359.0) {
-							mtrDefs.roller_b->move(35);
-							mtrDefs.intake_r->move(0);
-							mtrDefs.intake_l->move(0);
-						} else {
-							mtrDefs.roller_b->move(-80);
-							mtrDefs.intake_r->move(-127);
-							mtrDefs.intake_l->move(127);
-						}
-
+					while(!limit.get_value()) {
 						pros::Task::delay(10);
 					}
+					pros::Task::delay(20);
 
-					// Make the bottom roller start spinning again.
-					mtrDefs.roller_b->move(-80);
-
-					// Since the limit switch wasn't at the very top, delay a little.
-					pros::Task::delay(100);
 				}
+
 				pros::Task::delay(10);
 			}
 
@@ -291,6 +275,7 @@ void autoShoot(void* param) {
 			mtrDefs.roller_t->move(0);
 			mtrDefs.roller_b->move(0);
 		}
+		pros::Task::delay(10);
 	}
 }
 
