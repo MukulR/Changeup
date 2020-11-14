@@ -89,7 +89,7 @@ void ProgrammingSkillsAuton::thirdGoalSequence() {
     // Backout from the goal
     // Turn on the intakes to remove the bottom blue balls from the robot
     
-    au->translate(-300);
+    au->translate(-450);
 
     mtrDefs->roller_b->move(127);
     AutonUtils::startOuttake(mtrDefs);
@@ -261,7 +261,7 @@ void ProgrammingSkillsAuton::captureThirdGoal() {
     // Filter out blue ball, wait until filtered, then index the emaining balls.
     au->filter();
     // move forward to corner goal
-    au->translate(2350);
+    au->translate(2280);
     // Index the ball we pick up while moving to the next corner goal.
     au->indexTop();
     au->indexMid();
@@ -278,7 +278,7 @@ void ProgrammingSkillsAuton::captureThirdGoal() {
 
 void ProgrammingSkillsAuton::captureFourthGoal() {
     AutonUtils::startIntakes(mtrDefs);
-    au->translate(2660);
+    au->translate(2270);
     pros::Task::delay(500);
     AutonUtils::stopIntakes(mtrDefs);
     pros::Task::delay(50);
@@ -314,12 +314,13 @@ void ProgrammingSkillsAuton::captureFifthGoal() {
     // Re-index the already indexed ball just in case
     au->indexTop();
     // Turn to face the corner goal
-    au->globalTurn(328);
+    au->globalTurn(330);
     // Go to the corner goal
     au->translate(1250);
     // Shoot the ball and intake the blue ball
     oneShotSequence(true);
-    // Back out of the corner goal
+    // Back out of the corner goal, make sure the direction is proper.
+    au->globalTurn(328);
     au->translate(-400);
     // Out take the blue ball that we got from the tower
     AutonUtils::startIntakes(mtrDefs);
@@ -334,7 +335,7 @@ void ProgrammingSkillsAuton::captureFifthGoal() {
 
 void ProgrammingSkillsAuton::captureSixthGoal() {
     AutonUtils::startIntakes(mtrDefs);
-    au->translate(2720);
+    au->translate(2580);
     AutonUtils::stopIntakes(mtrDefs);
 
     // Index the ball we pick up while moving to the next corner goal.
@@ -371,7 +372,7 @@ void ProgrammingSkillsAuton::captureSeventhGoal() {
     // Shoot the ball and intake the blue ball
     oneShotSequence(true);
     // Back out of the corner goal
-    au->translate(-495);
+    au->translate(-525);
     // Out take the blue ball that we got from the tower
     AutonUtils::startIntakes(mtrDefs);
     mtrDefs->roller_b->move(-127);

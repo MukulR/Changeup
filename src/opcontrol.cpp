@@ -52,10 +52,10 @@ void stopAll() {
 void intake(void* param) {
 	
 	while(true) {
-		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
 			mtrDefs.intake_r->move(-127);
 			mtrDefs.intake_l->move(127);
-			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
 				pros::Task::delay(10);
 			}
 			mtrDefs.intake_r->move(0);
@@ -77,10 +77,10 @@ void intake(void* param) {
 
 void rollers(void* param) {
 	while(true) {
-		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
+		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
 			mtrDefs.roller_t->move(-127);
 			mtrDefs.roller_b->move(-80);
-			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
+			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
 				pros::Task::delay(10);
 			}
 			mtrDefs.roller_t->move(0);
@@ -230,21 +230,23 @@ void control(void* param) {
 
 void autoShoot(void* param) {
 	while(true) {
-		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
-			// Turn on light for better readings and wait for it to turn on
+		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_B) /*master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)*/){
+			// Disable autoindexing so it doesn't interfere
+			detection_enabled = false;
+			// Stop running motors from previous tasks.
+			stopAll();
+			// Turn on light for better readings and wait for it to turn on			
 			optical.set_led_pwm(100);
 			pros::Task::delay(20);
 
-			// Stop running motors from previous tasks.
-			stopAll();
-			
+		
 			// Start intakes and rollers
 			mtrDefs.intake_r->move(-127);
 			mtrDefs.intake_l->move(127);
 			mtrDefs.roller_t->move(-127);
 			mtrDefs.roller_b->move(-80);
 
-			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_B) /*master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) */){
 
 				if (optical.get_hue() > 175.0 && optical.get_hue() < 290.0) {
 					// If blue, filter out the ball
