@@ -55,7 +55,7 @@ void intake(void* param) {
 		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
 			mtrDefs.intake_r->move(-127);
 			mtrDefs.intake_l->move(127);
-			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
+			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
 				pros::Task::delay(10);
 			}
 			mtrDefs.intake_r->move(0);
@@ -80,7 +80,7 @@ void rollers(void* param) {
 		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
 			mtrDefs.roller_t->move(-127);
 			mtrDefs.roller_b->move(-80);
-			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
+			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) && !master.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
 				pros::Task::delay(10);
 			}
 			mtrDefs.roller_t->move(0);
@@ -246,25 +246,29 @@ void autoShoot(void* param) {
 
 			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
 
-				if (optical.get_hue() > 180.0 && optical.get_hue() < 280.0) {
-					// If blue filter out the ball
+				if (optical.get_hue() > 175.0 && optical.get_hue() < 290.0) {
+					// If blue, filter out the ball
 
 					mtrDefs.roller_t->move(127);
 				 	mtrDefs.roller_b->move(-127);
-				} else if ((optical.get_hue() > 290.0 && optical.get_hue() <= 359.9999) || (optical.get_hue() >= 0.0 && optical.get_hue() <= 50.0)) {
+					
+					// Keep going until the blue ball get's filtered.
+					while(optical.get_hue() < 175.0 && optical.get_hue() > 290.0) {
+						pros::Task::delay(10);
+					}
+				} else if ((optical.get_hue() >= 290.0 && optical.get_hue() <= 359.9999) || (optical.get_hue() >= 0.0 && optical.get_hue() <= 50.0)) {
+					
 					// Shoot out red ball
-
 					mtrDefs.roller_t->move(-127);
 					mtrDefs.roller_b->move(-80);
 
-					while(!limit.get_value()) {
+					// Keep going until red ball get's shot out.
+					while(line_m.get_value() >= 2750) {
 						pros::Task::delay(10);
 					}
-					pros::Task::delay(20);
-
 				}
 
-				pros::Task::delay(10);
+				pros::Task::delay(5);
 			}
 
 			// Turn off light because it could affect the line tracker on the other side
