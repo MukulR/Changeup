@@ -153,11 +153,11 @@ void index(void *param){
 					}
 					pros::Task::delay(10);
 				}
-				mtrDefs.roller_b->move(0);
+				//mtrDefs.roller_b->move(0);
 				mtrDefs.roller_t->move(0);
-				mtrDefs.intake_l->move(0);
-				mtrDefs.intake_r->move(0);
-				detection_enabled = false;
+				// mtrDefs.intake_l->move(0);
+				// mtrDefs.intake_r->move(0);
+				// detection_enabled = false;
 			}
 		}
 	}
