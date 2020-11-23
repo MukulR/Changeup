@@ -21,6 +21,12 @@ class AutonUtils {
         double avgDriveEncoderValue();
         void rotate(int degrees, int voltage);
         void globalTurn(double angle);
+
+        // PID Turn Stuff
+        void pidGlobalTurn(double angle);
+        void pidRotate(double angle, int direction);
+        void assignMotorsVol(int leftVoltage, int rightVoltage);
+        double determineError(double imu_cur, double imu_desired, int direction);
         
         void turnRightToZeroHeading();
         void turnLeftToZeroHeading();

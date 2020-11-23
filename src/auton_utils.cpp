@@ -78,6 +78,86 @@ void AutonUtils::assignMotors(int leftVoltage, int rightVoltage) {
     *(mtrDefs->right_mtr_b) = (rightVoltage);
 }
 
+void AutonUtils::pidGlobalTurn(double angle) {
+    double imu_cur = sensors->imu->get_heading();
+
+    double angleTurningRight = std::fmod((360.0 - imu_cur + angle), 360.0);
+    double angleTurningLeft = 360.0 - angleTurningRight;
+
+    if (angleTurningLeft < angleTurningRight) {
+        pidRotate(angle, -1);
+    } else if (angleTurningRight <= angleTurningLeft) {
+        pidRotate(angle, 1);
+    }
+}
+
+void AutonUtils::pidRotate(double angle, int direction) {
+    double speed;
+    double imu_cur;
+    double error = determineError(imu_cur, angle, direction);
+    double prev_error = 0.0;
+
+    double integral = 0.0;
+    double integral_cap = 40.0;
+    double derivative;
+
+    // PID CONSTANTS
+    double kP = 2.8;
+    double kI = 0.27;
+    double kD = 16.0;
+
+    while (true) {
+        imu_cur = sensors->imu->get_heading();
+
+        error = determineError(imu_cur, angle, direction);
+
+        integral += error;
+        derivative = error - prev_error;
+        prev_error = error;
+
+        if (integral > integral_cap) {
+            integral = integral_cap;
+        } else if (integral < -integral_cap) {
+            integral = -integral_cap;
+        }
+
+        speed = error * kP + integral * kI + derivative * kD;
+
+        assignMotorsVol(speed * direction, speed * -direction);
+        pros::Task::delay(5);
+    }
+    assignMotorsVol(0, 0);
+}
+
+double AutonUtils::determineError(double imu_cur, double imu_desired, int direction) {
+    double angleTurningRight = std::fmod((360.0 - imu_cur + imu_desired), 360.0);
+    double angleTurningLeft = 360.0 - angleTurningRight;
+    double error;
+
+    if (direction == 1) {
+        if (angleTurningRight < angleTurningLeft) {
+            error = angleTurningRight;
+        } else {
+            error = -angleTurningLeft;
+        }
+    } else {
+        if (angleTurningLeft < angleTurningRight) {
+            error = angleTurningLeft;
+        } else {
+            error = -angleTurningRight;
+        }
+    }
+
+    return error;
+}
+
+void AutonUtils::assignMotorsVol(int leftVoltage, int rightVoltage) {
+    mtrDefs->left_mtr_t->move(leftVoltage);
+    mtrDefs->left_mtr_b->move(leftVoltage);
+    mtrDefs->right_mtr_t->move(rightVoltage);
+    mtrDefs->right_mtr_b->move(rightVoltage);
+}
+
 void AutonUtils::globalTurn(double angle) {
     // Initial imu heading
     double imuInitial = sensors->imu->get_heading();
