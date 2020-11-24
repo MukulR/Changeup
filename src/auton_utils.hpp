@@ -16,7 +16,7 @@ class AutonUtils {
         AutonUtils(MotorDefs* mtrDefs, Sensors* sensors);
         ~AutonUtils();
         void assignMotors(int left, int right);
-        void translate(int units);
+        void translate(int units, double angle = -1.0);
         void resetDriveEncoders();
         double avgDriveEncoderValue();
         void rotate(int degrees, int voltage);
