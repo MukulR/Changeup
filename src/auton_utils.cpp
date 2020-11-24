@@ -101,15 +101,29 @@ void AutonUtils::pidRotate(double angle, int direction) {
     double integral_cap = 40.0;
     double derivative;
 
+    // Used to determine when to exit the loop
+    bool started = false;
+    int iter = 300;
+
     // PID CONSTANTS
-    double kP = 2.8;
+    double kP = 3.2;
     double kI = 0.27;
-    double kD = 16.0;
+    double kD = 20.0;
 
     while (true) {
         imu_cur = sensors->imu->get_heading();
 
         error = determineError(imu_cur, angle, direction);
+
+        if (fabs(error) < 1.0) {
+            started = true;
+        }
+
+        if(iter == 0) {
+            break;
+        } else if (started) {
+            iter--;
+        }
 
         integral += error;
         derivative = error - prev_error;
@@ -122,8 +136,8 @@ void AutonUtils::pidRotate(double angle, int direction) {
         }
 
         speed = error * kP + integral * kI + derivative * kD;
-
         assignMotorsVol(speed * direction, speed * -direction);
+
         pros::Task::delay(5);
     }
     assignMotorsVol(0, 0);
