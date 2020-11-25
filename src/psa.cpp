@@ -148,15 +148,20 @@ void ProgrammingSkillsAuton::runAuton(){
     // pros::Task(AutonUtils::filter, mtrDefs);
 
     // Auton movements start here,uncomment the below 6 lines
-    captureFirstGoal();
-    captureSecondGoal();
-    captureThirdGoal();
-    captureFourthGoal();
-    captureFifthGoal();
-    captureSixthGoal();
-    captureSeventhGoal();
-    captureEighthGoal();
-    captureNinthGoal();
+    // captureFirstGoal();
+    // captureSecondGoal();
+    // captureThirdGoal();
+    // captureFourthGoal();
+    // captureFifthGoal();
+    // captureSixthGoal();
+    // captureSeventhGoal();
+    // captureEighthGoal();
+    // captureNinthGoal();
+
+    au->pidGlobalTurn(0.0);
+    pros::Task::delay(2000);
+    au->translate(3000, 0.0);
+    // au->translate(1500, 10.0);
 
 
     // thirdGoalSequence();

@@ -38,7 +38,7 @@ double AutonUtils::avgDriveEncoderValue() {
 }
 
 void AutonUtils::translate(int units, double angle) {
-    double imu_correction = -3.0;
+    double imu_correction = 0.0;
 
     // Initial imu rotation used for alignment
     double imu_initial = sensors->imu->get_heading();
@@ -109,8 +109,6 @@ void AutonUtils::pidGlobalTurn(double angle) {
 }
 
 void AutonUtils::pidRotate(double angle, int direction) {
-    angle = angle - 3.0;
-
     double speed;
     double imu_cur;
     double error = determineError(imu_cur, angle, direction);
@@ -156,7 +154,6 @@ void AutonUtils::pidRotate(double angle, int direction) {
         }
 
         speed = error * kP + integral * kI + derivative * kD;
-        speed = std::min(speed, 100.0);
         assignMotorsVol(speed * direction, speed * -direction);
 
         pros::Task::delay(5);
