@@ -38,11 +38,17 @@ double AutonUtils::avgDriveEncoderValue() {
 }
 
 void AutonUtils::translate(int units, double angle) {
+    double imu_correction = -3.0;
+
     // Initial imu rotation used for alignment
     double imu_initial = sensors->imu->get_heading();
+    double right_err;
+    double left_err;
+    int dir;
 
     if(angle != -1.0) {
-        imu_initial = angle;
+        // Subtract 3 since imu is off.
+        imu_initial = angle + imu_correction;
     }
 
     // Motor power for drive
@@ -57,10 +63,17 @@ void AutonUtils::translate(int units, double angle) {
 
     // drive forward units
     while(avgDriveEncoderValue() < fabs(units)){
-        // When turning left, the imu returns a negative value so we subtract a negative number(add) to speed up the left and slow down the right.
-        // When turning right, the imu returns a positive value so we add a positive number to speed up the right and slow down the left.
-        double leftVoltage = (direction * voltage) - ((sensors->imu->get_heading() - imu_initial) * velocityScale);
-        double rightVoltage = (direction * voltage) + ((sensors->imu->get_heading() - imu_initial) * velocityScale);
+        right_err = determineError(sensors->imu->get_heading(), angle, 1);
+        left_err = -right_err;
+
+        if(right_err > 0.0) {
+            dir = 1;
+        } else {
+            dir = -1;
+        }
+
+        double leftVoltage = (direction * voltage) + (determineError(sensors->imu->get_heading(), imu_initial, dir) * velocityScale * dir);
+        double rightVoltage = (direction * voltage) - (determineError(sensors->imu->get_heading(), imu_initial, dir) * velocityScale * dir);
 
         assignMotors(leftVoltage, rightVoltage);
         
@@ -96,6 +109,8 @@ void AutonUtils::pidGlobalTurn(double angle) {
 }
 
 void AutonUtils::pidRotate(double angle, int direction) {
+    angle = angle - 3.0;
+
     double speed;
     double imu_cur;
     double error = determineError(imu_cur, angle, direction);
@@ -111,15 +126,16 @@ void AutonUtils::pidRotate(double angle, int direction) {
 
     // PID CONSTANTS
     double kP = 3.2;
-    double kI = 0.27;
-    double kD = 20.0;
+    double kI = 0.25;
+    double kD = 48.0;
 
     while (true) {
+        std::cout << sensors->imu->get_heading() << "\n";
         imu_cur = sensors->imu->get_heading();
 
         error = determineError(imu_cur, angle, direction);
 
-        if (fabs(error) < 1.0) {
+        if (fabs(error) < 3.0) {
             started = true;
         }
 
@@ -140,6 +156,7 @@ void AutonUtils::pidRotate(double angle, int direction) {
         }
 
         speed = error * kP + integral * kI + derivative * kD;
+        speed = std::min(speed, 100.0);
         assignMotorsVol(speed * direction, speed * -direction);
 
         pros::Task::delay(5);
