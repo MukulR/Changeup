@@ -28,7 +28,7 @@ class AutonUtils {
         void assignMotorsVol(int leftVoltage, int rightVoltage);
         double determineError(double imu_cur, double imu_desired, int direction);
 
-        void alignToBall();
+        void visionTranslate(int units, int speed);
         
         void turnRightToZeroHeading();
         void turnLeftToZeroHeading();

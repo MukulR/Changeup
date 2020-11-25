@@ -96,15 +96,16 @@ void AutonUtils::assignMotors(int leftVoltage, int rightVoltage) {
     *(mtrDefs->right_mtr_b) = (rightVoltage);
 }
 
-void AutonUtils::alignToBall() {
+void AutonUtils::visionTranslate(int units, int speed) {
     pros::vision_object_s_t obj;
     int des_left_coord;
     int turn_direction;
 
-    double speed;
+    double left_speed;
+    double right_speed;
+    double speed_correction;
 
-    while (true) {
-
+    while (avgDriveEncoderValue() < fabs(units)) {
         obj = vision_sensor.get_by_size(0);
         des_left_coord = (315 / 2) - (obj.width / 2);
 
@@ -112,14 +113,28 @@ void AutonUtils::alignToBall() {
         turn_direction = fabs(turn_direction) / turn_direction;
 
         if(vision_sensor.get_object_count() <= 0 || obj.width < 20) {
-            speed = 0;
+            speed_correction = 0;
         } else {
-            speed = fabs(des_left_coord - obj.left_coord) / 1.2;
+            speed_correction = fabs(des_left_coord - obj.left_coord) / 2.0;
         }
 
-        assignMotors(speed * turn_direction, -speed * turn_direction);
+        speed_correction = speed_correction * turn_direction;
+
+        left_speed = speed + speed_correction;
+        right_speed = speed - speed_correction;
+        
+        //std::cout << "LSPEED: " << left_speed << " RSPEED: " << right_speed << " dir " << turn_direction << "\n";
+
+        assignMotors(left_speed, right_speed);
         pros::Task::delay(10);
     }
+
+    // brake
+    assignMotors(-20, -20);
+    pros::delay(50);
+
+    // set drive to neutral
+    assignMotors(0, 0);
 }
 
 void AutonUtils::pidGlobalTurn(double angle) {
