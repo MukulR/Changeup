@@ -27,6 +27,8 @@ class AutonUtils {
         void pidRotate(double angle, int direction);
         void assignMotorsVol(int leftVoltage, int rightVoltage);
         double determineError(double imu_cur, double imu_desired, int direction);
+
+        void alignToBall();
         
         void turnRightToZeroHeading();
         void turnLeftToZeroHeading();

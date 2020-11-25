@@ -10,6 +10,7 @@ pros::ADIAnalogIn line_top('D');
 pros::ADIAnalogIn line_mid('B');
 pros::ADIAnalogIn line_bot('H');
 pros::ADIDigitalIn limit_t('A');
+pros::Vision vision_sensor(15);
 
 const int TURN_VOLTAGE = 50;
 const int CORRECTION_TURN_VOLTAGE = 25;
@@ -93,6 +94,32 @@ void AutonUtils::assignMotors(int leftVoltage, int rightVoltage) {
     *(mtrDefs->left_mtr_b) = (leftVoltage);
     *(mtrDefs->right_mtr_t) = (rightVoltage);
     *(mtrDefs->right_mtr_b) = (rightVoltage);
+}
+
+void AutonUtils::alignToBall() {
+    pros::vision_object_s_t obj;
+    int des_left_coord;
+    int turn_direction;
+
+    double speed;
+
+    while (true) {
+
+        obj = vision_sensor.get_by_size(0);
+        des_left_coord = (315 / 2) - (obj.width / 2);
+
+        turn_direction = des_left_coord - obj.left_coord;
+        turn_direction = fabs(turn_direction) / turn_direction;
+
+        if(vision_sensor.get_object_count() <= 0 || obj.width < 20) {
+            speed = 0;
+        } else {
+            speed = fabs(des_left_coord - obj.left_coord) / 1.2;
+        }
+
+        assignMotors(speed * turn_direction, -speed * turn_direction);
+        pros::Task::delay(10);
+    }
 }
 
 void AutonUtils::pidGlobalTurn(double angle) {

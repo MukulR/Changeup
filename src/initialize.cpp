@@ -85,6 +85,10 @@ void competition_initialize() {
    // Initialize and calibrate imu/gyro here.
    inertial_sensor = new pros::Imu(11);
    inertial_sensor->reset();
+
+   pros::Vision vision_sensor (15);
+   vision_sensor.clear_led();
+
    pros::Task::delay(3000);
    std::cout << "Finished initializing IMU" << std::endl;
    std::cout << inertial_sensor->get_heading() << std::endl;
