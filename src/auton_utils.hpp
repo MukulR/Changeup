@@ -45,11 +45,9 @@ class AutonUtils {
         void indexMidRollers();
         void filter();
 
-            /*
         static void indexTop(void* param);
         static void indexMid(void* param);
         static void filter(void* param);
-        */
 
         static void enableTopIndex();
         static void disableTopIndexing();

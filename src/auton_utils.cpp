@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "autonselection.hpp"
 #include "auton_utils.hpp"
 #include "motordefs.hpp"
 #include "sensors.hpp"
@@ -420,20 +421,19 @@ void AutonUtils::waitUntilIntaked(bool darkGoal){
     }
 }
 
-/*
+
 void AutonUtils::indexTop(void* param) {
     MotorDefs* mtrDefs = (MotorDefs*)param;
-    while (true) {
+    while(indexTopTask->notify_take(true, TIMEOUT_MAX)) {
         // Case when we want to load the top ball, and the indexer is fully empty
-        if ((line_top.get_value() >= 2800 || limit_t.get_value()) && indexingTop) {
+        if ((line_top.get_value() >= 2800 || limit_t.get_value())) {
             mtrDefs->roller_b->move(-127);
             mtrDefs->roller_t->move(-80);
             // Wait until the top ball slot is filled
-            while(line_top.get_value() >= 2800 && indexingTop) {
+            while(line_top.get_value() >= 2800) {
                 pros::Task::delay(10);
             }
             stopRollers(mtrDefs);
-            indexingTop = false;
         }
         pros::Task::delay(10);
     }
@@ -441,46 +441,37 @@ void AutonUtils::indexTop(void* param) {
 
 void AutonUtils::indexMid(void* param) {
     MotorDefs* mtrDefs = (MotorDefs*)param;
-    while (true) {
+    while(indexMidTask->notify_take(true, TIMEOUT_MAX)) {
         // Case when top is full, and we need to fill the middle spot.
         // std::cout << "Mid Value: " << line_mid.get_value() << endl;
-        if (!indexingTop && line_mid.get_value() >= 2750 && indexingMid){
+        if (!indexingTop && line_mid.get_value() >= 2750){
             std::cout << "Starting mid roller" << endl;
             mtrDefs->roller_b->move(-127);
-            while(line_mid.get_value() >= 2750 && indexingMid) {
+            while(line_mid.get_value() >= 2750) {
                 std::cout << "Mid Loop Value: " << line_mid.get_value() << endl;
                 pros::Task::delay(10);
             }
             std::cout << "detected ball with value: " << line_mid.get_value() << endl;
-            stopRollers(mtrDefs);
-            indexingMid = false;
-           
+            stopRollers(mtrDefs);           
         }
         pros::Task::delay(10);
     }
 }
 
 
-void AutonUtils::filter(void* param){
-    while(pros::Task::notify_take(true, TIMEOUT_MAX)) {
-        MotorDefs* mtrDefs = (MotorDefs*)param;
-        // Todo: Make it so that filtering is only finished when
-        // the middle line sensor is not blocked.
-        while(true) {
-            if (filteringEnabled) {
-                mtrDefs->roller_b->move(-80);
-                mtrDefs->roller_t->move(80);
-                pros::Task::delay(750);
-                filteringEnabled = false;
-                mtrDefs->roller_b->move(0);
-                mtrDefs->roller_t->move(0);
-            }
-            filteringEnabled = false;
-            pros::Task::delay(10);
-        }
+void AutonUtils::filter(void* param) {
+    MotorDefs* mtrDefs = (MotorDefs*)param;
+    // Todo: Make it so that filtering is only finished when
+    // the middle line sensor is not blocked.
+    while(filterTask->notify_take(true, TIMEOUT_MAX)) {
+        mtrDefs->roller_b->move(-80);
+        mtrDefs->roller_t->move(80);
+        pros::Task::delay(750);
+        mtrDefs->roller_b->move(0);
+        mtrDefs->roller_t->move(0);
+        pros::Task::delay(10);
     }
 }
-*/
 
 
 // ----------------------------------------

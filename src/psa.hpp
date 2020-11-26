@@ -5,6 +5,10 @@ class MotorDefs;
 class AutonUtils;
 class Sensors;
 
+namespace pros {
+    class Task;
+}
+
 /**
  * Changeup Skills autonomous
  */
@@ -14,6 +18,7 @@ class ProgrammingSkillsAuton {
         Sensors *sensors;
         AutonUtils *au;
         bool redAlliance;
+
     public:
         ProgrammingSkillsAuton(MotorDefs *mtrDefs, bool ra);
         ~ProgrammingSkillsAuton();
