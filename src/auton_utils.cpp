@@ -7,6 +7,7 @@
 
 using std::endl;
 
+// TODO: Move to Sensors.hpp
 pros::ADIAnalogIn line_top('D');
 pros::ADIAnalogIn line_mid('B');
 pros::ADIAnalogIn line_bot('H');
@@ -78,20 +79,20 @@ void AutonUtils::translate(int units, double angle) {
         double leftVoltage = (direction * voltage) + (determineError(sensors->imu->get_heading(), imu_initial, dir) * velocityScale * dir);
         double rightVoltage = (direction * voltage) - (determineError(sensors->imu->get_heading(), imu_initial, dir) * velocityScale * dir);
 
-        assignMotors(leftVoltage, rightVoltage);
+        setDriveVoltage(leftVoltage, rightVoltage);
         
         pros::delay(10);
     }
 
     // brake
-    assignMotors(-20 * direction, -20 * direction);
+    setDriveVoltage(-20 * direction, -20 * direction);
     pros::delay(50);
 
     // set drive to neutral
-    assignMotors(0, 0);
+    setDriveVoltage(0, 0);
 }
 
-void AutonUtils::assignMotors(int leftVoltage, int rightVoltage) {
+void AutonUtils::setDriveVoltage(int leftVoltage, int rightVoltage) {
     *(mtrDefs->left_mtr_t) = (leftVoltage);
     *(mtrDefs->left_mtr_b) = (leftVoltage);
     *(mtrDefs->right_mtr_t) = (rightVoltage);
@@ -127,16 +128,16 @@ void AutonUtils::visionTranslate(int units, int speed) {
         
         //std::cout << "LSPEED: " << left_speed << " RSPEED: " << right_speed << " dir " << turn_direction << "\n";
 
-        assignMotors(left_speed, right_speed);
+        setDriveVoltage(left_speed, right_speed);
         pros::Task::delay(10);
     }
 
     // brake
-    assignMotors(-20, -20);
+    setDriveVoltage(-20, -20);
     pros::delay(50);
 
     // set drive to neutral
-    assignMotors(0, 0);
+    setDriveVoltage(0, 0);
 }
 
 void AutonUtils::pidGlobalTurn(double angle) {
@@ -198,11 +199,11 @@ void AutonUtils::pidRotate(double angle, int direction) {
         }
 
         speed = error * kP + integral * kI + derivative * kD;
-        assignMotorsVol(speed * direction, speed * -direction);
+        setDriveSpeed(speed * direction, speed * -direction);
 
         pros::Task::delay(5);
     }
-    assignMotorsVol(0, 0);
+    setDriveSpeed(0, 0);
 }
 
 double AutonUtils::determineError(double imu_cur, double imu_desired, int direction) {
@@ -227,121 +228,14 @@ double AutonUtils::determineError(double imu_cur, double imu_desired, int direct
     return error;
 }
 
-void AutonUtils::assignMotorsVol(int leftVoltage, int rightVoltage) {
-    mtrDefs->left_mtr_t->move(leftVoltage);
-    mtrDefs->left_mtr_b->move(leftVoltage);
-    mtrDefs->right_mtr_t->move(rightVoltage);
-    mtrDefs->right_mtr_b->move(rightVoltage);
+
+// TODO: 
+void AutonUtils::setDriveSpeed(int leftSpeed, int rightSpeed) {
+    mtrDefs->left_mtr_t->move(leftSpeed);
+    mtrDefs->left_mtr_b->move(leftSpeed);
+    mtrDefs->right_mtr_t->move(rightSpeed);
+    mtrDefs->right_mtr_b->move(rightSpeed);
 }
-
-void AutonUtils::globalTurn(double angle) {
-    // Initial imu heading
-    double imuInitial = sensors->imu->get_heading();
-
-    // If turning left is shorter, turn left(represented by 1). Otherwise, turn right(represented by -1).
-    if(determineTurnDirection(imuInitial, angle)){
-        // std::cout << "imuInit: " << imuInitial << " angle: " << angle << "\n";
-        turnInGivenDirection(angle, 1);
-    } else {
-        // std::cout << "imuInit: " << imuInitial << " angle: " << angle << "\n";
-        turnInGivenDirection(angle, -1);
-    }
-}
-
-// Tells us which way we should turn to reach the desired angle faster. True = Left. False = Right.
-bool AutonUtils::determineTurnDirection(double angle_current, double angle_desired) {   
-    double angleTurningRight = std::fmod((360.0 - angle_current + angle_desired), 360.0);
-    double angleTurningLeft = 360.0 - angleTurningRight;
-
-    if(angleTurningRight > angleTurningLeft){
-        return true;
-    } else {
-        return false;
-    }
-}
-
-// Turns the robot in a given direction
-void AutonUtils::turnInGivenDirection(double angle, double direction){
-    // Function constants: voltage - robot speed, angleBuffer - precision of turn.
-    int voltage = TURN_VOLTAGE;
-    double angleBuffer = 1.0;
-
-    // Turn the robot based on direction
-    assignMotors(-voltage * direction, voltage * direction);
-
-    // Robot's current heading
-    double imuCurrent = sensors->imu->get_heading();
-
-    // Delay until the value of the imu reaches the desired amount
-    while (imuCurrent > (angle + angleBuffer) || imuCurrent < (angle - angleBuffer)) {
-        pros::Task::delay(10);
-        // Update imu's current value
-        imuCurrent = sensors->imu->get_heading();
-    }
-
-    // Coast
-    assignMotors(40 * direction, -40 * direction);
-    pros::Task::delay(50);
-    assignMotors(0, 0);
-
-    int voltageForCorrection = CORRECTION_TURN_VOLTAGE;
-    if (determineTurnDirection(sensors->imu->get_heading(), angle)) {
-        // Correct undershoot at a slower speed
-        assignMotors(-voltageForCorrection, voltageForCorrection);
-
-        while(sensors->imu->get_heading() > angle) {
-            pros::Task::delay(10);
-        }
-    } else if (!determineTurnDirection(sensors->imu->get_heading(), angle)) {
-        // Correct any overshoot at a slower speed
-        assignMotors(voltageForCorrection, -voltageForCorrection);
-
-        while(sensors->imu->get_heading() < angle) {
-            pros::Task::delay(10);
-        }
-    }
-    // If anything needed to be corrected, it is corrected
-    // and the motors can be stopped.
-    assignMotors(0, 0);
-}
-
-
-void AutonUtils::turnRightToZeroHeading() {
-	assignMotors(50, -50);
-	while (true){
-		if (sensors->imu->get_heading() >= 0 && sensors->imu->get_heading() < 180){ // brake the robot when heading reaches the right hemisphere
-			assignMotors(-50, 50);
-			pros::Task::delay(50);
-			assignMotors(0, 0);
-			break;
-		}
-	}
-    while (sensors->imu->get_heading() >= 0 && sensors->imu->get_heading() < 180){
-        assignMotors(-25, 25);
-    }
-    assignMotors(25, -25);
-    pros::Task::delay(50);
-    assignMotors(0, 0);
-}
-
-void AutonUtils::turnLeftToZeroHeading() {
-	assignMotors(-50, 50);
-	while (true){
-		if (sensors->imu->get_heading() <= 360 && sensors->imu->get_heading() > 180){ // brake the robot when heading reaches the right hemisphere
-			assignMotors(50, -50);
-			pros::Task::delay(50);
-			assignMotors(0, 0);
-			break;
-		}
-	}
-    while (sensors->imu->get_heading() <= 360 && sensors->imu->get_heading() > 180){
-        assignMotors(25, -25);
-    }
-    assignMotors(-25, 25);
-    pros::Task::delay(50);
-    assignMotors(0, 0);
-}
-
 
 void AutonUtils::filter() {
     mtrDefs->roller_b->move(-80);
@@ -378,66 +272,6 @@ void AutonUtils::indexMid() {
     pros::Task::delay(50);
 }
 
-
-bool indexingTop = false;
-bool indexingMid = false;
-bool filteringEnabled = false;
-
-void AutonUtils::enableTopIndex() {
-    indexingTop = true;
-}
-
-void AutonUtils::disableTopIndexing() {
-    indexingTop = false;
-}
-
-void AutonUtils::enableMidIndex() {
-    indexingMid = true;
-}
-
-void AutonUtils::disableMidIndexing() {
-    indexingMid = false;
-}
-
-void AutonUtils::enableFiltering() {
-    filteringEnabled = true;
-}
-
-void AutonUtils::waitUntilFiltered() {
-    while (filteringEnabled) {
-        pros::Task::delay(10);
-    }
-    pros::Task::delay(50);
-}
-
-void AutonUtils::waitUntilTopIndexed() {
-    while (indexingTop) {
-        pros::Task::delay(10);
-    }
-}
-
-void AutonUtils::waitUntilMidIndexed() {
-    while (indexingMid) {
-        pros::Task::delay(10);
-    }
-}
-
-void AutonUtils::waitUntilIntaked(bool darkGoal){
-    int sensVal = line_bot.get_value();
-    int threshold = 2700;
-
-    if (darkGoal) {
-        threshold = 2700;
-    }
-
-    while(sensVal > threshold) {
-        std::cout << sensVal << endl;
-        sensVal = line_bot.get_value();
-        pros::Task::delay(5);
-    }
-}
-
-
 void AutonUtils::indexTop(void* param) {
     MotorDefs* mtrDefs = (MotorDefs*)param;
     while(indexTopTask->notify_take(true, TIMEOUT_MAX)) {
@@ -460,7 +294,7 @@ void AutonUtils::indexMid(void* param) {
     while(indexMidTask->notify_take(true, TIMEOUT_MAX)) {
         // Case when top is full, and we need to fill the middle spot.
         // std::cout << "Mid Value: " << line_mid.get_value() << endl;
-        if (!indexingTop && line_mid.get_value() >= 2750){
+        if (line_mid.get_value() >= 2750){
             std::cout << "Starting mid roller" << endl;
             mtrDefs->roller_b->move(-127);
             while(line_mid.get_value() >= 2750) {
@@ -510,7 +344,6 @@ void AutonUtils::stopIntakes(MotorDefs* mtrDefs) {
 void AutonUtils::startRollers(MotorDefs* mtrDefs) {
     mtrDefs->roller_t->move(-127);
 	mtrDefs->roller_b->move(-80);
-    
 }
 
 void AutonUtils::stopRollers(MotorDefs* mtrDefs) {
@@ -559,28 +392,28 @@ void AutonUtils::shootBalls(void* param) {
                 mtrDefs->roller_t->move(-127);
                 // Wait until the limit switch is released (while it is pressed, wait)
                 while(limit_t.get_value()) {
-                    pros::Task::delay(2);
+                    // pros::Task::delay(2);
                 }
                 // Wait a little bit, then shut off power.
                 pros::Task::delay(400);
                 mtrDefs->roller_t->move(0);
-            } else if (ballAtTop && ballAtMid) {
+            } else if (ballAtTop() && ballAtMid()) {
                 // Twoshot
                 startRollers(mtrDefs);
                 // Wait until the first ball is shot out (While it is pressed, wait)
                 // (Until the limit switch is released, wait)
                 while(limit_t.get_value()) {
-                    pros::Task::delay(2);
+                    // pros::Task::delay(2);
                 }
                 // Wait until the second ball triggers the switch (while it is not pressed, wait)
                 while(!limit_t.get_value()) {
-                    pros::Task::delay(2);
+                    // pros::Task::delay(2);
                 }
                 // Turn off the bottom roller so that blue balls do not get indexed.
                 mtrDefs->roller_b->move(0);
                 // Wait until the second ball releases the switch (while it is pressed, wait)
                 while(limit_t.get_value()) {
-                    pros::Task::delay(2);
+                    // pros::Task::delay(2);
                 }
                 // The second ball has triggered the switch at this point
                 // Wait a little bit until the ball has left the top spot, then shut off power.
@@ -588,35 +421,21 @@ void AutonUtils::shootBalls(void* param) {
                 stopRollers(mtrDefs);
             }
         }
+        // shootBallsTask->notify_clear();
+        // shootingDoneMutex.give();
+        // pros::Task::delay(10);
     }
+    std::cout << "Outside while." << std::endl;
 }
 
-/*
-void AutonUtils::doubleShot() {
-    mtrDefs->intake_r->move(60);
-    mtrDefs->intake_l->move(-60);
-    pros::Task::delay(200);
-    mtrDefs->intake_r->move(0);
-    mtrDefs->intake_l->move(0);
+void AutonUtils::backUpAndOuttake(void* param) {
 
-    mtrDefs->roller_b->move(80);
-    pros::Task::delay(200);
-    mtrDefs->roller_b->move(15);
-    
-    mtrDefs->roller_t->move(-127);
-    pros::Task::delay(300);
-    mtrDefs->roller_t->move(0);
-
-    pros::Task::delay(50);
-
-    mtrDefs->roller_b->move(-127);
-    mtrDefs->roller_t->move(-127);
-    pros::Task::delay(300);
-    mtrDefs->roller_b->move(0);
-    pros::Task::delay(600);
-    mtrDefs->roller_t->move(0);
 }
-*/
+
+void AutonUtils::moveForwardAndFilter(void* param) {
+
+}
+
 
 bool AutonUtils::notBlueBall() {
     if (optical_sensor.get_hue() > 175.0 && optical_sensor.get_hue() < 290.0) {
@@ -627,22 +446,26 @@ bool AutonUtils::notBlueBall() {
 }
 
 void AutonUtils::twoInTwoOut() {
-    // optical_sensor.set_led_pwm(100);
-    shootBallsTask->notify();
+    startRollers(mtrDefs);
 
     startIntakes(mtrDefs);
-    /*
+    while (line_bot.get_value() >= 2800) {
+        
+    }
+    pros::Task::delay(200);
+    
+    mtrDefs->intake_r->move(-60);
+	mtrDefs->intake_l->move(60);
+
+    stopRollers(mtrDefs);
     mtrDefs->roller_b->move(-127);
-    while(line_bot.get_value() >= 2800) {
-        pros::Task::delay(2);
+
+    while(!ballAtMid()) {
+
     }
-    assignMotors(-80, -80);
-    while (notBlueBall()) {
-        pros::Task::delay(2);
-    }
-    assignMotors(0, 0);
+
     mtrDefs->roller_b->move(0);
-    stopIntakes(mtrDefs);
-    optical_sensor.set_led_pwm(0);
-    */
+    translate(-500);
+    mtrDefs->intake_r->move(0);
+	mtrDefs->intake_l->move(0);
 }

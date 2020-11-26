@@ -15,32 +15,26 @@ class AutonUtils {
     public:
         AutonUtils(MotorDefs* mtrDefs, Sensors* sensors);
         ~AutonUtils();
-        void assignMotors(int left, int right);
+        void setDriveVoltage(int leftVoltage, int rightVoltage);
         void translate(int units, double angle = -1.0);
         void resetDriveEncoders();
         double avgDriveEncoderValue();
-        void rotate(int degrees, int voltage);
-        void globalTurn(double angle);
 
         // PID Turn Stuff
         void pidGlobalTurn(double angle);
         void pidRotate(double angle, int direction);
-        void assignMotorsVol(int leftVoltage, int rightVoltage);
+        void setDriveSpeed(int leftSpeed, int rightSpeed);
         double determineError(double imu_cur, double imu_desired, int direction);
 
         void visionTranslate(int units, int speed);
         
-        void turnRightToZeroHeading();
-        void turnLeftToZeroHeading();
-
-        bool determineTurnDirection(double angle_current, double angle_desired);
-        void turnInGivenDirection(double angle, double direction);
+        
 
         void oneShot();
         void slowOneShot();
 
 
-        bool notBlueBall();
+        static bool notBlueBall();
         void twoInTwoOut();
 
 
@@ -52,21 +46,10 @@ class AutonUtils {
         static void indexTop(void* param);
         static void indexMid(void* param);
         static void filter(void* param);
-
         static void shootBalls(void* param);
+        static void backUpAndOuttake(void* param);
+        static void moveForwardAndFilter(void* param);
 
-        static void enableTopIndex();
-        static void disableTopIndexing();
-
-        static void enableMidIndex();
-        static void disableMidIndexing();
-
-        static void enableFiltering();
-        static void waitUntilFiltered();
-        static void waitUntilTopIndexed();
-        static void waitUntilMidIndexed();
-
-        void waitUntilIntaked(bool darkGoal);
     
 
         static void startIntakes(MotorDefs* mtrDefs);

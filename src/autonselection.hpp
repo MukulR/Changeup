@@ -15,6 +15,8 @@ extern pros::Task *indexTopTask;
 extern pros::Task *indexMidTask;
 extern pros::Task *filterTask;
 extern pros::Task *shootBallsTask;
+extern pros::Task *backUpAndOuttakeTask;
+extern pros::Task *moveForwardAndFilterTask;
 
 
 #endif //_AUTONSELECTION_H_

@@ -37,12 +37,6 @@ class ProgrammingSkillsAuton {
 
         void startHoldInGoal();
         void stopHoldInGoal();
-
-        // Repeated sequences
-        void threeShotSequence();
-        void twoShotSequence(bool darkGoal = false);
-        void thirdGoalSequence();
-        void oneShotSequence(bool slowShot);
 };
 
 #endif // _PROGRAMMINGSKILLSAUTON_HPP_
