@@ -7,6 +7,7 @@
 pros::Task *indexTopTask;
 pros::Task *indexMidTask;
 pros::Task *filterTask;
+pros::Task *shootBallsTask;
 
 void ProgrammingSkillsAuton::threeShotSequence() {
     // Hold power once in the goal
@@ -138,9 +139,12 @@ ProgrammingSkillsAuton::ProgrammingSkillsAuton(MotorDefs *md, bool ra) {
     sensors = new Sensors();
     au = new AutonUtils(mtrDefs, sensors);
 
+
+
     indexTopTask = new pros::Task(AutonUtils::indexTop, md);
     indexMidTask = new pros::Task(AutonUtils::indexMid, md);
     filterTask = new pros::Task(AutonUtils::filter, md);
+    shootBallsTask = new pros::Task(AutonUtils::shootBalls, md);
 }
 
 ProgrammingSkillsAuton::~ProgrammingSkillsAuton() {
@@ -149,6 +153,7 @@ ProgrammingSkillsAuton::~ProgrammingSkillsAuton() {
     delete indexTopTask;
     delete indexMidTask;
     delete filterTask;
+    delete shootBallsTask;
 }
 
 void ProgrammingSkillsAuton::runAuton(){
@@ -180,12 +185,14 @@ void ProgrammingSkillsAuton::runAuton(){
 }
 
 void ProgrammingSkillsAuton::captureFirstGoal() {
-    pros::Task::delay(2000);
-    indexTopTask->notify();
-    pros::Task::delay(5000);
-    indexTopTask->suspend();
-    pros::Task::delay(2000);
-    indexTopTask->notify();
+    // au->visionTranslate(2000, 80);
+    // pros::Task::delay(2000);
+    // indexTopTask->notify();
+    // pros::Task::delay(5000);
+    // indexTopTask->suspend();
+    // pros::Task::delay(2000);
+    // indexTopTask->notify();
+    au->twoInTwoOut();
 }
 
 

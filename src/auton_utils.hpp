@@ -38,7 +38,11 @@ class AutonUtils {
 
         void oneShot();
         void slowOneShot();
-        void doubleShot();
+
+
+        bool notBlueBall();
+        void twoInTwoOut();
+
 
         void indexTop();
         void indexMid();
@@ -48,6 +52,8 @@ class AutonUtils {
         static void indexTop(void* param);
         static void indexMid(void* param);
         static void filter(void* param);
+
+        static void shootBalls(void* param);
 
         static void enableTopIndex();
         static void disableTopIndexing();
@@ -65,6 +71,7 @@ class AutonUtils {
 
         static void startIntakes(MotorDefs* mtrDefs);
         static void stopIntakes(MotorDefs* mtrDefs);
+        static void startRollers(MotorDefs* mtrDefs);
         static void stopRollers(MotorDefs* mtrDefs);
         static void startOuttake(MotorDefs* mtrDefs);        
 };

@@ -12,6 +12,7 @@ pros::ADIAnalogIn line_mid('B');
 pros::ADIAnalogIn line_bot('H');
 pros::ADIDigitalIn limit_t('A');
 pros::Vision vision_sensor(15);
+pros::Optical optical_sensor (6);
 
 const int TURN_VOLTAGE = 50;
 const int CORRECTION_TURN_VOLTAGE = 25;
@@ -506,6 +507,12 @@ void AutonUtils::stopIntakes(MotorDefs* mtrDefs) {
     mtrDefs->intake_r->move(0);
 }
 
+void AutonUtils::startRollers(MotorDefs* mtrDefs) {
+    mtrDefs->roller_t->move(-127);
+	mtrDefs->roller_b->move(-80);
+    
+}
+
 void AutonUtils::stopRollers(MotorDefs* mtrDefs) {
     mtrDefs->roller_t->move(0);
     mtrDefs->roller_b->move(0);
@@ -533,6 +540,58 @@ void AutonUtils::slowOneShot() {
     mtrDefs->roller_t->move(0);
 }
 
+bool ballAtTop() {
+   return line_top.get_value() < 2800;
+}
+
+bool ballAtMid() {
+    return line_mid.get_value() < 2750;
+}
+
+
+void AutonUtils::shootBalls(void* param) {
+    // This function assumes that the balls in shooting positions are red.
+    MotorDefs* mtrDefs = (MotorDefs*)param;
+    while(shootBallsTask->notify_take(true, TIMEOUT_MAX)) {
+        if (ballAtTop() || ballAtMid()) {
+            if(!ballAtMid() && ballAtTop()) {
+                // Oneshot, start the top roller to shoot
+                mtrDefs->roller_t->move(-127);
+                // Wait until the limit switch is released (while it is pressed, wait)
+                while(limit_t.get_value()) {
+                    pros::Task::delay(2);
+                }
+                // Wait a little bit, then shut off power.
+                pros::Task::delay(400);
+                mtrDefs->roller_t->move(0);
+            } else if (ballAtTop && ballAtMid) {
+                // Twoshot
+                startRollers(mtrDefs);
+                // Wait until the first ball is shot out (While it is pressed, wait)
+                // (Until the limit switch is released, wait)
+                while(limit_t.get_value()) {
+                    pros::Task::delay(2);
+                }
+                // Wait until the second ball triggers the switch (while it is not pressed, wait)
+                while(!limit_t.get_value()) {
+                    pros::Task::delay(2);
+                }
+                // Turn off the bottom roller so that blue balls do not get indexed.
+                mtrDefs->roller_b->move(0);
+                // Wait until the second ball releases the switch (while it is pressed, wait)
+                while(limit_t.get_value()) {
+                    pros::Task::delay(2);
+                }
+                // The second ball has triggered the switch at this point
+                // Wait a little bit until the ball has left the top spot, then shut off power.
+                pros::Task::delay(400);
+                stopRollers(mtrDefs);
+            }
+        }
+    }
+}
+
+/*
 void AutonUtils::doubleShot() {
     mtrDefs->intake_r->move(60);
     mtrDefs->intake_l->move(-60);
@@ -556,4 +615,34 @@ void AutonUtils::doubleShot() {
     mtrDefs->roller_b->move(0);
     pros::Task::delay(600);
     mtrDefs->roller_t->move(0);
+}
+*/
+
+bool AutonUtils::notBlueBall() {
+    if (optical_sensor.get_hue() > 175.0 && optical_sensor.get_hue() < 290.0) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+void AutonUtils::twoInTwoOut() {
+    // optical_sensor.set_led_pwm(100);
+    shootBallsTask->notify();
+
+    startIntakes(mtrDefs);
+    /*
+    mtrDefs->roller_b->move(-127);
+    while(line_bot.get_value() >= 2800) {
+        pros::Task::delay(2);
+    }
+    assignMotors(-80, -80);
+    while (notBlueBall()) {
+        pros::Task::delay(2);
+    }
+    assignMotors(0, 0);
+    mtrDefs->roller_b->move(0);
+    stopIntakes(mtrDefs);
+    optical_sensor.set_led_pwm(0);
+    */
 }
