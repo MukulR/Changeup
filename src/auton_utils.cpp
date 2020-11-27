@@ -377,9 +377,19 @@ void AutonUtils::startIntakes(MotorDefs* mtrDefs) {
     mtrDefs->intake_r->move(-127);
 }
 
+void AutonUtils::startIntakesSlow(MotorDefs* mtrDefs) {
+    mtrDefs->intake_l->move(60);
+    mtrDefs->intake_r->move(-60);
+}
+
 void AutonUtils::startOuttake(MotorDefs* mtrDefs) {
     mtrDefs->intake_l->move(-80);
     mtrDefs->intake_r->move(80);
+}
+
+void AutonUtils::startOuttakeFast(MotorDefs* mtrDefs) {
+    mtrDefs->intake_l->move(-127);
+    mtrDefs->intake_r->move(127);
 }
 
 void AutonUtils::stopIntakes(MotorDefs* mtrDefs) {
@@ -527,7 +537,24 @@ void AutonUtils::nonCornerGoalSequence(int moveBackDistance, double heading) {
     while(!ballAtMid()) {
 
     }
-    mtrDefs->roller_b->move(0);
-    mtrDefs->roller_t->move(0);
+    stopRollers(mtrDefs);
     translate(moveBackDistance, heading);
+}
+
+void AutonUtils::centerSequence() {
+    int i = 0;
+    while (i < 5) {
+        setDriveVoltage(-50, -50);
+        startIntakes(mtrDefs);
+        pros::Task::delay(300);
+
+        setDriveVoltage(50, 50);
+        startOuttakeFast(mtrDefs);
+        pros::Task::delay(600);
+
+        i++;
+    }
+    setDriveVoltage(0, 0);
+    stopIntakes(mtrDefs);
+    // Shoot
 }
