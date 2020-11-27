@@ -12,8 +12,10 @@ pros::ADIAnalogIn line_top('D');
 pros::ADIAnalogIn line_mid('B');
 pros::ADIAnalogIn line_bot('H');
 pros::ADIDigitalIn limit_t('A');
-pros::Vision vision_sensor(15);
-pros::Optical optical_sensor (6);
+
+bool indexingOneBall = false;
+
+const int DISTANCE_THRESHOLD = 200;
 
 const int TURN_VOLTAGE = 50;
 const int CORRECTION_TURN_VOLTAGE = 25;
@@ -46,8 +48,8 @@ void AutonUtils::translate(int units, double angle) {
 
     // Initial imu rotation used for alignment
     double imu_initial = sensors->imu->get_heading();
-    double right_err;
-    double left_err;
+    double right_err = 0;
+    double left_err = 0;
     int dir;
 
     if(angle != -1.0) {
@@ -85,11 +87,50 @@ void AutonUtils::translate(int units, double angle) {
     }
 
     // brake
-    setDriveVoltage(-20 * direction, -20 * direction);
+    setDriveVoltage(-0.5 * TRANSLATE_VOLTAGE * direction, -0.5 * TRANSLATE_VOLTAGE * direction);
     pros::delay(50);
 
     // set drive to neutral
     setDriveVoltage(0, 0);
+}
+
+void AutonUtils::goalTranslate(int units, bool parallelOuttake) {
+    int direction = abs(units) / units;
+    setDriveVoltage(direction * TRANSLATE_VOLTAGE, direction * TRANSLATE_VOLTAGE);
+    
+    // Reset drive encoders
+    resetDriveEncoders();
+
+    while(avgDriveEncoderValue() < fabs(units)){
+        if (parallelOuttake && avgDriveEncoderValue() > fabs(0.2 * units)){
+            startOuttake(mtrDefs);
+        }
+    }
+
+    // brake
+    setDriveVoltage(direction * -20, direction * -20);
+    pros::delay(50);
+
+    // set drive to neutral
+    setDriveVoltage(0, 0);
+    if (parallelOuttake) {
+        stopIntakes(mtrDefs);
+    }
+}
+
+
+void AutonUtils::translateWithDS() {
+    setDriveVoltage(TRANSLATE_VOLTAGE, TRANSLATE_VOLTAGE);
+
+    while ((sensors->distance_l->get() > DISTANCE_THRESHOLD && sensors->distance_r->get() > DISTANCE_THRESHOLD)
+            || (sensors->distance_l->get() == 0 || sensors->distance_r->get() == 0)) {
+
+    }
+
+    setDriveVoltage(-20, -20);
+    pros::Task::delay(50);
+    setDriveVoltage(0, 0);
+    std::cout << "Done" << std::endl;
 }
 
 void AutonUtils::setDriveVoltage(int leftVoltage, int rightVoltage) {
@@ -108,14 +149,17 @@ void AutonUtils::visionTranslate(int units, int speed) {
     double right_speed;
     double speed_correction;
 
+    // Reset drive encoders
+    resetDriveEncoders();
+
     while (avgDriveEncoderValue() < fabs(units)) {
-        obj = vision_sensor.get_by_size(0);
+        obj = sensors->vision->get_by_size(0);
         des_left_coord = (315 / 2) - (obj.width / 2);
 
         turn_direction = des_left_coord - obj.left_coord;
         turn_direction = fabs(turn_direction) / turn_direction;
 
-        if(vision_sensor.get_object_count() <= 0 || obj.width < 20) {
+        if(sensors->vision->get_object_count() <= 0 || obj.width < 20) {
             speed_correction = 0;
         } else {
             speed_correction = fabs(des_left_coord - obj.left_coord) / 2.0;
@@ -165,7 +209,7 @@ void AutonUtils::pidRotate(double angle, int direction) {
 
     // Used to determine when to exit the loop
     bool started = false;
-    int iter = 300;
+    int iter = 100;
 
     // PID CONSTANTS
     double kP = 3.2;
@@ -272,6 +316,45 @@ void AutonUtils::indexMid() {
     pros::Task::delay(50);
 }
 
+void AutonUtils::index(void* param) {
+    MotorDefs* mtrDefs = (MotorDefs*)param;
+    while(indexTask->notify_take(true, TIMEOUT_MAX)) {
+        // Case when we want to load the top ball, and the indexer is fully empty
+        if (!ballAtTop() && !ballAtMid()) {
+            mtrDefs->roller_b->move(-127);
+            mtrDefs->roller_t->move(-80);
+            // Wait until the top ball slot is filled
+            while(!ballAtTop()) {
+
+            }
+            stopRollers(mtrDefs);
+            if (indexingOneBall) {
+                break;
+            }
+        } 
+
+        if (!ballAtMid() && ballAtTop()) {
+            // Case to load only the middle ball
+            mtrDefs->roller_b->move(-127);
+            while (!ballAtMid()) {
+
+            }
+            mtrDefs->roller_b->move(0);
+
+        }
+
+        if (ballAtMid() && !ballAtTop()) {
+            mtrDefs->roller_t->move(-127);
+            while(!ballAtTop()) {
+
+            }
+            mtrDefs->roller_t->move(0);
+        }
+        pros::Task::delay(10);
+    }
+}
+
+
 void AutonUtils::indexTop(void* param) {
     MotorDefs* mtrDefs = (MotorDefs*)param;
     while(indexTopTask->notify_take(true, TIMEOUT_MAX)) {
@@ -351,6 +434,26 @@ void AutonUtils::stopRollers(MotorDefs* mtrDefs) {
     mtrDefs->roller_b->move(0);
 }
 
+void AutonUtils::setIndexingOneBall(bool value) {
+    indexingOneBall = value;
+}
+
+bool AutonUtils::ballAtTop() {
+   return line_top.get_value() < 2800;
+}
+
+bool AutonUtils::ballAtMid() {
+    return line_mid.get_value() < 2750;
+}
+
+bool AutonUtils::blueBallInFilteringPos(Sensors *sensors) {
+    sensors->optical->set_led_pwm(100);
+    bool isBlueBall = sensors->optical->get_hue() > 175.0 && sensors->optical->get_hue() < 290.0;
+    sensors->optical->set_led_pwm(0);
+    return isBlueBall;
+}
+
+
 
 void AutonUtils::oneShot() {
     mtrDefs->roller_t->move(-127);
@@ -372,15 +475,6 @@ void AutonUtils::slowOneShot() {
     mtrDefs->roller_b->move(0);
     mtrDefs->roller_t->move(0);
 }
-
-bool ballAtTop() {
-   return line_top.get_value() < 2800;
-}
-
-bool ballAtMid() {
-    return line_mid.get_value() < 2750;
-}
-
 
 void AutonUtils::shootBalls(void* param) {
     // This function assumes that the balls in shooting positions are red.
@@ -437,35 +531,39 @@ void AutonUtils::moveForwardAndFilter(void* param) {
 }
 
 
-bool AutonUtils::notBlueBall() {
-    if (optical_sensor.get_hue() > 175.0 && optical_sensor.get_hue() < 290.0) {
-        return false;
-    } else {
-        return true;
-    }
-}
 
-void AutonUtils::twoInTwoOut() {
+void AutonUtils::cornerGoalSequence() {
     startRollers(mtrDefs);
-
     startIntakes(mtrDefs);
     while (line_bot.get_value() >= 2800) {
         
     }
-    pros::Task::delay(200);
-    
-    mtrDefs->intake_r->move(-60);
-	mtrDefs->intake_l->move(60);
-
-    stopRollers(mtrDefs);
-    mtrDefs->roller_b->move(-127);
-
+    mtrDefs->roller_b->move(0);
     while(!ballAtMid()) {
 
     }
 
+    stopRollers(mtrDefs);
+
+    startOuttake(mtrDefs);
+    translate(-400);
+    pros::Task::delay(300);
+    stopIntakes(mtrDefs);
+}
+
+
+void AutonUtils::nonCornerGoalSequence() {
+    startIntakes(mtrDefs);
+    while (line_bot.get_value() >= 2800) {
+        
+    }
+    stopIntakes(mtrDefs);
+    mtrDefs->roller_t->move(-127);
+    mtrDefs->roller_b->move(-80);
+    while(!ballAtMid()) {
+
+    }
     mtrDefs->roller_b->move(0);
-    translate(-500);
-    mtrDefs->intake_r->move(0);
-	mtrDefs->intake_l->move(0);
+    mtrDefs->roller_t->move(0);
+    translate(-200);
 }

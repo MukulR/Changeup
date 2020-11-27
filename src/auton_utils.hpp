@@ -17,6 +17,8 @@ class AutonUtils {
         ~AutonUtils();
         void setDriveVoltage(int leftVoltage, int rightVoltage);
         void translate(int units, double angle = -1.0);
+        void goalTranslate(int units, bool parallelOuttake);
+        void translateWithDS();
         void resetDriveEncoders();
         double avgDriveEncoderValue();
 
@@ -35,7 +37,8 @@ class AutonUtils {
 
 
         static bool notBlueBall();
-        void twoInTwoOut();
+        void cornerGoalSequence();
+        void nonCornerGoalSequence();
 
 
         void indexTop();
@@ -43,6 +46,7 @@ class AutonUtils {
         void indexMidRollers();
         void filter();
 
+        static void index(void* param);
         static void indexTop(void* param);
         static void indexMid(void* param);
         static void filter(void* param);
@@ -56,7 +60,12 @@ class AutonUtils {
         static void stopIntakes(MotorDefs* mtrDefs);
         static void startRollers(MotorDefs* mtrDefs);
         static void stopRollers(MotorDefs* mtrDefs);
-        static void startOuttake(MotorDefs* mtrDefs);        
+        static void startOuttake(MotorDefs* mtrDefs);  
+        static bool blueBallInFilteringPos(Sensors *sensors);    
+        static bool ballAtTop();
+        static bool ballAtMid(); 
+
+        static void setIndexingOneBall(bool value); 
 };
 
 #endif // _AUTON_UTILS_HPP_

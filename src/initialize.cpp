@@ -22,6 +22,10 @@ int autonSelected = 2;  // by default no auton
 bool redAlliance = false;
 
 pros::Imu *inertial_sensor;
+pros::Vision *vision_sensor;
+pros::Optical *optical_sensor;
+pros::Distance *distance_sensor_l;
+pros::Distance *distance_sensor_r;
 
 
 static lv_res_t btnm_action(lv_obj_t *btnm, const char *txt) {
@@ -86,8 +90,13 @@ void competition_initialize() {
    inertial_sensor = new pros::Imu(11);
    inertial_sensor->reset();
 
-   pros::Vision vision_sensor (15);
-   vision_sensor.clear_led();
+   vision_sensor = new pros::Vision(18);
+   vision_sensor->clear_led();
+
+   optical_sensor = new pros::Optical(6);
+
+   distance_sensor_l = new pros::Distance(9);
+   distance_sensor_r = new pros::Distance(14);
 
    pros::Task::delay(3000);
    std::cout << "Finished initializing IMU" << std::endl;
