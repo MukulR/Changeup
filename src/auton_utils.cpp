@@ -43,7 +43,7 @@ double AutonUtils::avgDriveEncoderValue() {
             fabs(mtrDefs->right_mtr_t->get_position())) / 4;
 }
 
-void AutonUtils::translate(int units, double angle) {
+void AutonUtils::translate(int units, int voltage, double angle) {
     double imu_correction = 0.0;
 
     // Initial imu rotation used for alignment
@@ -56,9 +56,6 @@ void AutonUtils::translate(int units, double angle) {
         // Subtract 3 since imu is off.
         imu_initial = angle + imu_correction;
     }
-
-    // Motor power for drive
-    int voltage = TRANSLATE_VOLTAGE;
 
     // Reset drive encoders
     resetDriveEncoders();
@@ -520,7 +517,7 @@ void AutonUtils::cornerGoalSequence() {
     stopRollers(mtrDefs);
 
     startOuttake(mtrDefs);
-    translate(-400);
+    translate(-400, TRANSLATE_VOLTAGE);
     pros::Task::delay(300);
     stopIntakes(mtrDefs);
 }
@@ -538,12 +535,12 @@ void AutonUtils::nonCornerGoalSequence(int moveBackDistance, double heading) {
 
     }
     stopRollers(mtrDefs);
-    translate(moveBackDistance, heading);
+    translate(moveBackDistance, TRANSLATE_VOLTAGE, heading);
 }
 
 void AutonUtils::centerSequence() {
     int i = 0;
-    while (i < 5) {
+    while (i < 3) {
         // if (i == 4) {
         //     mtrDefs->roller_t->move(-127);
         // }
@@ -562,6 +559,6 @@ void AutonUtils::centerSequence() {
     setDriveVoltage(0, 0);
     stopIntakes(mtrDefs);
     startOuttake(mtrDefs);
-    translate(-650, 90.0);
+    translate(-650, TRANSLATE_VOLTAGE, 90.0);
     mtrDefs->roller_t->move(0);
 }
