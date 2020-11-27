@@ -53,7 +53,7 @@ void getInfo(Sensors *sensors) {
 
 
 void ProgrammingSkillsAuton::runAuton(){
-    au->centerSequence();
+    // au->centerSequence();
     // Auton movements start here,uncomment the below 6 lines
     // getInfo(sensors);
     // au->translate(-1000, 45.0); 
@@ -64,10 +64,9 @@ void ProgrammingSkillsAuton::runAuton(){
     // captureFirstGoal();
     // captureSecondGoal();
     // captureThirdGoal();
-    // captureFourthGoal();
-    // captureFifthGoal();
-    //captureCenterGoal();
-    // captureSixthGoal();
+    captureFourthGoal();
+    captureFifthGoal();
+    captureCenterGoal();
     // captureSeventhGoal();
     // captureEighthGoal();
     // captureNinthGoal();
@@ -177,7 +176,7 @@ void ProgrammingSkillsAuton::captureFifthGoal() {
     // Turn to goal
     au->pidGlobalTurn(315);
     // Go to goal
-    au->translate(700, 315.0);
+    au->translate(800, 315.0);
     // Score/remove balls
     au->cornerGoalSequence();
     // Face next goal
@@ -191,7 +190,7 @@ void ProgrammingSkillsAuton::captureCenterGoal() {
     AutonUtils::startIntakes(mtrDefs);
     indexOneBallTask->notify();
     // Advance towards the ball
-    au->visionTranslate(2650, 80);
+    au->visionTranslate(2800, 80);
     pros::Task::delay(200);
     // Turn to goal
     au->pidGlobalTurn(90);
@@ -200,11 +199,11 @@ void ProgrammingSkillsAuton::captureCenterGoal() {
     au->translate(900, 90.0);
     // Turn intake to full speed to outtake the balls
     au->centerSequence();
-    pros::Task::delay(3000);
-    // Score balls
-    mtrDefs->roller_t->move(-127);
 }
 
+void ProgrammingSkillsAuton::captureSeventhGoal() {
+
+}
 
 void ProgrammingSkillsAuton::startHoldInGoal(){
     au->setDriveVoltage(25, 25);
