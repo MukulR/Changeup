@@ -177,7 +177,7 @@ void AutonUtils::visionTranslate(int units, int speed) {
     }
 
     // brake
-    setDriveVoltage(-20, -20);
+    setDriveVoltage(-50, -50);
     pros::delay(50);
 
     // set drive to neutral
@@ -291,31 +291,34 @@ void AutonUtils::filter() {
 }
 
 
-void AutonUtils::indexTop() {
-    // Case when we want to load the top ball, and the indexer is fully empty
-    if (line_top.get_value() >= 2800 || limit_t.get_value()) {
-        mtrDefs->roller_b->move(-100);
-        mtrDefs->roller_t->move(-100);
-        // Wait until the top ball slot is filled
-        while(line_top.get_value() >= 2800) {
-            pros::Task::delay(10);
+void AutonUtils::indexTwoBalls(void* param) {
+    MotorDefs* mtrDefs = (MotorDefs*)param;
+    while(indexTwoBallsTask->notify_take(true, TIMEOUT_MAX)) {
+        mtrDefs->roller_t->move(-80);
+        mtrDefs->roller_b->move(-80);
+        while(!ballAtTop()) {
+
+        }
+        mtrDefs->roller_t->move(0);
+        while(!ballAtMid()) {
+
+        }
+        mtrDefs->roller_b->move(0);
+    }
+}
+
+void AutonUtils::indexOneBall(void* param) {
+    MotorDefs* mtrDefs = (MotorDefs*)param;
+    while(indexTwoBallsTask->notify_take(true, TIMEOUT_MAX)) {
+        mtrDefs->roller_t->move(-80);
+        mtrDefs->roller_b->move(-80);
+        while(!ballAtTop()) {
+
         }
         stopRollers(mtrDefs);
     }
-    pros::Task::delay(50);
 }
-
-void AutonUtils::indexMid() {
-    if (line_mid.get_value() >= 2750){
-        mtrDefs->roller_b->move(-100);
-        while(line_mid.get_value() >= 2750) {
-            pros::Task::delay(10);
-        }
-        stopRollers(mtrDefs);
-    }
-    pros::Task::delay(50);
-}
-
+/*
 void AutonUtils::index(void* param) {
     MotorDefs* mtrDefs = (MotorDefs*)param;
     while(indexTask->notify_take(true, TIMEOUT_MAX)) {
@@ -331,9 +334,7 @@ void AutonUtils::index(void* param) {
             if (indexingOneBall) {
                 break;
             }
-        } 
-
-        if (!ballAtMid() && ballAtTop()) {
+        } else if (!ballAtMid() && ballAtTop()) {
             // Case to load only the middle ball
             mtrDefs->roller_b->move(-127);
             while (!ballAtMid()) {
@@ -341,9 +342,7 @@ void AutonUtils::index(void* param) {
             }
             mtrDefs->roller_b->move(0);
 
-        }
-
-        if (ballAtMid() && !ballAtTop()) {
+        } else if (ballAtMid() && !ballAtTop()) {
             mtrDefs->roller_t->move(-127);
             while(!ballAtTop()) {
 
@@ -353,43 +352,7 @@ void AutonUtils::index(void* param) {
         pros::Task::delay(10);
     }
 }
-
-
-void AutonUtils::indexTop(void* param) {
-    MotorDefs* mtrDefs = (MotorDefs*)param;
-    while(indexTopTask->notify_take(true, TIMEOUT_MAX)) {
-        // Case when we want to load the top ball, and the indexer is fully empty
-        if ((line_top.get_value() >= 2800 || limit_t.get_value())) {
-            mtrDefs->roller_b->move(-127);
-            mtrDefs->roller_t->move(-80);
-            // Wait until the top ball slot is filled
-            while(line_top.get_value() >= 2800) {
-                pros::Task::delay(10);
-            }
-            stopRollers(mtrDefs);
-        }
-        pros::Task::delay(10);
-    }
-}
-
-void AutonUtils::indexMid(void* param) {
-    MotorDefs* mtrDefs = (MotorDefs*)param;
-    while(indexMidTask->notify_take(true, TIMEOUT_MAX)) {
-        // Case when top is full, and we need to fill the middle spot.
-        // std::cout << "Mid Value: " << line_mid.get_value() << endl;
-        if (line_mid.get_value() >= 2750){
-            std::cout << "Starting mid roller" << endl;
-            mtrDefs->roller_b->move(-127);
-            while(line_mid.get_value() >= 2750) {
-                std::cout << "Mid Loop Value: " << line_mid.get_value() << endl;
-                pros::Task::delay(10);
-            }
-            std::cout << "detected ball with value: " << line_mid.get_value() << endl;
-            stopRollers(mtrDefs);           
-        }
-        pros::Task::delay(10);
-    }
-}
+*/
 
 
 void AutonUtils::filter(void* param) {
@@ -426,7 +389,7 @@ void AutonUtils::stopIntakes(MotorDefs* mtrDefs) {
 
 void AutonUtils::startRollers(MotorDefs* mtrDefs) {
     mtrDefs->roller_t->move(-127);
-	mtrDefs->roller_b->move(-80);
+	mtrDefs->roller_b->move(-127);
 }
 
 void AutonUtils::stopRollers(MotorDefs* mtrDefs) {
@@ -539,6 +502,7 @@ void AutonUtils::cornerGoalSequence() {
         
     }
     mtrDefs->roller_b->move(0);
+
     while(!ballAtMid()) {
 
     }
@@ -552,7 +516,7 @@ void AutonUtils::cornerGoalSequence() {
 }
 
 
-void AutonUtils::nonCornerGoalSequence() {
+void AutonUtils::nonCornerGoalSequence(int moveBackDistance, double heading) {
     startIntakes(mtrDefs);
     while (line_bot.get_value() >= 2800) {
         
@@ -565,5 +529,5 @@ void AutonUtils::nonCornerGoalSequence() {
     }
     mtrDefs->roller_b->move(0);
     mtrDefs->roller_t->move(0);
-    translate(-200);
+    translate(moveBackDistance, heading);
 }

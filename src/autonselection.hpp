@@ -18,13 +18,13 @@ extern pros::Optical *optical_sensor;
 extern pros::Distance *distance_sensor_l;
 extern pros::Distance *distance_sensor_r;
 
-extern pros::Task *indexTopTask;
-extern pros::Task *indexMidTask;
 extern pros::Task *filterTask;
 extern pros::Task *shootBallsTask;
 extern pros::Task *backUpAndOuttakeTask;
 extern pros::Task *moveForwardAndFilterTask;
-extern pros::Task *indexTask;
+extern pros::Task *indexTwoBallsTask;
+extern pros::Task *indexOneBallTask;
+// extern pros::Task *indexTask;
 
 
 #endif //_AUTONSELECTION_H_
