@@ -43,7 +43,6 @@ class AutonUtils {
         void indexMidRollers();
         void filter();
 
-        // static void index(void* param);
         static void indexTwoBalls(void* param);
         static void indexOneBall(void* param);
         static void filter(void* param);
