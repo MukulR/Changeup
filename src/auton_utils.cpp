@@ -207,11 +207,12 @@ void AutonUtils::pidRotate(double angle, int direction) {
     // Used to determine when to exit the loop
     bool started = false;
     int iter = 100;
+    double angle_to_start = 3.0;
 
     // PID CONSTANTS
     double kP = 3.2;
     double kI = 0.25;
-    double kD = 48.0;
+    double kD = 40.0;
 
     while (true) {
         std::cout << sensors->imu->get_heading() << "\n";
@@ -219,7 +220,9 @@ void AutonUtils::pidRotate(double angle, int direction) {
 
         error = determineError(imu_cur, angle, direction);
 
-        if (fabs(error) < 3.0) {
+        // If the error is within a threshold(angle_to_start) or the floor of the error is equal to angle_to_start,
+        // start the countdown in order to preserve the sanity of humanity.
+        if (fabs(error) < angle_to_start || (fabs(error) > angle_to_start && floor(fabs(error)) == angle_to_start)) {
             started = true;
         }
 

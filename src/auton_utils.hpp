@@ -31,7 +31,6 @@ class AutonUtils {
         void visionTranslate(int units, int speed);
         
         
-
         void oneShot();
         void slowOneShot();
 
