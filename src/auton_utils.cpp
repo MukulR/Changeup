@@ -547,11 +547,7 @@ void AutonUtils::nonCornerGoalSequence(int moveBackDistance, double heading) {
 }
 
 void AutonUtils::centerSequence() {
-    int i = 0;
-    while (i < 3) {
-        // if (i == 4) {
-        //     mtrDefs->roller_t->move(-127);
-        // }
+    for (int i = 0; i < 3; i++) {
         setDriveVoltage(-50, -50);
         startIntakes(mtrDefs);
         pros::Task::delay(300);
@@ -559,9 +555,8 @@ void AutonUtils::centerSequence() {
         setDriveVoltage(50, 50);
         startOuttakeFast(mtrDefs);
         pros::Task::delay(600);
-
-        i++;
     }
+
     mtrDefs->roller_t->move(-127);
     setDriveVoltage(0, 0);
     startOuttake(mtrDefs);

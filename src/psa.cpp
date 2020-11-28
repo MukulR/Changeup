@@ -57,8 +57,6 @@ void getInfo(Sensors *sensors) {
 
 
 void ProgrammingSkillsAuton::runAuton() {
-    // au->visionTranslate(1550, 80);
-    // au->cornerGoalSequence();
     captureFirstGoal();
     captureSecondGoal();
     captureThirdGoal();
@@ -79,14 +77,14 @@ void ProgrammingSkillsAuton::captureFirstGoal() {
 
     // Move to the fence ball 
     indexTwoBallsTask->notify();
-    au->visionTranslate(3000, 80);
+    au->visionTranslate(3050, 80);
     pros::Task::delay(100);
 
-    // Move back from fence and stop intakes
+    // Move back from fence 
     au->translate(-400, TRANSLATE_VOLTAGE);
-    AutonUtils::stopIntakes(mtrDefs);
-    // Turn towards the goal
+    // Turn towards the goal and stop intakes
     au->pidGlobalTurn(135);
+    AutonUtils::stopIntakes(mtrDefs);
     // Go to goal
     au->translate(900, TRANSLATE_VOLTAGE);
     pros::Task::delay(50);
@@ -148,7 +146,7 @@ void ProgrammingSkillsAuton::captureFourthGoal() {
     AutonUtils::startIntakes(mtrDefs);
     filterAndIndexOneBallTask->notify();
     // Advance towards the middle ball
-    au->visionTranslate(3200, 80);
+    au->visionTranslate(3150, 80);
     // Turn to face goal
     au->pidGlobalTurn(0);
     AutonUtils::stopIntakes(mtrDefs);
@@ -168,7 +166,7 @@ void ProgrammingSkillsAuton::captureFifthGoal() {
     // Advance towards the ball
     au->visionTranslate(2000, 80);
     // Translate now so we do not pickup the other red ball w/ vision
-    au->translate(500, TRANSLATE_VOLTAGE, 270.0);
+    au->translate(525, TRANSLATE_VOLTAGE, 270.0);
     // Turn to goal
     au->pidGlobalTurn(315);
     // Go to goal
@@ -185,7 +183,7 @@ void ProgrammingSkillsAuton::captureCenterGoal() {
     AutonUtils::startIntakes(mtrDefs);
     filterAndIndexOneBallTask->notify();
     // Advance towards the ball
-    au->visionTranslate(2900, 80);
+    au->visionTranslate(2825, 80);
     pros::Task::delay(200);
     // Turn to goal
     au->pidGlobalTurn(90);
@@ -240,7 +238,7 @@ void ProgrammingSkillsAuton::reviseNinthGoal() {
     AutonUtils::startIntakes(mtrDefs);
     filterAndIndexOneBallTask->notify();
     // Advance towards the middle ball
-    au->visionTranslate(3200, 80);
+    au->visionTranslate(3100, 80);
 
     au->pidGlobalTurn(180);
     AutonUtils::stopIntakes(mtrDefs);

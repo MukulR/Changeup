@@ -24,9 +24,6 @@ bool redAlliance = false;
 pros::Imu *inertial_sensor;
 pros::Vision *vision_sensor;
 pros::Optical *optical_sensor;
-pros::Distance *distance_sensor_l;
-pros::Distance *distance_sensor_r;
-
 
 static lv_res_t btnm_action(lv_obj_t *btnm, const char *txt) {
    printf("btnm_action Called \n");
@@ -94,9 +91,6 @@ void competition_initialize() {
    vision_sensor->clear_led();
 
    optical_sensor = new pros::Optical(6);
-
-   distance_sensor_l = new pros::Distance(9);
-   distance_sensor_r = new pros::Distance(14);
 
    pros::Task::delay(3000);
    std::cout << "Finished initializing IMU" << std::endl;
