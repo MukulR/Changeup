@@ -14,9 +14,6 @@ Sensors::Sensors() {
     imu = inertial_sensor;
     optical = optical_sensor;
     vision = vision_sensor;
-    // line_t = new pros::ADIAnalogIn(LINE_T_PORT);
-    // line_m = new pros::ADIAnalogIn(LINE_M_PORT);
-    // limit_t = new pros::ADIDigitalIn(LIMIT_T_PORT);
 }
 
 Sensors::~Sensors() {
@@ -25,8 +22,5 @@ Sensors::~Sensors() {
     delete imu;
     delete optical;
     delete vision;
-    // delete line_t;
-    // delete line_m;
-    // delete limit_t;
 }
 

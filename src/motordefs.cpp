@@ -18,8 +18,6 @@ MotorDefs::MotorDefs() {
     roller_b = new pros::Motor(BOTTOM_ROLLER_MTR_PORT, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
     intake_l = new pros::Motor(LEFT_INTAKE_MTR_PORT, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
     intake_r = new pros::Motor(RIGHT_INTAKE_MTR_PORT, pros::E_MOTOR_GEARSET_18, false, pros::E_MOTOR_ENCODER_DEGREES);
-
-    //left_mtr_b->set_encoder_units(pros::E_MOTOR_ENCODER_DEGREES)
 }
 
 MotorDefs::~MotorDefs() { 

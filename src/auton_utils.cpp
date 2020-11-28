@@ -284,12 +284,12 @@ void AutonUtils::setDriveSpeed(int leftSpeed, int rightSpeed) {
 void AutonUtils::filter() {
     mtrDefs->roller_b->move(-80);
     mtrDefs->roller_t->move(80);
-    pros::Task::delay(750);
+    // pros::Task::delay(750);
+    while (!ballAtBottom()) {}
     mtrDefs->roller_b->move(0);
     mtrDefs->roller_t->move(0);
     pros::Task::delay(50);
 }
-
 
 void AutonUtils::indexTwoBalls(void* param) {
     MotorDefs* mtrDefs = (MotorDefs*)param;
@@ -307,9 +307,40 @@ void AutonUtils::indexTwoBalls(void* param) {
     }
 }
 
-void AutonUtils::indexOneBall(void* param) {
+void AutonUtils::filterAndIndexTwoBalls(void* param) {
     MotorDefs* mtrDefs = (MotorDefs*)param;
-    while(indexTwoBallsTask->notify_take(true, TIMEOUT_MAX)) {
+    while(filterAndIndexTwoBallsTask->notify_take(true, TIMEOUT_MAX)) {
+        // Filter until a ball is detected in the intake
+        mtrDefs->roller_b->move(-127);
+        mtrDefs->roller_t->move(127);
+        while (!ballAtBottom()) {}
+        mtrDefs->roller_b->move(0);
+        mtrDefs->roller_t->move(0);
+
+        // Start the rollers so that we can index the newly picked up ball.
+        mtrDefs->roller_t->move(-80);
+        mtrDefs->roller_b->move(-80);
+        while(!ballAtTop()) {
+
+        }
+        mtrDefs->roller_t->move(0);
+        while(!ballAtMid()) {
+
+        }
+        mtrDefs->roller_b->move(0);
+    }
+}
+
+void AutonUtils::filterAndIndexOneBall(void* param) {
+    MotorDefs* mtrDefs = (MotorDefs*)param;
+    while(filterAndIndexOneBallTask->notify_take(true, TIMEOUT_MAX)) {
+        mtrDefs->roller_b->move(-127);
+        mtrDefs->roller_t->move(127);
+        while (!ballAtBottom()) {}
+        mtrDefs->roller_b->move(0);
+        mtrDefs->roller_t->move(0);
+
+        // Start the rollers so that we can index the newly picked up ball.
         mtrDefs->roller_t->move(-80);
         mtrDefs->roller_b->move(-80);
         while(!ballAtTop()) {
@@ -382,6 +413,10 @@ bool AutonUtils::ballAtTop() {
 
 bool AutonUtils::ballAtMid() {
     return line_mid.get_value() < 2750;
+}
+
+bool AutonUtils::ballAtBottom() {
+    return line_bot.get_value() < 2800;
 }
 
 bool AutonUtils::blueBallInFilteringPos(Sensors *sensors) {
@@ -473,7 +508,7 @@ void AutonUtils::moveForwardAndFilter(void* param) {
 void AutonUtils::cornerGoalSequence() {
     startRollers(mtrDefs);
     startIntakes(mtrDefs);
-    while (line_bot.get_value() >= 2800) {
+    while (!ballAtBottom()) {
         
     }
     mtrDefs->roller_b->move(0);
@@ -493,7 +528,7 @@ void AutonUtils::cornerGoalSequence() {
 
 void AutonUtils::nonCornerGoalSequence(int moveBackDistance, double heading) {
     startIntakes(mtrDefs);
-    while (line_bot.get_value() >= 2800) {
+    while (!ballAtBottom()) {
         
     }
     stopIntakes(mtrDefs);

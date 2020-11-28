@@ -44,7 +44,8 @@ class AutonUtils {
         void filter();
 
         static void indexTwoBalls(void* param);
-        static void indexOneBall(void* param);
+        static void filterAndIndexTwoBalls(void* param);
+        static void filterAndIndexOneBall(void* param);
         static void filter(void* param);
         static void shootBalls(void* param);
         static void backUpAndOuttake(void* param);
@@ -62,6 +63,7 @@ class AutonUtils {
         static bool blueBallInFilteringPos(Sensors *sensors);    
         static bool ballAtTop();
         static bool ballAtMid(); 
+        static bool ballAtBottom();
 
         static void setIndexingOneBall(bool value); 
 };
