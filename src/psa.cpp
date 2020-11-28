@@ -57,17 +57,17 @@ void getInfo(Sensors *sensors) {
 
 
 void ProgrammingSkillsAuton::runAuton() {
-    //au->visionTranslate(1550, 80);
-    au->cornerGoalSequence();
-    //captureFirstGoal();
-    // captureSecondGoal();
-    // captureThirdGoal();
-    // captureFourthGoal();
-    // captureFifthGoal();
-    // captureCenterGoal();
-    // captureSeventhGoal();
-    // captureEighthGoal();
-    // reviseNinthGoal();
+    // au->visionTranslate(1550, 80);
+    // au->cornerGoalSequence();
+    captureFirstGoal();
+    captureSecondGoal();
+    captureThirdGoal();
+    captureFourthGoal();
+    captureFifthGoal();
+    captureCenterGoal();
+    captureSeventhGoal();
+    captureEighthGoal();
+    reviseNinthGoal();
 }
 
 void ProgrammingSkillsAuton::captureFirstGoal() {
@@ -83,7 +83,7 @@ void ProgrammingSkillsAuton::captureFirstGoal() {
     pros::Task::delay(100);
 
     // Move back from fence and stop intakes
-    au->translate(-450, TRANSLATE_VOLTAGE);
+    au->translate(-400, TRANSLATE_VOLTAGE);
     AutonUtils::stopIntakes(mtrDefs);
     // Turn towards the goal
     au->pidGlobalTurn(135);
@@ -129,6 +129,7 @@ void ProgrammingSkillsAuton::captureThirdGoal() {
     pros::Task::delay(50);
 
     au->pidGlobalTurn(90);
+    AutonUtils::stopIntakes(mtrDefs);
     pros::Task::delay(50);
     au->translate(500, TRANSLATE_VOLTAGE, 90.0);
     pros::Task::delay(50);
@@ -152,7 +153,7 @@ void ProgrammingSkillsAuton::captureFourthGoal() {
     au->pidGlobalTurn(0);
     AutonUtils::stopIntakes(mtrDefs);
     // Go to goal
-    au->translate(1550, TRANSLATE_VOLTAGE, 0.0);
+    au->translate(1700, TRANSLATE_VOLTAGE, 0.0);
 
     au->nonCornerGoalSequence(-200, 0.0);
     // Turn to face next goal
@@ -171,7 +172,7 @@ void ProgrammingSkillsAuton::captureFifthGoal() {
     // Turn to goal
     au->pidGlobalTurn(315);
     // Go to goal
-    au->translate(800, TRANSLATE_VOLTAGE, 315.0);
+    au->translate(900, TRANSLATE_VOLTAGE, 315.0);
     // Score/remove balls
     au->cornerGoalSequence();
     // Face next goal
@@ -202,7 +203,8 @@ void ProgrammingSkillsAuton::captureSeventhGoal() {
     AutonUtils::startIntakes(mtrDefs);
     filterAndIndexOneBallTask->notify();
     // Advance towards the second goal
-    au->visionTranslate(1750, 50);
+    au->visionTranslate(1500, 50);
+    au->translate(350, 50, 270.0);
     pros::Task::delay(500);
     AutonUtils::stopIntakes(mtrDefs);
     // Process balls in the 7th goal
@@ -231,7 +233,7 @@ void ProgrammingSkillsAuton::captureEighthGoal() {
     au->cornerGoalSequence();
     pros::Task::delay(100);
     // Turn to face the next goals
-    au->pidGlobalTurn(30);
+    au->pidGlobalTurn(70);
 }
 
 void ProgrammingSkillsAuton::reviseNinthGoal() {

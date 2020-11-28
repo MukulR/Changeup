@@ -512,7 +512,12 @@ void AutonUtils::cornerGoalSequence() {
         
     }
     mtrDefs->roller_b->move(0);
-
+    setDriveSpeed(-40, -40);
+    pros::Task::delay(200);
+    setDriveSpeed(40, 40);
+    pros::Task::delay(200);
+    setDriveSpeed(0, 0);
+    
     while(!ballAtMid()) {
 
     }
@@ -558,10 +563,9 @@ void AutonUtils::centerSequence() {
         i++;
     }
     mtrDefs->roller_t->move(-127);
-    pros::Task::delay(100);
     setDriveVoltage(0, 0);
-    stopIntakes(mtrDefs);
     startOuttake(mtrDefs);
+    pros::Task::delay(300);
     translate(-650, TRANSLATE_VOLTAGE, 90.0);
     mtrDefs->roller_t->move(0);
 }
