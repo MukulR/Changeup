@@ -11,7 +11,8 @@ pros::Task *backUpAndOuttakeTask;
 pros::Task *moveForwardAndFilterTask;
 pros::Task *indexTwoBallsTask;
 pros::Task *indexOneBallTask;
-// pros::Task *indexTask;
+
+
 const int TRANSLATE_VOLTAGE = 80;
 
 ProgrammingSkillsAuton::ProgrammingSkillsAuton(MotorDefs *md, bool ra) {
@@ -27,7 +28,6 @@ ProgrammingSkillsAuton::ProgrammingSkillsAuton(MotorDefs *md, bool ra) {
     moveForwardAndFilterTask = new pros::Task(AutonUtils::moveForwardAndFilter, md);
     indexTwoBallsTask = new pros::Task(AutonUtils::indexTwoBalls, md);
     indexOneBallTask = new pros::Task(AutonUtils::indexOneBall, md);
-    // indexTask = new pros::Task(AutonUtils::index, md);
 }
 
 ProgrammingSkillsAuton::~ProgrammingSkillsAuton() {
@@ -40,7 +40,6 @@ ProgrammingSkillsAuton::~ProgrammingSkillsAuton() {
     delete moveForwardAndFilterTask;
     delete indexTwoBallsTask;
     delete indexOneBallTask;
-    // delete indexTask;
 }
 
 
@@ -93,7 +92,7 @@ void ProgrammingSkillsAuton::captureFirstGoal() {
     // Turn to 0 heading. 
     au->pidGlobalTurn(0);
 
-    au->filter();;
+    au->filter();
 }
 
 void ProgrammingSkillsAuton::captureSecondGoal() {

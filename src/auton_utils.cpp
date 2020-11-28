@@ -315,41 +315,6 @@ void AutonUtils::indexOneBall(void* param) {
         stopRollers(mtrDefs);
     }
 }
-/*
-void AutonUtils::index(void* param) {
-    MotorDefs* mtrDefs = (MotorDefs*)param;
-    while(indexTask->notify_take(true, TIMEOUT_MAX)) {
-        // Case when we want to load the top ball, and the indexer is fully empty
-        if (!ballAtTop() && !ballAtMid()) {
-            mtrDefs->roller_b->move(-127);
-            mtrDefs->roller_t->move(-80);
-            // Wait until the top ball slot is filled
-            while(!ballAtTop()) {
-
-            }
-            stopRollers(mtrDefs);
-            if (indexingOneBall) {
-                break;
-            }
-        } else if (!ballAtMid() && ballAtTop()) {
-            // Case to load only the middle ball
-            mtrDefs->roller_b->move(-127);
-            while (!ballAtMid()) {
-
-            }
-            mtrDefs->roller_b->move(0);
-
-        } else if (ballAtMid() && !ballAtTop()) {
-            mtrDefs->roller_t->move(-127);
-            while(!ballAtTop()) {
-
-            }
-            mtrDefs->roller_t->move(0);
-        }
-        pros::Task::delay(10);
-    }
-}
-*/
 
 
 void AutonUtils::filter(void* param) {
