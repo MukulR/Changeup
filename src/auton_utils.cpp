@@ -361,6 +361,18 @@ void AutonUtils::filterAndIndexOneBall(void* param) {
     }
 }
 
+void AutonUtils::indexMid(void* param) {
+    MotorDefs* mtrDefs = (MotorDefs*)param;
+    while(indexMidTask->notify_take(true, TIMEOUT_MAX)) {
+        // Start the rollers so that we can index the newly picked up ball.
+        mtrDefs->roller_b->move(-80);
+        while(!ballAtMid()) {
+
+        }
+        mtrDefs->roller_b->move(0);
+    }
+}
+
 
 void AutonUtils::filter(void* param) {
     MotorDefs* mtrDefs = (MotorDefs*)param;
@@ -407,6 +419,11 @@ void AutonUtils::stopIntakes(MotorDefs* mtrDefs) {
 void AutonUtils::startRollers(MotorDefs* mtrDefs) {
     mtrDefs->roller_t->move(-127);
 	mtrDefs->roller_b->move(-127);
+}
+
+void AutonUtils::startRollersForDoubleShot(MotorDefs* mtrDefs) {
+    mtrDefs->roller_t->move(-127);
+    mtrDefs->roller_b->move(-80);
 }
 
 void AutonUtils::stopRollers(MotorDefs* mtrDefs) {
@@ -514,10 +531,38 @@ void AutonUtils::moveForwardAndFilter(void* param) {
 
 }
 
+void AutonUtils::nonCornerGoalTwoBallSequence(int moveBackDistance, double heading) {
+    startRollersForDoubleShot(mtrDefs);
+    while (!limit_t.get_value()) {
+
+    }
+    while (limit_t.get_value()) {
+
+    }
+    pros::Task::delay(200);
+    while (!limit_t.get_value()) {
+
+    }
+    pros::Task::delay(200);
+    stopRollers(mtrDefs);
+
+    startIntakes(mtrDefs);
+    mtrDefs->roller_b->move(-127);
+    while(!ballAtBottom()) {
+
+    }
+    AutonUtils::stopIntakes(mtrDefs);
+    while(!ballAtMid()) {
+
+    }
+    mtrDefs->roller_b->move(0);
+
+    translate(moveBackDistance, TRANSLATE_VOLTAGE, heading);
+}
 
 
 void AutonUtils::cornerGoalSequence() {
-    startRollers(mtrDefs);
+    startRollersForDoubleShot(mtrDefs);
     startIntakes(mtrDefs);
     while (!ballAtBottom()) {
         

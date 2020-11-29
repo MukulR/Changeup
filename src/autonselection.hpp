@@ -22,6 +22,7 @@ extern pros::Task *filterTask;
 extern pros::Task *shootBallsTask;
 extern pros::Task *backUpAndOuttakeTask;
 extern pros::Task *moveForwardAndFilterTask;
+extern pros::Task *indexMidTask;
 extern pros::Task *indexTwoBallsTask;
 extern pros::Task *filterAndIndexTwoBallsTask;
 extern pros::Task *filterAndIndexOneBallTask;

@@ -38,11 +38,13 @@ class AutonUtils {
         static bool notBlueBall();
         void cornerGoalSequence();
         void nonCornerGoalSequence(int moveBackDistance, double heading);
+        void nonCornerGoalTwoBallSequence(int moveBackDistance, double heading);
         void centerSequence();
 
         void indexMidRollers();
         void filter();
 
+        static void indexMid(void* param);
         static void indexTwoBalls(void* param);
         static void filterAndIndexTwoBalls(void* param);
         static void filterAndIndexOneBall(void* param);
@@ -57,6 +59,7 @@ class AutonUtils {
         static void startIntakesSlow(MotorDefs* mtrDefs);
         static void stopIntakes(MotorDefs* mtrDefs);
         static void startRollers(MotorDefs* mtrDefs);
+        static void startRollersForDoubleShot(MotorDefs* mtrDefs);
         static void stopRollers(MotorDefs* mtrDefs);
         static void startOuttake(MotorDefs* mtrDefs);  
         static void startOuttakeFast(MotorDefs* mtrDefs);
