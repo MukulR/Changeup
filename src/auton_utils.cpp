@@ -10,7 +10,9 @@ using std::endl;
 // TODO: Move to Sensors.hpp
 pros::ADIAnalogIn line_top('D');
 pros::ADIAnalogIn line_mid('B');
-pros::ADIAnalogIn line_bot('H');
+pros::ADIAnalogIn line_bot('G');
+pros::ADIAnalogIn line_drive_right('H');
+pros::ADIAnalogIn line_drive_left('C');
 pros::ADIDigitalIn limit_t('A');
 
 bool indexingOneBall = false;
@@ -137,7 +139,7 @@ void AutonUtils::setDriveVoltage(int leftVoltage, int rightVoltage) {
     *(mtrDefs->right_mtr_b) = (rightVoltage);
 }
 
-void AutonUtils::visionTranslate(int units, int speed) {
+void AutonUtils::visionTranslate(int units, int speed, bool trackLine) {
     pros::vision_object_s_t obj;
     int des_left_coord;
     int turn_direction;
@@ -149,7 +151,12 @@ void AutonUtils::visionTranslate(int units, int speed) {
     // Reset drive encoders
     resetDriveEncoders();
 
-    while (avgDriveEncoderValue() < fabs(units)) {
+    while (avgDriveEncoderValue() < fabs(units) || (trackLine && line_drive_right.get_value() < 550)) {
+        // Run-away robot prevention!
+        if(trackLine && (avgDriveEncoderValue() > fabs(units))) {
+            break;
+        }
+        
         obj = sensors->vision->get_by_size(0);
         des_left_coord = (315 / 2) - (obj.width / 2);
 
@@ -175,7 +182,11 @@ void AutonUtils::visionTranslate(int units, int speed) {
 
     // brake
     setDriveVoltage(-50, -50);
-    pros::delay(50);
+    if(trackLine) {
+        pros::delay(75);
+    } else {
+        pros::delay(50);
+    }
 
     // set drive to neutral
     setDriveVoltage(0, 0);

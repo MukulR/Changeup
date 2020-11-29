@@ -77,7 +77,7 @@ void ProgrammingSkillsAuton::captureFirstGoal() {
 
     // Move to the fence ball 
     indexTwoBallsTask->notify();
-    au->visionTranslate(3050, 80);
+    au->visionTranslate(3050, 80, false);
     pros::Task::delay(100);
 
     // Move back from fence 
@@ -101,7 +101,7 @@ void ProgrammingSkillsAuton::captureSecondGoal() {
     AutonUtils::startIntakes(mtrDefs);
     filterAndIndexOneBallTask->notify();
     // Advance towards the second goal
-    au->visionTranslate(2350, 80);
+    au->visionTranslate(2350, 80, false);
     pros::Task::delay(200);
     // Turn to face the goal
     au->pidGlobalTurn(90);
@@ -123,7 +123,7 @@ void ProgrammingSkillsAuton::captureThirdGoal() {
     AutonUtils::startIntakes(mtrDefs);
     filterAndIndexOneBallTask->notify();
     // Advance towards the third goal
-    au->visionTranslate(2500, 80);
+    au->visionTranslate(2500, 80, false);
     pros::Task::delay(50);
 
     au->pidGlobalTurn(90);
@@ -146,7 +146,7 @@ void ProgrammingSkillsAuton::captureFourthGoal() {
     AutonUtils::startIntakes(mtrDefs);
     filterAndIndexOneBallTask->notify();
     // Advance towards the middle ball
-    au->visionTranslate(3150, 80);
+    au->visionTranslate(3150, 80, false);
     // Turn to face goal
     au->pidGlobalTurn(0);
     AutonUtils::stopIntakes(mtrDefs);
@@ -164,9 +164,9 @@ void ProgrammingSkillsAuton::captureFifthGoal() {
     AutonUtils::startIntakes(mtrDefs);
     filterAndIndexOneBallTask->notify();
     // Advance towards the ball
-    au->visionTranslate(2000, 80);
+    au->visionTranslate(2000, 80, false);
     // Translate now so we do not pickup the other red ball w/ vision
-    au->translate(525, TRANSLATE_VOLTAGE, 270.0);
+    au->translate(500, TRANSLATE_VOLTAGE, 270.0);
     // Turn to goal
     au->pidGlobalTurn(315);
     // Go to goal
@@ -183,13 +183,13 @@ void ProgrammingSkillsAuton::captureCenterGoal() {
     AutonUtils::startIntakes(mtrDefs);
     filterAndIndexOneBallTask->notify();
     // Advance towards the ball
-    au->visionTranslate(2825, 80);
+    au->visionTranslate(2825, 80, true);
     pros::Task::delay(200);
     // Turn to goal
     au->pidGlobalTurn(90);
     // Go to goal with intakes slowly running
     AutonUtils::startIntakes(mtrDefs);
-    au->translate(1100, 60, 90.0);
+    au->translate(1050, 60, 90.0);
     // Turn intake to full speed to outtake the balls
     au->centerSequence();
     // Turn to face next goal
@@ -201,7 +201,7 @@ void ProgrammingSkillsAuton::captureSeventhGoal() {
     AutonUtils::startIntakes(mtrDefs);
     filterAndIndexOneBallTask->notify();
     // Advance towards the second goal
-    au->visionTranslate(1500, 50);
+    au->visionTranslate(1500, 50, false);
     au->translate(350, 50, 270.0);
     pros::Task::delay(500);
     AutonUtils::stopIntakes(mtrDefs);
@@ -218,7 +218,7 @@ void ProgrammingSkillsAuton::captureEighthGoal() {
     AutonUtils::startIntakes(mtrDefs);
     filterAndIndexOneBallTask->notify();
     // Advance towards the third goal
-    au->visionTranslate(2500, 80);
+    au->visionTranslate(2500, 80, false);
 
     au->pidGlobalTurn(270);
     pros::Task::delay(50);
@@ -238,7 +238,7 @@ void ProgrammingSkillsAuton::reviseNinthGoal() {
     AutonUtils::startIntakes(mtrDefs);
     filterAndIndexOneBallTask->notify();
     // Advance towards the middle ball
-    au->visionTranslate(3100, 80);
+    au->visionTranslate(3100, 80, false);
 
     au->pidGlobalTurn(180);
     AutonUtils::stopIntakes(mtrDefs);
