@@ -132,7 +132,7 @@ void ProgrammingSkillsAuton::captureThirdGoal() {
     au->translate(500, TRANSLATE_VOLTAGE, 90.0);
     pros::Task::delay(50);
     au->pidGlobalTurn(45);
-    au->translate(700, TRANSLATE_VOLTAGE, 45.0);
+    au->translate(750, TRANSLATE_VOLTAGE, 45.0);
     pros::Task::delay(50);
 
     au->cornerGoalSequence();
@@ -151,7 +151,7 @@ void ProgrammingSkillsAuton::captureFourthGoal() {
     au->pidGlobalTurn(0);
     AutonUtils::stopIntakes(mtrDefs);
     // Go to goal
-    au->translate(1700, TRANSLATE_VOLTAGE, 0.0);
+    au->translate(1800, TRANSLATE_VOLTAGE, 0.0);
 
     au->nonCornerGoalSequence(-200, 0.0);
     // Turn to face next goal
@@ -225,7 +225,7 @@ void ProgrammingSkillsAuton::captureEighthGoal() {
     au->translate(500, TRANSLATE_VOLTAGE, 270.0);
     pros::Task::delay(50);
     au->pidGlobalTurn(225);
-    au->translate(700, TRANSLATE_VOLTAGE, 225.0);
+    au->translate(750, TRANSLATE_VOLTAGE, 225.0);
     pros::Task::delay(50);
 
     au->cornerGoalSequence();
@@ -243,7 +243,7 @@ void ProgrammingSkillsAuton::reviseNinthGoal() {
     au->pidGlobalTurn(180);
     AutonUtils::stopIntakes(mtrDefs);
     // Go to goal
-    au->translate(1550, TRANSLATE_VOLTAGE, 180.0);
+    au->translate(1800, TRANSLATE_VOLTAGE, 180.0);
 
     au->nonCornerGoalSequence(-200, 180.0);
 }
