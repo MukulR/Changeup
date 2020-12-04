@@ -261,7 +261,7 @@ void ProgrammingSkillsAuton::reviseNinthGoal() {
     AutonUtils::startIntakes(mtrDefs);
     filterAndIndexOneBallTask->notify();
     // Advance towards the middle ball
-    au->visionTranslate(3100, 80, false);
+    au->visionTranslate(3050, 80, false);
 
     au->pidGlobalTurn(180);
     AutonUtils::stopIntakes(mtrDefs);
