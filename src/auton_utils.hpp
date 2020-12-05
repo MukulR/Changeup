@@ -38,7 +38,6 @@ class AutonUtils {
         static bool notBlueBall();
         void cornerGoalSequence(bool isFirstGoal);
         void nonCornerGoalSequence(int moveBackDistance, double heading);
-        void nonCornerGoalTwoBallSequence(int moveBackDistance, double heading);
         void centerSequence();
 
         void indexMidRollers();

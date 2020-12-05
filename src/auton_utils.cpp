@@ -531,36 +531,6 @@ void AutonUtils::moveForwardAndFilter(void* param) {
 
 }
 
-void AutonUtils::nonCornerGoalTwoBallSequence(int moveBackDistance, double heading) {
-    startRollersForDoubleShot(mtrDefs);
-    while (!limit_t.get_value()) {
-
-    }
-    while (limit_t.get_value()) {
-
-    }
-    pros::Task::delay(200);
-    while (!limit_t.get_value()) {
-
-    }
-    pros::Task::delay(200);
-    stopRollers(mtrDefs);
-
-    startIntakes(mtrDefs);
-    mtrDefs->roller_b->move(-127);
-    while(!ballAtBottom()) {
-
-    }
-    AutonUtils::stopIntakes(mtrDefs);
-    while(!ballAtMid()) {
-
-    }
-    mtrDefs->roller_b->move(0);
-
-    translate(moveBackDistance, TRANSLATE_VOLTAGE, heading);
-}
-
-
 void AutonUtils::cornerGoalSequence(bool isFirstGoal) {
     if (isFirstGoal) {
         mtrDefs->roller_t->move(-127);
