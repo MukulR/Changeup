@@ -108,7 +108,7 @@ void index(void *param){
 			if (line_t.get_value() >= 2800 && line_m.get_value() >= 2750){
 				mtrDefs.intake_l->move(127);
 				mtrDefs.intake_r->move(-127);
-				mtrDefs.roller_b->move(-80);
+				mtrDefs.roller_b->move(-127);
 				mtrDefs.roller_t->move(-80);
 				while(line_t.get_value() >= 2800 && detection_enabled) {
 					if (!detection_enabled){
@@ -122,10 +122,10 @@ void index(void *param){
 				mtrDefs.intake_r->move(0);
 			}
 
-			if (line_t.get_value() <= 2800 && line_m.get_value() >= 2750){
+			if (line_t.get_value() <= 2800 && line_m.get_value() >= 2750 && detection_enabled){
 				mtrDefs.intake_l->move(127);
 				mtrDefs.intake_r->move(-127);
-				mtrDefs.roller_b->move(-80);
+				mtrDefs.roller_b->move(-127);
 				while(line_m.get_value() >= 2750 && detection_enabled) {
 					if (!detection_enabled){
 						return;
@@ -139,11 +139,11 @@ void index(void *param){
 				detection_enabled = false;
 			}
 
-			if (line_t.get_value() >= 2800 && line_m.get_value() < 2750){
+			if (line_t.get_value() >= 2800 && line_m.get_value() < 2750 && detection_enabled){
 				mtrDefs.intake_l->move(127);
 				mtrDefs.intake_r->move(-127);
 				mtrDefs.roller_t->move(-80);
-				mtrDefs.roller_b->move(-80);
+				mtrDefs.roller_b->move(-127);
 				while(line_t.get_value() >= 2750 && detection_enabled) {
 					if (!detection_enabled){
 						return;
@@ -160,7 +160,7 @@ void index(void *param){
 void control(void* param) {	
 	while(true) {
 		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-			detection_enabled = false;
+			// detection_enabled = false;
 			stopAll();
 		}
 
