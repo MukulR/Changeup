@@ -561,8 +561,14 @@ void AutonUtils::nonCornerGoalTwoBallSequence(int moveBackDistance, double headi
 }
 
 
-void AutonUtils::cornerGoalSequence() {
-    startRollersForDoubleShot(mtrDefs);
+void AutonUtils::cornerGoalSequence(bool isFirstGoal) {
+    if (isFirstGoal) {
+        mtrDefs->roller_t->move(-127);
+        pros::Task::delay(300);
+        mtrDefs->roller_b->move(-80);
+    } else {
+        startRollersForDoubleShot(mtrDefs);
+    }
     startIntakes(mtrDefs);
     while (!ballAtBottom()) {
         

@@ -93,7 +93,7 @@ void ProgrammingSkillsAuton::captureFirstGoal() {
     au->translate(900, TRANSLATE_VOLTAGE);
     pros::Task::delay(50);
     // Score in goals, extract blue balls, and back up.
-    au->cornerGoalSequence();
+    au->cornerGoalSequence(true);
     // Turn to 0 heading. 
     // au->pidGlobalTurn(315);
     au->pidGlobalTurn(0);
@@ -158,7 +158,7 @@ void ProgrammingSkillsAuton::captureThirdGoal() {
     au->translate(750, TRANSLATE_VOLTAGE, 45.0);
     pros::Task::delay(50);
 
-    au->cornerGoalSequence();
+    au->cornerGoalSequence(false);
 
     au->pidGlobalTurn(245);
     // au->filter();
@@ -195,7 +195,7 @@ void ProgrammingSkillsAuton::captureFifthGoal() {
     // Go to goal
     au->translate(900, TRANSLATE_VOLTAGE, 315.0);
     // Score/remove balls
-    au->cornerGoalSequence();
+    au->cornerGoalSequence(false);
     // Face next goal
     au->pidGlobalTurn(145);
     // Filter out ball
@@ -209,10 +209,10 @@ void ProgrammingSkillsAuton::captureCenterGoal() {
     au->visionTranslate(2825, 80, true);
     pros::Task::delay(200);
     // Turn to goal
-    au->pidGlobalTurn(86);
+    au->pidGlobalTurn(99);
     // Go to goal with intakes slowly running
     AutonUtils::startIntakes(mtrDefs);
-    au->translate(1050, 60, 86.0);
+    au->translate(1050, 60, 99.0);
     // Turn intake to full speed to outtake the balls
     au->centerSequence();
     // Turn to face next goal
@@ -245,13 +245,13 @@ void ProgrammingSkillsAuton::captureEighthGoal() {
 
     au->pidGlobalTurn(270);
     pros::Task::delay(50);
-    au->translate(500, TRANSLATE_VOLTAGE, 270.0);
+    au->translate(575, TRANSLATE_VOLTAGE, 270.0);
     pros::Task::delay(50);
     au->pidGlobalTurn(225);
     au->translate(750, TRANSLATE_VOLTAGE, 225.0);
     pros::Task::delay(50);
 
-    au->cornerGoalSequence();
+    au->cornerGoalSequence(false);
     pros::Task::delay(100);
     // Turn to face the next goals
     au->pidGlobalTurn(70);
@@ -263,10 +263,10 @@ void ProgrammingSkillsAuton::reviseNinthGoal() {
     // Advance towards the middle ball
     au->visionTranslate(3050, 80, false);
 
-    au->pidGlobalTurn(180);
+    au->pidGlobalTurn(183);
     AutonUtils::stopIntakes(mtrDefs);
     // Go to goal
-    au->translate(1850, TRANSLATE_VOLTAGE, 180.0);
+    au->translate(1850, TRANSLATE_VOLTAGE, 183.0);
 
     au->nonCornerGoalSequence(-200, 180.0);
 }
