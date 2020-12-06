@@ -170,7 +170,7 @@ void ProgrammingSkillsAuton::captureFifthGoal() {
     // Turn to goal
     au->pidGlobalTurn(315);
     // Go to goal
-    au->translate(900, TRANSLATE_VOLTAGE, 315.0);
+    au->translate(1000, TRANSLATE_VOLTAGE, 315.0);
     // Score/remove balls
     au->cornerGoalSequence(false);
     // Face next goal
@@ -187,6 +187,7 @@ void ProgrammingSkillsAuton::captureCenterGoal() {
     pros::Task::delay(200);
     // Turn to goal
     au->pidGlobalTurn(105);
+    pros::Task::delay(100);
     // Go to goal with intakes slowly running
     AutonUtils::startIntakes(mtrDefs);
     au->translate(1050, 60, 105.0);
