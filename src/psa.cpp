@@ -186,11 +186,11 @@ void ProgrammingSkillsAuton::captureCenterGoal() {
     au->visionTranslate(2825, 80, true);
     pros::Task::delay(200);
     // Turn to goal
-    au->pidGlobalTurn(105);
+    au->pidGlobalTurn(110);
     pros::Task::delay(100);
     // Go to goal with intakes slowly running
     AutonUtils::startIntakes(mtrDefs);
-    au->translate(1050, 60, 105.0);
+    au->translate(1050, 60, 110.0);
     // Turn intake to full speed to outtake the balls
     au->centerSequence();
     // Turn to face next goal
