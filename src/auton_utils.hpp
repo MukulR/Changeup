@@ -28,7 +28,7 @@ class AutonUtils {
         void setDriveSpeed(int leftSpeed, int rightSpeed);
         double determineError(double imu_cur, double imu_desired, int direction);
 
-        void visionTranslate(int units, int speed, bool trackLine);
+        void visionTranslate(int units, int speed, bool useLT);
         
         
         void oneShot();

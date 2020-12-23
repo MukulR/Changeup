@@ -18,6 +18,7 @@ pros::ADIDigitalIn limit_t('A');
 bool indexingOneBall = false;
 
 const int DISTANCE_THRESHOLD = 200;
+const int DISTANCE_TO_FENCE = 125;
 
 const int TURN_VOLTAGE = 50;
 const int CORRECTION_TURN_VOLTAGE = 25;
@@ -139,7 +140,7 @@ void AutonUtils::setDriveVoltage(int leftVoltage, int rightVoltage) {
     *(mtrDefs->right_mtr_b) = (rightVoltage);
 }
 
-void AutonUtils::visionTranslate(int units, int speed, bool trackLine) {
+void AutonUtils::visionTranslate(int units, int speed, bool useLT) {
     pros::vision_object_s_t obj;
     int des_left_coord;
     int turn_direction;
@@ -151,9 +152,9 @@ void AutonUtils::visionTranslate(int units, int speed, bool trackLine) {
     // Reset drive encoders
     resetDriveEncoders();
 
-    while (avgDriveEncoderValue() < fabs(units) || (trackLine && line_drive_right.get_value() < 550)) {
+    while (avgDriveEncoderValue() < fabs(units) || (useLT && line_drive_right.get_value() < 550)) {
         // Run-away robot prevention!
-        if(trackLine && (avgDriveEncoderValue() > fabs(units))) {
+        if(useLT && (avgDriveEncoderValue() > fabs(units))) {
             break;
         }
         
@@ -182,7 +183,7 @@ void AutonUtils::visionTranslate(int units, int speed, bool trackLine) {
 
     // brake
     setDriveVoltage(-50, -50);
-    if(trackLine) {
+    if(useLT) {
         pros::delay(75);
     } else {
         pros::delay(50);
@@ -217,7 +218,7 @@ void AutonUtils::pidRotate(double angle, int direction) {
 
     // Used to determine when to exit the loop
     bool started = false;
-    int iter = 100;
+    int iter = 20;
     double angle_to_start = 3.0;
 
     // PID CONSTANTS

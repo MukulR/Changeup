@@ -15,7 +15,7 @@ pros::Task *filterAndIndexTwoBallsTask;
 pros::Task *filterAndIndexOneBallTask;
 
 
-const int TRANSLATE_VOLTAGE = 80;
+const int TRANSLATE_VOLTAGE = 100;
 
 ProgrammingSkillsAuton::ProgrammingSkillsAuton(MotorDefs *md, bool ra) {
     mtrDefs = md;
