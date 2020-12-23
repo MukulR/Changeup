@@ -524,14 +524,6 @@ void AutonUtils::shootBalls(void* param) {
     std::cout << "Outside while." << std::endl;
 }
 
-void AutonUtils::backUpAndOuttake(void* param) {
-
-}
-
-void AutonUtils::moveForwardAndFilter(void* param) {
-
-}
-
 void AutonUtils::cornerGoalSequence(bool isFirstGoal) {
     if (isFirstGoal) {
         mtrDefs->roller_t->move(-127);

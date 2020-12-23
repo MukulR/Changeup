@@ -49,9 +49,6 @@ class AutonUtils {
         static void filterAndIndexOneBall(void* param);
         static void filter(void* param);
         static void shootBalls(void* param);
-        static void backUpAndOuttake(void* param);
-        static void moveForwardAndFilter(void* param);
-
     
 
         static void startIntakes(MotorDefs* mtrDefs);

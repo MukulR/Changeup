@@ -54,9 +54,9 @@ void getInfo(Sensors *sensors) {
 
 
 void ProgrammingSkillsAuton::runAuton() {
-    au->twoInOneOut(-400, 0.0);
-    // captureFirstGoal();
-    // captureSecondGoal();
+    //au->twoInOneOut(-400, 0.0);
+    captureFirstGoal();
+    captureSecondGoal();
     // captureThirdGoal();
     // captureFourthGoal();
     // captureFifthGoal();
@@ -89,24 +89,27 @@ void ProgrammingSkillsAuton::captureFirstGoal() {
     // Score in goals, extract blue balls, and back up.
     au->cornerGoalSequence(true);
     // Turn to 0 heading. 
-    // au->pidGlobalTurn(315);
-    au->pidGlobalTurn(0);
+    au->pidGlobalTurn(335);
+    // au->pidGlobalTurn(0);
 }
 
 void ProgrammingSkillsAuton::captureSecondGoal() {
     // Start intakes to pickup the ball, and start the task
     AutonUtils::startIntakes(mtrDefs);
-    filterAndIndexOneBallTask->notify();
-    // Advance towards the second goal
-    au->visionTranslate(2350, 80, false);
-    pros::Task::delay(200);
+    filterAndIndexTwoBallsTask->notify();
+    // Advance to pickup the ball next to center goal
+    au->translate(1300, 80, 335.0);
+    au->visionTranslate(1525, 100, true);
+    
     // Turn to face the goal
     au->pidGlobalTurn(90);
-    AutonUtils::stopIntakes(mtrDefs);
-    // Advance to the goal
-    au->translate(400, TRANSLATE_VOLTAGE);
+    // Track and pickup the second ball
+    au->visionTranslate(1600, 50, false);
+    // move farther into the goal so that we can score
+    au->translate(350, 50, 90.0);
+    pros::Task::delay(100);
     // Process balls in the 2nd goal
-    au->nonCornerGoalSequence(-500, 90.0);
+    au->twoInOneOut(-500, 90.0);
     pros::Task::delay(100);
     // Turn to face the next goals
     au->pidGlobalTurn(0);
