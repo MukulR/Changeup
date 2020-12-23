@@ -16,6 +16,7 @@ Sensors::Sensors() {
     imu = inertial_sensor;
     optical = new pros::Optical(OPTICAL_PORT);
     vision = new pros::Vision(VISION_PORT);
+    distance_l = new pros::Distance(DISTANCE_L_PORT);
     distance_r = new pros::Distance(DISTANCE_R_PORT);
 }
 
