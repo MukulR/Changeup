@@ -563,6 +563,27 @@ void AutonUtils::cornerGoalSequence(bool isFirstGoal) {
     stopIntakes(mtrDefs);
 }
 
+void AutonUtils::twoInOneOut(int moveBackDistance, double heading) {
+    mtrDefs->roller_t->move(-127);
+    pros::Task::delay(300);
+    mtrDefs->roller_b->move(-80);
+   
+    startIntakes(mtrDefs);
+    while (!ballAtBottom()) {
+        
+    }
+
+    stopIntakes(mtrDefs);
+   
+    while(!ballAtMid()) {
+
+    }
+    
+    stopRollers(mtrDefs);
+
+    translate(moveBackDistance, TRANSLATE_VOLTAGE, heading);
+}
+
 
 void AutonUtils::nonCornerGoalSequence(int moveBackDistance, double heading) {
     startIntakes(mtrDefs);

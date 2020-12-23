@@ -7,8 +7,6 @@
 pros::Task *filterTask;
 pros::Task *shootBallsTask;
 pros::Task *stopBallsTask;
-pros::Task *backUpAndOuttakeTask;
-pros::Task *moveForwardAndFilterTask;
 pros::Task *indexMidTask;
 pros::Task *indexTwoBallsTask;
 pros::Task *filterAndIndexTwoBallsTask;
@@ -26,8 +24,6 @@ ProgrammingSkillsAuton::ProgrammingSkillsAuton(MotorDefs *md, bool ra) {
 
     filterTask = new pros::Task(AutonUtils::filter, md);
     shootBallsTask = new pros::Task(AutonUtils::shootBalls, md);
-    backUpAndOuttakeTask = new pros::Task(AutonUtils::backUpAndOuttake, md);
-    moveForwardAndFilterTask = new pros::Task(AutonUtils::moveForwardAndFilter, md);
     indexMidTask = new pros::Task(AutonUtils::indexMid, md);
     indexTwoBallsTask = new pros::Task(AutonUtils::indexTwoBalls, md);
     filterAndIndexTwoBallsTask = new pros::Task(AutonUtils::filterAndIndexTwoBalls, md);
@@ -40,8 +36,6 @@ ProgrammingSkillsAuton::~ProgrammingSkillsAuton() {
 
     delete filterTask;
     delete shootBallsTask;
-    delete backUpAndOuttakeTask;
-    delete moveForwardAndFilterTask;
     delete indexMidTask;
     delete indexTwoBallsTask;
     delete filterAndIndexTwoBallsTask;
@@ -60,15 +54,16 @@ void getInfo(Sensors *sensors) {
 
 
 void ProgrammingSkillsAuton::runAuton() {
-    captureFirstGoal();
-    captureSecondGoal();
-    captureThirdGoal();
-    captureFourthGoal();
-    captureFifthGoal();
-    captureCenterGoal();
-    captureSeventhGoal();
-    captureEighthGoal();
-    reviseNinthGoal();
+    au->twoInOneOut(-400, 0.0);
+    // captureFirstGoal();
+    // captureSecondGoal();
+    // captureThirdGoal();
+    // captureFourthGoal();
+    // captureFifthGoal();
+    // captureCenterGoal();
+    // captureSeventhGoal();
+    // captureEighthGoal();
+    // reviseNinthGoal();
 }
 
 void ProgrammingSkillsAuton::captureFirstGoal() {
