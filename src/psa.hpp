@@ -34,6 +34,8 @@ class ProgrammingSkillsAuton {
         void captureEighthGoal();
         void reviseNinthGoal();
 
+        void captureThirdOrEigthGoal(int goalNumber);
+
 
         void startHoldInGoal();
         void stopHoldInGoal();

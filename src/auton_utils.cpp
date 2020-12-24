@@ -592,7 +592,10 @@ void AutonUtils::nonCornerGoalSequence(int moveBackDistance, double heading) {
 
     }
     stopRollers(mtrDefs);
+    // Ensure that the blue ball comes to the right spot to filter
+    mtrDefs->roller_t->move(30);
     translate(moveBackDistance, TRANSLATE_VOLTAGE, heading);
+    mtrDefs->roller_t->move(0);
 }
 
 void AutonUtils::centerSequence() {
@@ -601,7 +604,7 @@ void AutonUtils::centerSequence() {
         startIntakes(mtrDefs);
         pros::Task::delay(300);
 
-        setDriveVoltage(50, 50);
+        setDriveVoltage(80, 80);
         startOuttakeFast(mtrDefs);
         pros::Task::delay(600);
     }
