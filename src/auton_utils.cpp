@@ -573,7 +573,10 @@ void AutonUtils::twoInOneOut(int moveBackDistance, double heading) {
     
     stopRollers(mtrDefs);
 
+    // Ensure that the blue ball comes to the right spot to filter
+    mtrDefs->roller_t->move(30);
     translate(moveBackDistance, TRANSLATE_VOLTAGE, heading);
+    mtrDefs->roller_t->move(0);
 }
 
 

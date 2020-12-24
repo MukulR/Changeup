@@ -57,13 +57,13 @@ void ProgrammingSkillsAuton::runAuton() {
     //au->twoInOneOut(-400, 0.0);
     captureFirstGoal();
     captureSecondGoal();
-    // captureThirdGoal();
-    // captureFourthGoal();
-    // captureFifthGoal();
-    // captureCenterGoal();
-    // captureSeventhGoal();
-    // captureEighthGoal();
-    // reviseNinthGoal();
+    captureThirdGoal();
+    captureFourthGoal();
+    captureFifthGoal();
+    captureCenterGoal();
+    captureSeventhGoal();
+    captureEighthGoal();
+    reviseNinthGoal();
 }
 
 void ProgrammingSkillsAuton::captureFirstGoal() {
