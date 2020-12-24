@@ -59,16 +59,13 @@ void getInfo(Sensors *sensors) {
 
 
 void ProgrammingSkillsAuton::runAuton() {
-    //au->twoInOneOut(-400, 0.0);
     captureFirstGoal();
     captureSecondGoal();
-    // captureThirdGoal();
     captureThirdOrEigthGoal(THIRD_GOAL);
     captureFourthGoal();
     captureFifthGoal();
     captureCenterGoal();
     captureSeventhGoal();
-    // captureEighthGoal();
     captureThirdOrEigthGoal(EIGTH_GOAL);
     reviseNinthGoal();
 }
@@ -167,11 +164,12 @@ void ProgrammingSkillsAuton::captureFourthGoal() {
 
 void ProgrammingSkillsAuton::captureFifthGoal() {
     AutonUtils::startIntakes(mtrDefs);
-    filterAndIndexOneBallTask->notify();
+    filterAndIndexTwoBallsTask->notify();
     // Advance towards the ball
-    au->visionTranslate(2000, 80, false);
+    au->visionTranslate(3500, 80, false);
+    pros::Task::delay(100);
     // Translate now so we do not pickup the other red ball w/ vision
-    au->translate(500, TRANSLATE_VOLTAGE, 270.0);
+    au->translate(-550, TRANSLATE_VOLTAGE, 260.0);
     // Turn to goal
     au->pidGlobalTurn(315);
     // Go to goal
