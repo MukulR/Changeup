@@ -559,6 +559,16 @@ void AutonUtils::twoInOneOut(int moveBackDistance, double heading) {
     mtrDefs->roller_t->move(-127);
     pros::Task::delay(300);
     mtrDefs->roller_b->move(-80);
+    
+    // Wait until the limit switch is released (while it is pressed, wait)
+    while(limit_t.get_value()) {
+        
+    }
+
+    // Wait until the limit switch is pressed (while it is released, wait)
+    while(!limit_t.get_value()) {
+        
+    }
    
     startIntakes(mtrDefs);
     while (!ballAtBottom()) {
