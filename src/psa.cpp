@@ -91,7 +91,7 @@ void ProgrammingSkillsAuton::captureFirstGoal() {
     au->translate(900, TRANSLATE_VOLTAGE);
     pros::Task::delay(50);
     // Score in goals, extract blue balls, and back up.
-    au->cornerGoalSequence(true);
+    au->cornerGoalSequence();
     // Turn to 0 heading. 
     au->pidGlobalTurn(335);
     // au->pidGlobalTurn(0);
@@ -137,7 +137,7 @@ void ProgrammingSkillsAuton::captureThirdGoal() {
     au->translate(750, TRANSLATE_VOLTAGE, 45.0);
     pros::Task::delay(50);
 
-    au->cornerGoalSequence(false);
+    au->cornerGoalSequence();
 
     au->pidGlobalTurn(245);
     // au->filter();
@@ -166,7 +166,7 @@ void ProgrammingSkillsAuton::captureFifthGoal() {
     AutonUtils::startIntakes(mtrDefs);
     filterAndIndexTwoBallsTask->notify();
     // Advance towards the ball
-    au->visionTranslate(3500, 80, false);
+    au->visionTranslate(3550, 80, false);
     pros::Task::delay(100);
     // Translate now so we do not pickup the other red ball w/ vision
     au->translate(-550, TRANSLATE_VOLTAGE, 260.0);
@@ -175,7 +175,7 @@ void ProgrammingSkillsAuton::captureFifthGoal() {
     // Go to goal
     au->translate(1000, TRANSLATE_VOLTAGE, 315.0);
     // Score/remove balls
-    au->cornerGoalSequence(false);
+    au->cornerGoalSequence();
     // Face next goal
     au->pidGlobalTurn(145);
     // Filter out ball
@@ -193,7 +193,9 @@ void ProgrammingSkillsAuton::captureCenterGoal() {
     pros::Task::delay(100);
     // Go to goal with intakes slowly running
     AutonUtils::startIntakes(mtrDefs);
-    au->translate(1050, 60, 110.0);
+    au->setDriveVoltage(80, 80);
+    pros::Task::delay(750);
+    au->setDriveVoltage(0, 0);
     // Turn intake to full speed to outtake the balls
     au->centerSequence();
     // Turn to face next goal
@@ -232,7 +234,7 @@ void ProgrammingSkillsAuton::captureEighthGoal() {
     au->translate(750, TRANSLATE_VOLTAGE, 225.0);
     pros::Task::delay(50);
 
-    au->cornerGoalSequence(false);
+    au->cornerGoalSequence();
     pros::Task::delay(100);
     // Turn to face the next goals
     au->pidGlobalTurn(70);
@@ -280,7 +282,7 @@ void ProgrammingSkillsAuton::captureThirdOrEigthGoal(int goalNumber) {
             au->translate(-550, TRANSLATE_VOLTAGE, 105.0);
             break;
         case EIGTH_GOAL:
-            au->translate(-600, TRANSLATE_VOLTAGE, 285.0);
+            au->translate(-550, TRANSLATE_VOLTAGE, 285.0);
             break;
         default:
             break;
@@ -301,7 +303,7 @@ void ProgrammingSkillsAuton::captureThirdOrEigthGoal(int goalNumber) {
     au->translate(900, TRANSLATE_VOLTAGE);
     pros::Task::delay(50);
     // Score in goals, extract blue balls, and back up.
-    au->cornerGoalSequence(true);
+    au->cornerGoalSequence();
     // Turn to next ball heading.
     switch (goalNumber) {
         case THIRD_GOAL:

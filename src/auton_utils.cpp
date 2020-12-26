@@ -524,14 +524,10 @@ void AutonUtils::shootBalls(void* param) {
     std::cout << "Outside while." << std::endl;
 }
 
-void AutonUtils::cornerGoalSequence(bool isFirstGoal) {
-    if (isFirstGoal) {
-        mtrDefs->roller_t->move(-127);
-        pros::Task::delay(300);
-        mtrDefs->roller_b->move(-80);
-    } else {
-        startRollersForDoubleShot(mtrDefs);
-    }
+void AutonUtils::cornerGoalSequence() {
+    mtrDefs->roller_t->move(-127);
+    pros::Task::delay(300);
+    mtrDefs->roller_b->move(-80);
     startIntakes(mtrDefs);
     while (!ballAtBottom()) {
         
