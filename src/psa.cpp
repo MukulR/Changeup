@@ -166,10 +166,10 @@ void ProgrammingSkillsAuton::captureFifthGoal() {
     AutonUtils::startIntakes(mtrDefs);
     filterAndIndexTwoBallsTask->notify();
     // Advance towards the ball
-    au->visionTranslate(3550, 80, false);
+    au->visionTranslate(3710, 80, false);
     pros::Task::delay(100);
     // Translate now so we do not pickup the other red ball w/ vision
-    au->translate(-550, TRANSLATE_VOLTAGE, 260.0);
+    au->translate(-600, TRANSLATE_VOLTAGE, 260.0);
     // Turn to goal
     au->pidGlobalTurn(315);
     // Go to goal
@@ -186,6 +186,8 @@ void ProgrammingSkillsAuton::captureCenterGoal() {
     AutonUtils::startIntakes(mtrDefs);
     filterAndIndexOneBallTask->notify();
     // Advance towards the ball
+    au->setDriveVoltage(80, 80);
+    pros::Task::delay(100);
     au->visionTranslate(2825, 80, true);
     pros::Task::delay(200);
     // Turn to goal
@@ -208,7 +210,7 @@ void ProgrammingSkillsAuton::captureSeventhGoal() {
     filterAndIndexOneBallTask->notify();
     // Advance towards the second goal
     au->visionTranslate(1500, 50, false);
-    au->translate(400, 50, 270.0);
+    au->translate(500, 50, 270.0);
     pros::Task::delay(500);
     AutonUtils::stopIntakes(mtrDefs);
     // Process balls in the 7th goal

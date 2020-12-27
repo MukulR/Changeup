@@ -526,7 +526,7 @@ void AutonUtils::shootBalls(void* param) {
 
 void AutonUtils::cornerGoalSequence() {
     mtrDefs->roller_t->move(-127);
-    pros::Task::delay(300);
+    pros::Task::delay(400);
     mtrDefs->roller_b->move(-80);
     startIntakes(mtrDefs);
     while (!ballAtBottom()) {
@@ -553,7 +553,7 @@ void AutonUtils::cornerGoalSequence() {
 
 void AutonUtils::twoInOneOut(int moveBackDistance, double heading) {
     mtrDefs->roller_t->move(-127);
-    pros::Task::delay(300);
+    pros::Task::delay(400);
     mtrDefs->roller_b->move(-80);
     
     // Wait until the limit switch is released (while it is pressed, wait)
