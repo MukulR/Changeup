@@ -58,7 +58,7 @@ void getInfo(Sensors *sensors) {
 
 
 
-void ProgrammingSkillsAuton::runAuton() {
+void ProgrammingSkillsAuton::runAuton() { 
     captureFirstGoal();
     captureSecondGoal();
     captureThirdOrEigthGoal(THIRD_GOAL);
@@ -169,7 +169,7 @@ void ProgrammingSkillsAuton::captureFifthGoal() {
     au->visionTranslate(3710, 80, false);
     pros::Task::delay(100);
     // Translate now so we do not pickup the other red ball w/ vision
-    au->translate(-600, TRANSLATE_VOLTAGE, 260.0);
+    au->translate(-550, TRANSLATE_VOLTAGE, 245.0);
     // Turn to goal
     au->pidGlobalTurn(315);
     // Go to goal
