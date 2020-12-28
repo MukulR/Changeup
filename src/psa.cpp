@@ -186,12 +186,11 @@ void ProgrammingSkillsAuton::captureCenterGoal() {
     AutonUtils::startIntakes(mtrDefs);
     filterAndIndexOneBallTask->notify();
     // Advance towards the ball
-    au->setDriveVoltage(80, 80);
-    pros::Task::delay(100);
+    au->translate(300, 80, 140.0, false);
     au->visionTranslate(2825, 80, true);
     pros::Task::delay(200);
     // Turn to goal
-    au->pidGlobalTurn(110);
+    au->pidGlobalTurn(100);
     pros::Task::delay(100);
     // Go to goal with intakes slowly running
     AutonUtils::startIntakes(mtrDefs);

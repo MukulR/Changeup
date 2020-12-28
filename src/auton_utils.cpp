@@ -46,7 +46,7 @@ double AutonUtils::avgDriveEncoderValue() {
             fabs(mtrDefs->right_mtr_t->get_position())) / 4;
 }
 
-void AutonUtils::translate(int units, int voltage, double angle) {
+void AutonUtils::translate(int units, int voltage, double angle, bool braking) {
     double imu_correction = 0.0;
 
     // Initial imu rotation used for alignment
@@ -87,8 +87,10 @@ void AutonUtils::translate(int units, int voltage, double angle) {
     }
 
     // brake
-    setDriveVoltage(-0.5 * TRANSLATE_VOLTAGE * direction, -0.5 * TRANSLATE_VOLTAGE * direction);
-    pros::delay(50);
+    if (braking) {
+        setDriveVoltage(-0.5 * TRANSLATE_VOLTAGE * direction, -0.5 * TRANSLATE_VOLTAGE * direction);
+        pros::delay(50);
+    }
 
     // set drive to neutral
     setDriveVoltage(0, 0);

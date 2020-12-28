@@ -16,7 +16,7 @@ class AutonUtils {
         AutonUtils(MotorDefs* mtrDefs, Sensors* sensors);
         ~AutonUtils();
         void setDriveVoltage(int leftVoltage, int rightVoltage);
-        void translate(int units, int voltage, double angle = -1.0);
+        void translate(int units, int voltage, double angle = -1.0, bool braking = true);
         void goalTranslate(int units, bool parallelOuttake);
         void translateWithDS();
         void resetDriveEncoders();
