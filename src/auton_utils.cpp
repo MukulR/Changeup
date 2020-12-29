@@ -548,7 +548,9 @@ void AutonUtils::cornerGoalSequence() {
     stopRollers(mtrDefs);
 
     startOuttake(mtrDefs);
+    mtrDefs->roller_t->move(30);
     translate(-400, TRANSLATE_VOLTAGE);
+    mtrDefs->roller_t->move(0);
     pros::Task::delay(300);
     stopIntakes(mtrDefs);
 }
