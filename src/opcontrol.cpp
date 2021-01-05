@@ -159,12 +159,12 @@ void index(void *param){
 
 void control(void* param) {	
 	while(true) {
-		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
-			// detection_enabled = false;
+		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
+			detection_enabled = false;
 			stopAll();
 		}
 
-		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) {
 			detection_enabled = true;
 		}
 
@@ -218,7 +218,7 @@ void control(void* param) {
 
 void autoShoot(void* param) {
 	while(true) {
-		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_B) /*master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)*/){
+		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_A) /*master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)*/){
 			// Disable autoindexing so it doesn't interfere
 			detection_enabled = false;
 			// Stop running motors from previous tasks.
@@ -234,7 +234,7 @@ void autoShoot(void* param) {
 			mtrDefs.roller_t->move(-127);
 			mtrDefs.roller_b->move(-80);
 
-			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_B) /*master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) */){
+			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_A) /*master.get_digital(pros::E_CONTROLLER_DIGITAL_L1) && master.get_digital(pros::E_CONTROLLER_DIGITAL_R1) */){
 
 				if (optical.get_hue() > 175.0 && optical.get_hue() < 290.0) {
 					// If blue, filter out the ball

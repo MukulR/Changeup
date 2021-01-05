@@ -153,7 +153,7 @@ void ProgrammingSkillsAuton::captureFourthGoal() {
     au->pidGlobalTurn(0);
     AutonUtils::stopIntakes(mtrDefs);
     // Go to goal
-    au->translate(1800, TRANSLATE_VOLTAGE, 0.0);
+    au->translate(1800, 115, 0.0);
 
     au->nonCornerGoalSequence(-200, 0.0);
     // Turn to face next goal
@@ -250,7 +250,7 @@ void ProgrammingSkillsAuton::reviseNinthGoal() {
     au->pidGlobalTurn(183);
     AutonUtils::stopIntakes(mtrDefs);
     // Go to goal
-    au->translate(1850, TRANSLATE_VOLTAGE, 183.0);
+    au->translate(1850, 115, 183.0);
 
     au->nonCornerGoalSequence(-200, 180.0);
 }
