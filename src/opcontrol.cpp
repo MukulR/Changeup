@@ -17,7 +17,7 @@ void drive(void* param){
 	while(true) {
 		int forward = master.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
 		int turn = master.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
-		float scaledTurn = ((turn * 100) * 0.75) / 100;
+		float scaledTurn = ((turn * 100) * 0.7) / 100;
 		float leftMtrVals = (forward + scaledTurn);
 		float rightMtrVals = -(scaledTurn - forward);
 		if(leftMtrVals > 127){

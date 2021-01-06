@@ -102,7 +102,7 @@ void ProgrammingSkillsAuton::captureSecondGoal() {
     AutonUtils::startIntakes(mtrDefs);
     filterAndIndexTwoBallsTask->notify();
     // Advance to pickup the ball next to center goal
-    au->translate(1300, 80, 335.0);
+    au->translate(1300, 80, 335.0, false);
     au->visionTranslate(1525, 100, true);
     
     // Turn to face the goal
