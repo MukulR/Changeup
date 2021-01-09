@@ -110,6 +110,7 @@ void ProgrammingSkillsAuton::captureSecondGoal() {
     // Track and pickup the second ball
     au->visionTranslate(1500, 50, false);
     // move farther into the goal so that we can score
+    indexTwoBallsTask->notify();
     au->translate(500, 50, 90.0);
     pros::Task::delay(100);
     // Process balls in the 2nd goal
@@ -134,6 +135,7 @@ void ProgrammingSkillsAuton::captureThirdGoal() {
     au->translate(500, TRANSLATE_VOLTAGE, 90.0);
     pros::Task::delay(50);
     au->pidGlobalTurn(45);
+    indexTwoBallsTask->notify();
     au->translate(750, TRANSLATE_VOLTAGE, 45.0);
     pros::Task::delay(50);
 
@@ -173,6 +175,7 @@ void ProgrammingSkillsAuton::captureFifthGoal() {
     // Turn to goal
     au->pidGlobalTurn(315);
     // Go to goal
+    indexTwoBallsTask->notify();
     au->translate(1000, TRANSLATE_VOLTAGE, 315.0);
     // Score/remove balls
     au->cornerGoalSequence();
@@ -300,6 +303,7 @@ void ProgrammingSkillsAuton::captureThirdOrEigthGoal(int goalNumber) {
             break;
     }
     AutonUtils::stopIntakes(mtrDefs);
+    indexTwoBallsTask->notify();
     // Go to goal
     au->translate(900, TRANSLATE_VOLTAGE);
     pros::Task::delay(50);
