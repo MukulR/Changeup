@@ -618,7 +618,6 @@ void AutonUtils::centerSequence() {
         startOuttakeFast(mtrDefs);
         pros::Task::delay(600);
     }
-    pidGlobalTurn(50);
     mtrDefs->roller_t->move(-127);
     setDriveVoltage(0, 0);
     startOuttake(mtrDefs);
