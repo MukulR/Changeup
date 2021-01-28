@@ -5,7 +5,7 @@ const int LEFT_MTR_T_PORT = 16;
 const int RIGHT_MTR_B_PORT = 13;
 const int RIGHT_MTR_T_PORT = 2;
 const int LEFT_INTAKE_MTR_PORT = 8;
-const int RIGHT_INTAKE_MTR_PORT = 10;
+const int RIGHT_INTAKE_MTR_PORT = 9;
 const int TOP_ROLLER_MTR_PORT = 5;
 const int BOTTOM_ROLLER_MTR_PORT = 3;
 

@@ -1,9 +1,10 @@
 #include <iostream>
-
+#include "autonselection.hpp"
 #include "main.h"
 #include "okapi/api.hpp"
 #include "motordefs.hpp"
 #include "psa.hpp"
+#include "tga.hpp"
 #include "auton.hpp"
 
 using std::endl;
@@ -25,29 +26,22 @@ using std::endl;
 void noAuton(){}
 
 void autonomous() {
-    /*
-    pros::Vision vision_sensor(10);
-
-    pros::vision_signature_s_t RED_SIG =
-    pros::Vision::signature_from_utility(1, 4937, 8847, 6892, -1703, 1, -851, 1.800, 0);
-
-    vision_sensor.set_signature(1, &RED_SIG);
-
-    pros::vision_object_s_t rtn = vision_sensor.get_by_sig(0, 1);
-    for (int i = 0; i < 2; i++) {
-        std::cout << "LC : " << rtn.left_coord << std::endl;
-        std::cout << "TC : " << rtn.top_coord << std::endl;
-        std::cout << "W : " << rtn.width << std::endl;
-        std::cout << "H : " << rtn.height << std::endl;
-        std::cout << "ANGLE : " << rtn.angle << std::endl;
-        std::cout << "XMID : " << rtn.x_middle_coord << std::endl;
-        std::cout << "YMID : " << rtn.y_middle_coord << std::endl;
-        std::cout << std::endl << std::endl;
-        rtn = vision_sensor.get_by_sig(0, 1);
-        pros::Task::delay(10000);
-    }
-    */
     MotorDefs* mtrDefs = new MotorDefs();
-    ProgrammingSkillsAuton psa(mtrDefs, true);
-    psa.runAuton();
+    switch (autonSelected) {
+        case 0:
+            {
+                ProgrammingSkillsAuton psa(mtrDefs, true);
+                psa.runAuton();
+            }
+            break;
+        case 1:
+            {
+                ThreeGoalAuton tga(mtrDefs, true);
+                tga.runAuton();
+            }
+            break;
+        default:
+            noAuton();
+            break;
+    }    
 } 

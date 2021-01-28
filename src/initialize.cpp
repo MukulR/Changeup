@@ -14,8 +14,8 @@
  *          shoot opponent's top flag, climb on platform
  */
  
-static const char *btnm_map[] = {"Skills", "Normal Auton", "\n", ""};
-static const char *auton_names[] = {"Skills", "Normal Auton"};
+static const char *btnm_map[] = {"Skills", "Three Goal", "\n", ""};
+static const char *auton_names[] = {"Skills", "Three Goal"};
 static const char *alliance_map[] = {"Red", "Blue", ""};
 
 int autonSelected = 2;  // by default no auton
@@ -82,7 +82,7 @@ void disabled() {}
 void competition_initialize() {
    std::cout << "Initializing IMU" << std::endl;
    // Initialize and calibrate imu/gyro here.
-   inertial_sensor = new pros::Imu(11);
+   inertial_sensor = new pros::Imu(12);
    inertial_sensor->reset();
 
    pros::Task::delay(3000);
