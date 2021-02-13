@@ -402,6 +402,29 @@ void AutonUtils::indexMid(void* param) {
     }
 }
 
+void AutonUtils::indexTwoBallsWithIntake(void* param) {
+    MotorDefs* mtrDefs = (MotorDefs*)param;
+    while(indexMidTask->notify_take(true, TIMEOUT_MAX)) {
+        mtrDefs->intake_l->move(127);
+        mtrDefs->intake_r->move(-127);
+        
+
+        mtrDefs->roller_t->move(-80);
+        mtrDefs->roller_b->move(-80);
+        while(!ballAtTop()) {
+
+        }
+        mtrDefs->roller_t->move(0);
+        while(!ballAtMid()) {
+
+        }
+        mtrDefs->roller_b->move(0);
+
+        mtrDefs->intake_l->move(0);
+        mtrDefs->intake_r->move(0);
+   }
+}
+
 
 void AutonUtils::filter(void* param) {
     MotorDefs* mtrDefs = (MotorDefs*)param;

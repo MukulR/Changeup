@@ -50,6 +50,7 @@ class AutonUtils {
         static void filterAndIndexOneBall(void* param);
         static void filter(void* param);
         static void shootBalls(void* param);
+        static void indexTwoBallsWithIntake(void* param);
     
 
         static void startIntakes(MotorDefs* mtrDefs);
