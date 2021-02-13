@@ -21,6 +21,7 @@ ThreeGoalAuton::~ThreeGoalAuton() {
 void ThreeGoalAuton::runAuton() { 
     captureFirstGoal();
     captureSecondGoal();
+    //captureThirdGoal();
 }
 
 void indexTwoBallsSync(MotorDefs *mtrDefs, AutonUtils *au) {
@@ -70,54 +71,40 @@ void doubleShot(MotorDefs *mtrDefs) {
 }
 
 void ThreeGoalAuton::captureFirstGoal() {
-    // Start indexing to pickup balls when going forward
-    mtrDefs->roller_t->move(-127);
-    pros::Task::delay(200);
-    mtrDefs->roller_t->move(0);
-    au->translate(1800, TRANSLATE_VOLTAGE);
-    pros::Task::delay(100);
+    au->startIntakes(mtrDefs);
+    au->translate(300, 80, 90.0, false);
+    au->pidGlobalTurn(125);
+    au->stopIntakes(mtrDefs);
+    au->translate(100, 80, 125, false);
 
-    // Turn towards the goal and stop intakes
-    std::cout << redAlliance << std::endl;
-    redAlliance ? au->pidGlobalTurn(135) : au->pidGlobalTurn(225);  
-    // Go to goal while using a task
-    AutonUtils::startIntakes(mtrDefs);
-    au->translate(975, TRANSLATE_VOLTAGE);
-    indexTwoBallsSync(mtrDefs, au);
-    AutonUtils::stopIntakes(mtrDefs);
-    pros::Task::delay(50);
-    // Score in goals, and back up.
-    doubleShot(mtrDefs);
-    pros::Task::delay(200);
-    //AutonUtils::startIntakes(mtrDefs);
-    au->translate(-800, TRANSLATE_VOLTAGE);
-    pros::Task::delay(100);
-    //AutonUtils::stopIntakes(mtrDefs);
-    // Turn to face next goal's heading. 
-    redAlliance ? au->pidGlobalTurn(270) : au->pidGlobalTurn(93);  
+    mtrDefs->roller_t->move(-127);
+    pros::Task::delay(900);
+    au->translate(-500, 127, 125, false);
+    au->pidGlobalTurn(300);
+    mtrDefs->roller_t->move(0);
 }
 
 void ThreeGoalAuton::captureSecondGoal() {
-    mtrDefs->roller_t->move(127);
-    mtrDefs->roller_b->move(-127);
-    // Advance towards the middle ball
-    AutonUtils::startIntakes(mtrDefs);
-    redAlliance ? au->translate(4750, 80, 270) : au->translate(4800, 80, 93);  
-    AutonUtils::stopIntakes(mtrDefs);
+    // indexTwoBallsTask->notify();
+    // au->visionTranslate(2000, 120, false);
+    // au->pidGlobalTurn(180.0);
+    // au->translate(2000, 127, 180.0, false);
 
-    redAlliance ? au->pidGlobalTurn(225) : au->pidGlobalTurn(135);  
-    mtrDefs->roller_t->move(0);
-    mtrDefs->roller_b->move(0);
+    // mtrDefs->roller_t->move(-127);
+    // pros::Task::delay(1000);
 
-    AutonUtils::startIntakes(mtrDefs);
-    au->translate(1000, TRANSLATE_VOLTAGE);
-    indexTwoBallsSync(mtrDefs, au);
-    AutonUtils::stopIntakes(mtrDefs);
-    pros::Task::delay(50);
-    // Score in goals, and back up.
-    doubleShot(mtrDefs);
-    pros::Task::delay(200);
-    //AutonUtils::startIntakes(mtrDefs);
-    au->translate(-1000, TRANSLATE_VOLTAGE);
-    //AutonUtils::stopIntakes(mtrDefs);
+    // au->translate(-100, 127, 180);
+    // au->pidGlobalTurn(270.0);
+}
+
+void ThreeGoalAuton::captureThirdGoal() {
+    // indexTwoBallsTask->notify();
+    // au->visionTranslate(2000, 120, false);
+
+    // mtrDefs->roller_t->move(-127);
+    // mtrDefs->intake_l->move(127);
+    // mtrDefs->intake_r->move(-127);
+    // pros::Task::delay(1000);
+
+    // au->translate(-500, 127);
 }
