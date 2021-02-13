@@ -44,6 +44,7 @@ class AutonUtils {
         void filter();
 
         static void indexMid(void* param);
+        static void filterAndIndexMid(void* param);
         static void indexTwoBalls(void* param);
         static void filterAndIndexTwoBalls(void* param);
         static void filterAndIndexOneBall(void* param);

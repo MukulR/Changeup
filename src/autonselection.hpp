@@ -14,6 +14,7 @@ extern pros::Imu *inertial_sensor;
 extern pros::Task *filterTask;
 extern pros::Task *shootBallsTask;
 extern pros::Task *indexMidTask;
+extern pros::Task *filterAndIndexMidTask;
 extern pros::Task *indexTwoBallsTask;
 extern pros::Task *filterAndIndexTwoBallsTask;
 extern pros::Task *filterAndIndexOneBallTask;

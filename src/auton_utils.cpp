@@ -53,6 +53,8 @@ void AutonUtils::translate(int units, int voltage, double angle, bool braking) {
     double imu_initial = sensors->imu->get_heading();
     double right_err = 0;
     double left_err = 0;
+    double leftVoltage;
+    double rightVoltage;
     int dir;
 
     if(angle != -1.0) {
@@ -78,8 +80,13 @@ void AutonUtils::translate(int units, int voltage, double angle, bool braking) {
             dir = -1;
         }
 
-        double leftVoltage = (direction * voltage) + (determineError(sensors->imu->get_heading(), imu_initial, dir) * velocityScale * dir);
-        double rightVoltage = (direction * voltage) - (determineError(sensors->imu->get_heading(), imu_initial, dir) * velocityScale * dir);
+        if (voltage > 95) {
+            leftVoltage = (direction * voltage) + 2 * (determineError(sensors->imu->get_heading(), imu_initial, dir) * velocityScale * dir);
+            rightVoltage = (direction * voltage) - 2 * (determineError(sensors->imu->get_heading(), imu_initial, dir) * velocityScale * dir);
+        } else {
+            leftVoltage = (direction * voltage) + (determineError(sensors->imu->get_heading(), imu_initial, dir) * velocityScale * dir);
+            rightVoltage = (direction * voltage) - (determineError(sensors->imu->get_heading(), imu_initial, dir) * velocityScale * dir);
+        }
 
         setDriveVoltage(leftVoltage, rightVoltage);
         
@@ -220,7 +227,7 @@ void AutonUtils::pidRotate(double angle, int direction) {
 
     // Used to determine when to exit the loop
     bool started = false;
-    int iter = 20;
+    int iter = 10;
     double angle_to_start = 3.0;
 
     // PID CONSTANTS
@@ -358,6 +365,25 @@ void AutonUtils::filterAndIndexOneBall(void* param) {
         mtrDefs->roller_t->move(-80);
         mtrDefs->roller_b->move(-80);
         while(!ballAtTop()) {
+
+        }
+        stopRollers(mtrDefs);
+    }
+}
+
+void AutonUtils::filterAndIndexMid(void* param) {
+    MotorDefs* mtrDefs = (MotorDefs*)param;
+    while(filterAndIndexMidTask->notify_take(true, TIMEOUT_MAX)) {
+        mtrDefs->roller_b->move(-127);
+        mtrDefs->roller_t->move(127);
+        while (!ballAtBottom()) {}
+        mtrDefs->roller_b->move(0);
+        mtrDefs->roller_t->move(0);
+
+        // Start the rollers so that we can index the newly picked up ball.
+        mtrDefs->roller_t->move(-80);
+        mtrDefs->roller_b->move(-80);
+        while(!ballAtMid()) {
 
         }
         stopRollers(mtrDefs);
@@ -618,10 +644,15 @@ void AutonUtils::centerSequence() {
         startOuttakeFast(mtrDefs);
         pros::Task::delay(600);
     }
+
+    pidGlobalTurn(45.0);
+
     mtrDefs->roller_t->move(-127);
+    mtrDefs->roller_b->move(-127);
     setDriveVoltage(0, 0);
     startOuttake(mtrDefs);
-    pros::Task::delay(300);
-    translate(-650, TRANSLATE_VOLTAGE, 90.0);
+    pros::Task::delay(500);
+    translate(-650, TRANSLATE_VOLTAGE, 110.0);
     mtrDefs->roller_t->move(0);
+    mtrDefs->roller_b->move(0);
 }

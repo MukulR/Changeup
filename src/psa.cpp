@@ -8,6 +8,7 @@ pros::Task *filterTask;
 pros::Task *shootBallsTask;
 pros::Task *stopBallsTask;
 pros::Task *indexMidTask;
+pros::Task *filterAndIndexMidTask;
 pros::Task *indexTwoBallsTask;
 pros::Task *filterAndIndexTwoBallsTask;
 pros::Task *filterAndIndexOneBallTask;
@@ -30,6 +31,7 @@ ProgrammingSkillsAuton::ProgrammingSkillsAuton(MotorDefs *md, bool ra) {
     filterTask = new pros::Task(AutonUtils::filter, md);
     shootBallsTask = new pros::Task(AutonUtils::shootBalls, md);
     indexMidTask = new pros::Task(AutonUtils::indexMid, md);
+    filterAndIndexMidTask = new pros::Task(AutonUtils::filterAndIndexMid, md);
     indexTwoBallsTask = new pros::Task(AutonUtils::indexTwoBalls, md);
     filterAndIndexTwoBallsTask = new pros::Task(AutonUtils::filterAndIndexTwoBalls, md);
     filterAndIndexOneBallTask = new pros::Task(AutonUtils::filterAndIndexOneBall, md);
@@ -42,6 +44,7 @@ ProgrammingSkillsAuton::~ProgrammingSkillsAuton() {
     delete filterTask;
     delete shootBallsTask;
     delete indexMidTask;
+    delete filterAndIndexMidTask;
     delete indexTwoBallsTask;
     delete filterAndIndexTwoBallsTask;
     delete filterAndIndexOneBallTask;
@@ -58,7 +61,7 @@ void getInfo(Sensors *sensors) {
 
 
 
-void ProgrammingSkillsAuton::runAuton() { 
+void ProgrammingSkillsAuton::runAuton() {
     captureFirstGoal();
     captureSecondGoal();
     captureThirdOrEigthGoal(THIRD_GOAL);
@@ -102,13 +105,13 @@ void ProgrammingSkillsAuton::captureSecondGoal() {
     AutonUtils::startIntakes(mtrDefs);
     filterAndIndexTwoBallsTask->notify();
     // Advance to pickup the ball next to center goal
-    au->translate(1300, 80, 335.0, false);
-    au->visionTranslate(1525, 100, true);
+    au->translate(1400, 100, 325.0, false);
+    au->visionTranslate(1525, 80, false);
     
     // Turn to face the goal
     au->pidGlobalTurn(90);
     // Track and pickup the second ball
-    au->visionTranslate(1500, 50, false);
+    au->visionTranslate(1650, 80, false);
     // move farther into the goal so that we can score
     indexTwoBallsTask->notify();
     au->translate(500, 50, 90.0);
@@ -150,12 +153,12 @@ void ProgrammingSkillsAuton::captureFourthGoal() {
     AutonUtils::startIntakes(mtrDefs);
     filterAndIndexOneBallTask->notify();
     // Advance towards the middle ball
-    au->visionTranslate(3150, 80, false);
+    au->visionTranslate(3150, 110, false);
     // Turn to face goal
     au->pidGlobalTurn(0);
     AutonUtils::stopIntakes(mtrDefs);
     // Go to goal
-    au->translate(1800, 115, 0.0);
+    au->translate(1800, 127, 0.0);
 
     au->nonCornerGoalSequence(-200, 0.0);
     // Turn to face next goal
@@ -187,10 +190,10 @@ void ProgrammingSkillsAuton::captureFifthGoal() {
 
 void ProgrammingSkillsAuton::captureCenterGoal() {
     AutonUtils::startIntakes(mtrDefs);
-    filterAndIndexOneBallTask->notify();
+    filterAndIndexMidTask->notify();
     // Advance towards the ball
     au->translate(300, 80, 140.0, false);
-    au->visionTranslate(2825, 80, true);
+    au->visionTranslate(2825, 100, true);
     pros::Task::delay(200);
     // Turn to goal
     au->pidGlobalTurn(100);
@@ -210,8 +213,8 @@ void ProgrammingSkillsAuton::captureSeventhGoal() {
     // Start intakes to pickup the ball, and start the task
     AutonUtils::startIntakes(mtrDefs);
     filterAndIndexOneBallTask->notify();
-    // Advance towards the second goal
-    au->visionTranslate(1500, 50, false);
+    // Advance towards the seventh goal
+    au->visionTranslate(1500, 80, false);
     au->translate(500, 50, 270.0);
     pros::Task::delay(500);
     AutonUtils::stopIntakes(mtrDefs);
@@ -248,12 +251,12 @@ void ProgrammingSkillsAuton::reviseNinthGoal() {
     AutonUtils::startIntakes(mtrDefs);
     filterAndIndexOneBallTask->notify();
     // Advance towards the middle ball
-    au->visionTranslate(3050, 80, false);
+    au->visionTranslate(3050, 127, false);
 
     au->pidGlobalTurn(183);
     AutonUtils::stopIntakes(mtrDefs);
     // Go to goal
-    au->translate(1850, 115, 183.0);
+    au->translate(1850, 127, 183.0);
 
     au->nonCornerGoalSequence(-200, 180.0);
 }
@@ -263,7 +266,7 @@ void ProgrammingSkillsAuton::captureThirdOrEigthGoal(int goalNumber) {
     AutonUtils::startIntakes(mtrDefs);
     filterAndIndexTwoBallsTask->notify();
     // Advance towards the third or eigth goal
-    au->visionTranslate(2500, 80, true);
+    au->visionTranslate(2500, 100, true);
     pros::Task::delay(50);
     // Turn based on parameter
     switch (goalNumber) {
@@ -277,16 +280,16 @@ void ProgrammingSkillsAuton::captureThirdOrEigthGoal(int goalNumber) {
             break;
     }
     // Track and pick up ball against the fence
-    au->visionTranslate(1400, 80, false);
+    au->visionTranslate(1400, 90, false);
     pros::Task::delay(100);
 
      // Move back from fence 
      switch (goalNumber) {
         case THIRD_GOAL:
-            au->translate(-550, TRANSLATE_VOLTAGE, 105.0);
+            au->translate(-450, TRANSLATE_VOLTAGE, 105.0);
             break;
         case EIGTH_GOAL:
-            au->translate(-550, TRANSLATE_VOLTAGE, 285.0);
+            au->translate(-500, TRANSLATE_VOLTAGE, 285.0);
             break;
         default:
             break;
