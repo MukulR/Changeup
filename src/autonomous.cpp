@@ -36,7 +36,7 @@ void autonomous() {
             break;
         case 1:
             {
-                ThreeGoalAuton tga(mtrDefs, true);
+                ThreeGoalAuton tga(mtrDefs, redAlliance);
                 tga.runAuton();
             }
             break;
