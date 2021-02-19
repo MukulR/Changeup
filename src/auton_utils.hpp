@@ -51,6 +51,7 @@ class AutonUtils {
         static void filter(void* param);
         static void shootBalls(void* param);
         static void indexTwoBallsWithIntake(void* param);
+        static void indexOneTop(void* param);
     
 
         static void startIntakes(MotorDefs* mtrDefs);
@@ -61,6 +62,7 @@ class AutonUtils {
         static void stopRollers(MotorDefs* mtrDefs);
         static void startOuttake(MotorDefs* mtrDefs);  
         static void startOuttakeFast(MotorDefs* mtrDefs);
+        static void indexTopBlocking(MotorDefs* mtrDefs);
         static bool blueBallInFilteringPos(Sensors *sensors);    
         static bool ballAtTop();
         static bool ballAtMid(); 
