@@ -659,23 +659,21 @@ void AutonUtils::nonCornerGoalSequence(int moveBackDistance, double heading) {
 
 void AutonUtils::centerSequence() {
     for (int i = 0; i < 3; i++) {
-        setDriveVoltage(-50, -50);
+        translate(-150, TRANSLATE_VOLTAGE, 0.0, false);
         startIntakes(mtrDefs);
         pros::Task::delay(300);
 
-        setDriveVoltage(80, 80);
+        setDriveVoltage(100, 100);
         startOuttakeFast(mtrDefs);
-        pros::Task::delay(600);
+        pros::Task::delay(500);
     }
 
-    pidGlobalTurn(45.0);
-
+    setDriveVoltage(0, 50);
     mtrDefs->roller_t->move(-127);
     mtrDefs->roller_b->move(-127);
-    setDriveVoltage(0, 0);
     startOuttake(mtrDefs);
     pros::Task::delay(500);
-    translate(-650, TRANSLATE_VOLTAGE, 110.0);
+    translate(-650, TRANSLATE_VOLTAGE, 340.0);
     mtrDefs->roller_t->move(0);
     mtrDefs->roller_b->move(0);
 }
