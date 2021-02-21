@@ -80,7 +80,7 @@ void ProgrammingSkillsAuton::captureFirstGoal() {
     // mtrDefs->roller_t->move(0);
 
     // New push back
-    au->setDriveVoltage(-60, -60);
+    au->setDriveVoltage(-95, -95);
     pros::Task::delay(500);
     au->setDriveVoltage(0, 0);
     // End new
@@ -88,7 +88,7 @@ void ProgrammingSkillsAuton::captureFirstGoal() {
 
     // Move to the fence ball 
     indexTwoBallsTask->notify();
-    au->visionTranslate(3100, 80, false);
+    au->visionTranslate(3150, 80, false);
     pros::Task::delay(100);
 
     // Move back from fence 
@@ -111,7 +111,7 @@ void ProgrammingSkillsAuton::captureSecondGoal() {
     AutonUtils::startIntakes(mtrDefs);
     filterAndIndexTwoBallsTask->notify();
     // Advance to pickup the ball next to center goal
-    au->translate(1400, 100, 325.0, false);
+    au->translate(1400, 100, 327.0, false);
     au->visionTranslate(1525, 80, false);
     
     // Turn to face the goal
@@ -159,7 +159,7 @@ void ProgrammingSkillsAuton::captureFourthGoal() {
     AutonUtils::startIntakes(mtrDefs);
     filterAndIndexOneBallTask->notify();
     // Advance towards the middle ball
-    au->visionTranslate(3150, 110, false);
+    au->visionTranslate(3050, 110, false);
     // Turn to face goal
     au->pidGlobalTurn(0);
     AutonUtils::stopIntakes(mtrDefs);
@@ -208,7 +208,7 @@ void ProgrammingSkillsAuton::captureSixthGoal() {
     // move farther into the goal so that we can score
     indexTwoBallsTask->notify();
     au->translate(500, 50, 270.0);
-
+    pros::Task::delay(100);
     // pros::Task::delay(500);
     AutonUtils::stopIntakes(mtrDefs);
     // Process balls in the 7th goal
@@ -222,15 +222,17 @@ void ProgrammingSkillsAuton::captureCenterGoal() {
     AutonUtils::startIntakes(mtrDefs);
     filterAndIndexOneBallTask->notify();
     // Advance towards the middle ball
-    au->visionTranslate(3250, 127, false);
+    au->visionTranslate(2850, 110, false);
     // pros::Task::delay(100);
     au->pidGlobalTurn(0);
 
-    // Go to goal with intakes slowly running
+    // // Go to goal with intakes slowly running
     AutonUtils::startIntakes(mtrDefs);
-    au->setDriveVoltage(127, 127);
-    pros::Task::delay(750);
-    au->setDriveVoltage(0, 0);
+    // au->setDriveVoltage(80, 80);
+    // pros::Task::delay(800);
+    // au->setDriveVoltage(0, 0);
+
+    au->translate(1300, 60, 0, false);
     // Turn intake to full speed to outtake the balls
     au->centerSequence();
 

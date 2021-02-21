@@ -79,7 +79,7 @@ void rollers(void* param) {
 	while(true) {
 		if(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
 			mtrDefs.roller_t->move(-127);
-			mtrDefs.roller_b->move(-80);
+			mtrDefs.roller_b->move(-30);
 
 			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_R1)){
 				if(line_t.get_value() >= 2800 && line_m.get_value() >= 2750){

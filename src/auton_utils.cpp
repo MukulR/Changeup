@@ -658,22 +658,36 @@ void AutonUtils::nonCornerGoalSequence(int moveBackDistance, double heading) {
 }
 
 void AutonUtils::centerSequence() {
-    for (int i = 0; i < 3; i++) {
-        translate(-150, TRANSLATE_VOLTAGE, 0.0, false);
-        startIntakes(mtrDefs);
-        pros::Task::delay(300);
+    // for (int i = 0; i < 2; i++) {
+    //     translate(-300, 50, 0.0, false);
+    //     pros::Task::delay(50);
 
-        setDriveVoltage(100, 100);
-        startOuttakeFast(mtrDefs);
-        pros::Task::delay(500);
+    //     setDriveVoltage(50, 50);
+    //     pros::Task::delay(500);
+    //     setDriveVoltage(0, 0);
+    // }
+
+    // setDriveVoltage(0, 50);
+    // mtrDefs->roller_t->move(-127);
+    // mtrDefs->roller_b->move(-127);
+    // startOuttake(mtrDefs);
+    // pros::Task::delay(1000);
+    // translate(-650, TRANSLATE_VOLTAGE, 0.0);
+    // mtrDefs->roller_t->move(0);
+    // mtrDefs->roller_b->move(0);
+
+    setDriveVoltage(-10, -10);
+    startRollers(mtrDefs);
+    startIntakes(mtrDefs);
+    pros::Task::delay(300);
+    while(!ballAtTop()) {
+
     }
+    stopRollers(mtrDefs);
+    stopIntakes(mtrDefs);
 
-    setDriveVoltage(0, 50);
-    mtrDefs->roller_t->move(-127);
-    mtrDefs->roller_b->move(-127);
-    startOuttake(mtrDefs);
-    pros::Task::delay(500);
-    translate(-650, TRANSLATE_VOLTAGE, 340.0);
-    mtrDefs->roller_t->move(0);
-    mtrDefs->roller_b->move(0);
+    startIntakesSlow(mtrDefs);
+    translate(-300, TRANSLATE_VOLTAGE, -1.0, false);
+
+
 }
