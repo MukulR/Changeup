@@ -425,6 +425,28 @@ void AutonUtils::indexTwoBallsWithIntake(void* param) {
    }
 }
 
+void AutonUtils::indexOneTop(void* param) {
+    MotorDefs* mtrDefs = (MotorDefs*)param;
+     while(filterTask->notify_take(true, TIMEOUT_MAX)) {
+         // Start the rollers so that we can index the newly picked up ball.
+        mtrDefs->roller_t->move(-80);
+        mtrDefs->roller_b->move(-80);
+        while(!ballAtTop()) {
+
+        }
+        stopRollers(mtrDefs);
+     }
+}
+
+void AutonUtils::indexTopBlocking(MotorDefs *mtrDefs) {
+    mtrDefs->roller_t->move(-80);
+    mtrDefs->roller_b->move(-80);
+    while(!ballAtTop()) {
+
+    }
+    stopRollers(mtrDefs);
+}
+
 
 void AutonUtils::filter(void* param) {
     MotorDefs* mtrDefs = (MotorDefs*)param;

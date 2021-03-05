@@ -6,22 +6,32 @@
 
 const int TRANSLATE_VOLTAGE = 100;
 
+pros::Task *indexOneTopTask;
+
+
 ThreeGoalAuton::ThreeGoalAuton(MotorDefs *md, bool ra) {
     mtrDefs = md;
     redAlliance = ra;
     sensors = new Sensors();
     au = new AutonUtils(mtrDefs, sensors);
+
+    indexOneTopTask = new pros::Task(AutonUtils::indexOneTop, md);
 }
 
 ThreeGoalAuton::~ThreeGoalAuton() {
     delete sensors;
     delete au;
+
+    delete indexOneTopTask;
 }
 
 void ThreeGoalAuton::runAuton() { 
     captureFirstGoal();
     captureSecondGoal();
+    captureThirdGoal();
+    captureFourthGoal();
 }
+
 
 void indexTwoBallsSync(MotorDefs *mtrDefs, AutonUtils *au) {
     mtrDefs->roller_t->move(-80);
@@ -70,54 +80,51 @@ void doubleShot(MotorDefs *mtrDefs) {
 }
 
 void ThreeGoalAuton::captureFirstGoal() {
-    // Start indexing to pickup balls when going forward
-    mtrDefs->roller_t->move(-127);
-    pros::Task::delay(200);
-    mtrDefs->roller_t->move(0);
-    au->translate(1800, TRANSLATE_VOLTAGE);
-    pros::Task::delay(100);
+    au->startIntakes(mtrDefs);
+    au->translate(300, 80, redAlliance ? 90.0 : 270.0, false);
+    au->pidGlobalTurn(redAlliance ? 125 : 235);
+    au->stopIntakes(mtrDefs);
+    au->translate(100, 80, redAlliance ? 125 : 235, false);
 
-    // Turn towards the goal and stop intakes
-    std::cout << redAlliance << std::endl;
-    redAlliance ? au->pidGlobalTurn(135) : au->pidGlobalTurn(225);  
-    // Go to goal while using a task
-    AutonUtils::startIntakes(mtrDefs);
-    au->translate(975, TRANSLATE_VOLTAGE);
-    indexTwoBallsSync(mtrDefs, au);
-    AutonUtils::stopIntakes(mtrDefs);
-    pros::Task::delay(50);
-    // Score in goals, and back up.
-    doubleShot(mtrDefs);
-    pros::Task::delay(200);
-    //AutonUtils::startIntakes(mtrDefs);
-    au->translate(-800, TRANSLATE_VOLTAGE);
-    pros::Task::delay(100);
-    //AutonUtils::stopIntakes(mtrDefs);
-    // Turn to face next goal's heading. 
-    redAlliance ? au->pidGlobalTurn(270) : au->pidGlobalTurn(93);  
+    mtrDefs->roller_t->move(-127);
+    pros::Task::delay(900);
+    au->translate(-600, 127, redAlliance ? 125 : 235, false);
+    au->pidGlobalTurn(redAlliance ? 270 : 90);
+    mtrDefs->roller_t->move(0);
 }
 
 void ThreeGoalAuton::captureSecondGoal() {
-    mtrDefs->roller_t->move(127);
-    mtrDefs->roller_b->move(-127);
-    // Advance towards the middle ball
     AutonUtils::startIntakes(mtrDefs);
-    redAlliance ? au->translate(4750, 80, 270) : au->translate(4800, 80, 93);  
+    indexOneTopTask->notify();
+    au->translate(redAlliance ? 2000 : 2100, 127, redAlliance ? 270 : 90, true);
+    au->pidGlobalTurn(180.0);
     AutonUtils::stopIntakes(mtrDefs);
-
-    redAlliance ? au->pidGlobalTurn(225) : au->pidGlobalTurn(135);  
+    au->translate(500, 90, 180.0);
+    mtrDefs->roller_t->move(-127);
+    pros::Task::delay(900);
+    au->translate(-400, 90, 180.0);
     mtrDefs->roller_t->move(0);
-    mtrDefs->roller_b->move(0);
+    au->pidGlobalTurn(redAlliance ? 270 : 90);
+}
 
+void ThreeGoalAuton::captureThirdGoal() {
     AutonUtils::startIntakes(mtrDefs);
-    au->translate(1000, TRANSLATE_VOLTAGE);
-    indexTwoBallsSync(mtrDefs, au);
+    au->translate(2200, 127, redAlliance ? 270 : 90, true);
+    au->pidGlobalTurn(redAlliance ? 225 : 135);
+    pros::Task::delay(100);
+    au->translate(475, 127, -1);
+    AutonUtils::indexTopBlocking(mtrDefs);
     AutonUtils::stopIntakes(mtrDefs);
-    pros::Task::delay(50);
-    // Score in goals, and back up.
-    doubleShot(mtrDefs);
-    pros::Task::delay(200);
-    //AutonUtils::startIntakes(mtrDefs);
-    au->translate(-1000, TRANSLATE_VOLTAGE);
-    //AutonUtils::stopIntakes(mtrDefs);
+    au->translate(300, 80, -1, true);
+    mtrDefs->roller_t->move(-127);
+    pros::Task::delay(900);
+    au->translate(-600, 127, redAlliance ? 225 : 135);
+    au->pidGlobalTurn(redAlliance ? 60 : 300);
+}
+
+void ThreeGoalAuton::captureFourthGoal() {
+    au->translate(2300, 127, redAlliance ? 65 : 285, true);
+    au->pidGlobalTurn(350);
+    AutonUtils::startOuttake(mtrDefs);
+    au->visionTranslate(1700, 60, false);
 }
