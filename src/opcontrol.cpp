@@ -166,6 +166,21 @@ void index(void *param){
 
 void control(void* param) {	
 	while(true) {
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)) {
+			mtrDefs.intake_r->move(127);
+			mtrDefs.intake_l->move(-127);
+			mtrDefs.roller_t->move(127);
+			mtrDefs.roller_b->move(127);
+			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)) {
+				pros::Task::delay(10);
+			}
+			mtrDefs.intake_r->move(0);
+			mtrDefs.intake_l->move(0);
+			mtrDefs.roller_t->move(0);
+			mtrDefs.roller_b->move(0);
+		}
+
+
 		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)) {
 			detection_enabled = false;
 			stopAll();

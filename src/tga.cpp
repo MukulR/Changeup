@@ -96,7 +96,7 @@ void ThreeGoalAuton::captureFirstGoal() {
 void ThreeGoalAuton::captureSecondGoal() {
     AutonUtils::startIntakes(mtrDefs);
     indexOneTopTask->notify();
-    au->translate(redAlliance ? 2000 : 2100, 127, redAlliance ? 270 : 90, true);
+    au->translate(2000, 127, 270, true);
     au->pidGlobalTurn(180.0);
     AutonUtils::stopIntakes(mtrDefs);
     au->translate(500, 90, 180.0);
@@ -104,13 +104,13 @@ void ThreeGoalAuton::captureSecondGoal() {
     pros::Task::delay(900);
     au->translate(-400, 90, 180.0);
     mtrDefs->roller_t->move(0);
-    au->pidGlobalTurn(redAlliance ? 270 : 90);
+    au->pidGlobalTurn(270);
 }
 
 void ThreeGoalAuton::captureThirdGoal() {
     AutonUtils::startIntakes(mtrDefs);
-    au->translate(2300, 127, redAlliance ? 270 : 90, true);
-    au->pidGlobalTurn(redAlliance ? 225 : 135);
+    au->translate(2300, 127, 270, true);
+    au->pidGlobalTurn(225);
     pros::Task::delay(100);
     au->translate(425, 127, -1);
     AutonUtils::indexTopBlocking(mtrDefs);
@@ -118,14 +118,16 @@ void ThreeGoalAuton::captureThirdGoal() {
     au->translate(300, 80, -1, true);
     mtrDefs->roller_t->move(-127);
     pros::Task::delay(900);
-    au->translate(-600, 127, redAlliance ? 219 : 135, false);
+    au->translate(-600, 127, 219, false);
 }
 
 void ThreeGoalAuton::captureFourthGoal() {
-    au->translate(-2975, 80, redAlliance ? 219 : 310, true);
-    au->setDriveVoltage(3, -100);
-    pros::Task::delay(1000);
-    au->setDriveVoltage(-15, 80);
+    au->translate(-2975, 80, 219, true);
+    au->setDriveVoltage(2, -100);
+    while (sensors->imu->get_heading() < 271) {
+        pros::Task::delay(10);
+    }
+    au->setDriveVoltage(-5, 80);
     pros::Task::delay(1000);
     au->setDriveVoltage(0, 0);
 }
