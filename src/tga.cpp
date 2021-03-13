@@ -127,7 +127,7 @@ void ThreeGoalAuton::captureFourthGoal() {
     while (sensors->imu->get_heading() < 271) {
         pros::Task::delay(10);
     }
-    au->setDriveVoltage(-5, 80);
+    au->setDriveVoltage(-5, 127);
     pros::Task::delay(1000);
     au->setDriveVoltage(0, 0);
 }
