@@ -96,13 +96,13 @@ void ThreeGoalAuton::captureFirstGoal() {
 void ThreeGoalAuton::captureSecondGoal() {
     AutonUtils::startIntakes(mtrDefs);
     indexOneTopTask->notify();
-    au->translate(2000, 127, 270, true);
+    au->translate(1900, 127, 270, true);
     au->pidGlobalTurn(180.0);
     AutonUtils::stopIntakes(mtrDefs);
-    au->translate(500, 90, 180.0);
+    au->translate(650, 90, 180.0);
     mtrDefs->roller_t->move(-127);
     pros::Task::delay(900);
-    au->translate(-400, 90, 180.0);
+    au->translate(-300, 90, 180.0);
     mtrDefs->roller_t->move(0);
     au->pidGlobalTurn(270);
 }
