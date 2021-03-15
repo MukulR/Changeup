@@ -35,7 +35,7 @@ void ThreeGoalAuton::runAuton() {
         captureFirstGoalStates();
         captureSecondGoalStates();
         captureThirdGoalStates();
-        captureFourthGoalStates();
+        captureFourthGoalBackwardStates();
     }
 }
 
@@ -118,7 +118,7 @@ void ThreeGoalAuton::captureSecondGoalStates() {
     au->translate(-800, 80, 270.0, false);
     pros::Task::delay(300);
     au->setDriveVoltage(-30, 100);
-    while (sensors->imu->get_heading() > 165) {
+    while (sensors->imu->get_heading() > 163) {
         pros::Task::delay(10);
     }
     au->setDriveVoltage(0, 0);
@@ -126,16 +126,16 @@ void ThreeGoalAuton::captureSecondGoalStates() {
 }
 
 void ThreeGoalAuton::captureThirdGoalStates() {
-    au->translate(2000, 80, 165.0, false);
+    au->translate(2100, 80, 163.0, false);
     mtrDefs->roller_t->move(-127);
     pros::Task::delay(900);
 
     au->translate(-250, 80, 180, true);
     pros::Task::delay(100);
-    au->pidGlobalTurn(90);
 }
 
 void ThreeGoalAuton::captureFourthGoalStates() {
+    au->pidGlobalTurn(90);
     au->translate(2300, 80, 90, true);
     pros::Task::delay(100);
     au->pidGlobalTurn(135);
@@ -147,5 +147,15 @@ void ThreeGoalAuton::captureFourthGoalStates() {
     mtrDefs->roller_t->move(-127);
     pros::Task::delay(900);
     au->translate(-600, 127, 135, false);
+}
+
+void ThreeGoalAuton::captureFourthGoalBackwardStates() {
+    au->pidGlobalTurn(270);
+    au->translate(-2350, 80, 270, true);
+    pros::Task::delay(100);
+    au->pidGlobalTurn(315);
+    au->translate(-1000, 80, 315, false);
+    pros::Task::delay(100);
+    au->translate(500, 80, 315, false);
 }
 
