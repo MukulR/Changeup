@@ -25,58 +25,18 @@ ThreeGoalAuton::~ThreeGoalAuton() {
     delete indexOneTopTask;
 }
 
-void ThreeGoalAuton::runAuton() { 
-    captureFirstGoal();
-    captureSecondGoal();
-    captureThirdGoal();
-    captureFourthGoal();
-}
-
-
-void indexTwoBallsSync(MotorDefs *mtrDefs, AutonUtils *au) {
-    mtrDefs->roller_t->move(-80);
-    mtrDefs->roller_b->move(-80);
-    while(!AutonUtils::ballAtTop()) {
-        
+void ThreeGoalAuton::runAuton() {
+    if (redAlliance) {
+        captureFirstGoal();
+        captureSecondGoal();
+        captureThirdGoal();
+        captureFourthGoal();
+    } else {
+        captureFirstGoalStates();
+        captureSecondGoalStates();
+        captureThirdGoalStates();
+        captureFourthGoalStates();
     }
-    mtrDefs->roller_t->move(-10);
-
-    au->setDriveVoltage(-40, -40);
-    pros::Task::delay(300);
-    au->setDriveVoltage(40, 40);
-    pros::Task::delay(300);
-    au->setDriveVoltage(0, 0);
-
-    while(!AutonUtils::ballAtMid()) {
-
-    }
-    mtrDefs->roller_b->move(0);
-    mtrDefs->roller_t->move(0);
-}
-
-void doubleShot(MotorDefs *mtrDefs) {
-    // mtrDefs->intake_r->move(60);
-    // mtrDefs->intake_l->move(-60);
-    // pros::Task::delay(200);
-    // mtrDefs->intake_r->move(0);
-    // mtrDefs->intake_l->move(0);
-
-    mtrDefs->roller_b->move(80);
-    pros::Task::delay(200);
-    mtrDefs->roller_b->move(15);
-    
-    mtrDefs->roller_t->move(-127);
-    pros::Task::delay(300);
-    mtrDefs->roller_t->move(0);
-
-    pros::Task::delay(50);
-
-    mtrDefs->roller_b->move(-127);
-    mtrDefs->roller_t->move(-127);
-    pros::Task::delay(300);
-    mtrDefs->roller_b->move(0);
-    pros::Task::delay(600);
-    mtrDefs->roller_t->move(0);
 }
 
 void ThreeGoalAuton::captureFirstGoal() {
@@ -131,3 +91,61 @@ void ThreeGoalAuton::captureFourthGoal() {
     pros::Task::delay(1000);
     au->setDriveVoltage(0, 0);
 }
+
+void ThreeGoalAuton::captureFirstGoalStates() {
+    AutonUtils::startIntakes(mtrDefs);
+    au->translate(300, 80, 270.0, false);
+    au->pidGlobalTurn(225);
+    AutonUtils::stopIntakes(mtrDefs);
+
+    au->translate(100, 80, 225, false);
+    AutonUtils::startOuttakeFast(mtrDefs);
+    mtrDefs->roller_t->move(-127);
+    pros::Task::delay(900);
+
+    au->translate(-1000, 127, 225, true);
+    AutonUtils::stopIntakes(mtrDefs);
+    au->pidGlobalTurn(0);
+}
+
+void ThreeGoalAuton::captureSecondGoalStates() {
+    AutonUtils::startIntakes(mtrDefs);
+    au->visionTranslate(1400, 80, false);
+    pros::Task::delay(100);
+    indexOneTopTask->notify();
+    au->pidGlobalTurn(270);
+    pros::Task::delay(50);
+    au->translate(-800, 80, 270.0, false);
+    pros::Task::delay(300);
+    au->setDriveVoltage(-30, 100);
+    while (sensors->imu->get_heading() > 165) {
+        pros::Task::delay(10);
+    }
+    au->setDriveVoltage(0, 0);
+    AutonUtils::stopIntakes(mtrDefs);
+}
+
+void ThreeGoalAuton::captureThirdGoalStates() {
+    au->translate(2000, 80, 165.0, false);
+    mtrDefs->roller_t->move(-127);
+    pros::Task::delay(900);
+
+    au->translate(-250, 80, 180, true);
+    pros::Task::delay(100);
+    au->pidGlobalTurn(90);
+}
+
+void ThreeGoalAuton::captureFourthGoalStates() {
+    au->translate(2300, 80, 90, true);
+    pros::Task::delay(100);
+    au->pidGlobalTurn(135);
+    AutonUtils::startIntakes(mtrDefs);
+    au->translate(425, 127, -1);
+    AutonUtils::indexTopBlocking(mtrDefs);
+    AutonUtils::stopIntakes(mtrDefs);
+    au->translate(300, 80, -1, false);
+    mtrDefs->roller_t->move(-127);
+    pros::Task::delay(900);
+    au->translate(-600, 127, 135, false);
+}
+
