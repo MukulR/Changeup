@@ -34,6 +34,7 @@ class ThreeGoalAuton {
         void captureThirdGoalStates();
         void captureFourthGoalStates();
         void captureFourthGoalBackwardStates();
+        void captureFifthGoalStates();
 
         void startHoldInGoal();
         void stopHoldInGoal();

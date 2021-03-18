@@ -28,7 +28,8 @@ class AutonUtils {
         void setDriveSpeed(int leftSpeed, int rightSpeed);
         double determineError(double imu_cur, double imu_desired, int direction);
 
-        void visionTranslate(int units, int speed, bool useLT);
+        void visionTranslate(int units, int speed, bool useLT, bool useBumper = false);
+        void signatureVisionTranslate(int units, int speed, bool useLT, bool blue);
         
         
         void oneShot();
