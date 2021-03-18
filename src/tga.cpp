@@ -26,6 +26,11 @@ ThreeGoalAuton::~ThreeGoalAuton() {
 }
 
 void ThreeGoalAuton::runAuton() {
+    // au->signatureVisionTranslate(1400, 80, false, true);
+    // AutonUtils::startIntakes(mtrDefs);
+    // au->visionTranslate(6000, 80, false, true);
+    // driveUntilPushed();
+    
     if (redAlliance) {
         captureFirstGoal();
         captureSecondGoal();
@@ -36,6 +41,7 @@ void ThreeGoalAuton::runAuton() {
         captureSecondGoalStates();
         captureThirdGoalStates();
         captureFourthGoalBackwardStates();
+        captureFifthGoalStates();
     }
 }
 
@@ -110,12 +116,12 @@ void ThreeGoalAuton::captureFirstGoalStates() {
 
 void ThreeGoalAuton::captureSecondGoalStates() {
     AutonUtils::startIntakes(mtrDefs);
-    au->visionTranslate(1400, 80, false);
+    au->visionTranslate(1550, 80, true, true);
     pros::Task::delay(100);
     indexOneTopTask->notify();
     au->pidGlobalTurn(270);
     pros::Task::delay(50);
-    au->translate(-800, 80, 270.0, false);
+    au->translate(-900, 80, 270.0, false);
     pros::Task::delay(300);
     au->setDriveVoltage(-30, 100);
     while (sensors->imu->get_heading() > 163) {
@@ -126,7 +132,7 @@ void ThreeGoalAuton::captureSecondGoalStates() {
 }
 
 void ThreeGoalAuton::captureThirdGoalStates() {
-    au->translate(2100, 80, 163.0, false);
+    au->translate(2650, 80, 163.0, false);
     mtrDefs->roller_t->move(-127);
     pros::Task::delay(900);
 
@@ -156,6 +162,31 @@ void ThreeGoalAuton::captureFourthGoalBackwardStates() {
     au->pidGlobalTurn(315);
     au->translate(-1000, 80, 315, false);
     pros::Task::delay(100);
-    au->translate(500, 80, 315, false);
+    au->translate(500, 80, 310, false);
 }
 
+void ThreeGoalAuton::captureFifthGoalStates() {
+
+    au->signatureVisionTranslate(3300, 80, false, true);
+    au->setDriveVoltage(80, -15);
+    while(sensors->imu->get_heading() < 330) {
+        pros::Task::delay(10);
+    }
+    au->setDriveVoltage(-15, 80);
+    pros::Task::delay(50);
+    au->setDriveVoltage(0,0);
+    pros::Task::delay(200);
+}
+
+
+// void ThreeGoalAuton::driveUntilPushed() {
+//     au->setDriveVoltage(80, 80);
+//     while(!intake_bumper.get_value()) {
+//         pros::Task::delay(10);
+//     }
+//     indexOneTopTask->notify();
+//     au->setDriveVoltage(-70, -70);
+//     pros::Task::delay(150);
+//     au->setDriveVoltage(0,0);
+//     au->pidGlobalTurn(270);
+// }
