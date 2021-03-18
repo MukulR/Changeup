@@ -166,12 +166,12 @@ void index(void *param){
 
 void control(void* param) {	
 	while(true) {
-		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)) {
-			mtrDefs.intake_r->move(127);
-			mtrDefs.intake_l->move(-127);
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+			mtrDefs.intake_r->move(70);
+			mtrDefs.intake_l->move(-70);
 			mtrDefs.roller_t->move(127);
 			mtrDefs.roller_b->move(127);
-			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)) {
+			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
 				pros::Task::delay(10);
 			}
 			mtrDefs.intake_r->move(0);
@@ -190,7 +190,7 @@ void control(void* param) {
 			detection_enabled = true;
 		}
 
-		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
+		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_LEFT)) {
 			detection_enabled = false;
 
 			mtrDefs.intake_r->move(60);
