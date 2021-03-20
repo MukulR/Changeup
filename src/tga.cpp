@@ -62,33 +62,33 @@ void ThreeGoalAuton::captureFirstGoal() {
 void ThreeGoalAuton::captureSecondGoal() {
     AutonUtils::startIntakes(mtrDefs);
     indexOneTopTask->notify();
-    au->translate(1900, 127, 270, true);
+    au->translate(2050, 80, 270, true);
     au->pidGlobalTurn(180.0);
     AutonUtils::stopIntakes(mtrDefs);
-    au->translate(650, 90, 180.0);
+    au->translate(300, 80, 180.0, false);
     mtrDefs->roller_t->move(-127);
     pros::Task::delay(900);
-    au->translate(-300, 90, 180.0);
+    au->translate(-300, 60, 180.0);
     mtrDefs->roller_t->move(0);
     au->pidGlobalTurn(270);
 }
 
 void ThreeGoalAuton::captureThirdGoal() {
     AutonUtils::startIntakes(mtrDefs);
-    au->translate(2300, 127, 270, true);
+    au->translate(2550, 80, 270, true);
     au->pidGlobalTurn(225);
     pros::Task::delay(100);
-    au->translate(425, 127, -1);
+    au->translate(300, 80, -1, true);
     AutonUtils::indexTopBlocking(mtrDefs);
     AutonUtils::stopIntakes(mtrDefs);
     au->translate(300, 80, -1, true);
     mtrDefs->roller_t->move(-127);
     pros::Task::delay(900);
-    au->translate(-600, 127, 219, false);
+    au->translate(-600, 80, 219, false);
 }
 
 void ThreeGoalAuton::captureFourthGoal() {
-    au->translate(-2975, 80, 219, true);
+    au->translate(-3050, 80, 219, true);
     au->setDriveVoltage(2, -100);
     while (sensors->imu->get_heading() < 271) {
         pros::Task::delay(10);

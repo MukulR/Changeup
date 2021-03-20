@@ -167,8 +167,8 @@ void index(void *param){
 void control(void* param) {	
 	while(true) {
 		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
-			mtrDefs.intake_r->move(70);
-			mtrDefs.intake_l->move(-70);
+			mtrDefs.intake_r->move(50);
+			mtrDefs.intake_l->move(-50);
 			mtrDefs.roller_t->move(127);
 			mtrDefs.roller_b->move(127);
 			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_RIGHT)) {
@@ -176,6 +176,16 @@ void control(void* param) {
 			}
 			mtrDefs.intake_r->move(0);
 			mtrDefs.intake_l->move(0);
+			mtrDefs.roller_t->move(0);
+			mtrDefs.roller_b->move(0);
+		}
+
+		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
+			mtrDefs.roller_t->move(-80);
+			mtrDefs.roller_b->move(-80);
+			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
+				pros::Task::delay(10);
+			}
 			mtrDefs.roller_t->move(0);
 			mtrDefs.roller_b->move(0);
 		}
@@ -221,14 +231,14 @@ void control(void* param) {
 			pros::Task::delay(200);
 			mtrDefs.roller_b->move(15);
 			
-			mtrDefs.roller_t->move(-127);
+			mtrDefs.roller_t->move(-90);
 			pros::Task::delay(300);
 			mtrDefs.roller_t->move(0);
 
 			pros::Task::delay(50);
 
 			mtrDefs.roller_b->move(-127);
-			mtrDefs.roller_t->move(-127);
+			mtrDefs.roller_t->move(-110);
 			pros::Task::delay(300);
 			mtrDefs.roller_b->move(0);
 			pros::Task::delay(600);
