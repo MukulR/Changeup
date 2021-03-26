@@ -161,13 +161,14 @@ void AutonUtils::visionTranslate(int units, int speed, bool useLT, bool useBumpe
 
     // Reset drive encoders
     resetDriveEncoders();
-
-    while (avgDriveEncoderValue() < fabs(units) || (useLT && line_drive_right.get_value() < 550) || (useBumper && !intake_bumper.get_value())) {
+    while (useBumper ? !intake_bumper.get_value() : (useLT ? line_drive_right.get_value() < 550 : avgDriveEncoderValue() < fabs(units))) {
+    // while (avgDriveEncoderValue() < fabs(units) || (useLT && line_drive_right.get_value() < 550) || (useBumper && intake_bumper.get_value())) {
         // Run-away robot prevention!
         if(useLT && (avgDriveEncoderValue() > fabs(units))) {
             break;
         }
-        
+
+
         obj = sensors->vision->get_by_size(0);
         des_left_coord = (315 / 2) - (obj.width / 2);
 

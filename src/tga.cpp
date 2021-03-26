@@ -27,22 +27,25 @@ ThreeGoalAuton::~ThreeGoalAuton() {
 
 void ThreeGoalAuton::runAuton() {
     // au->signatureVisionTranslate(1400, 80, false, true);
-    // AutonUtils::startIntakes(mtrDefs);
-    // au->visionTranslate(6000, 80, false, true);
+    AutonUtils::startIntakes(mtrDefs);
+    // au->visionTranslate(8000, 80, false, true);
+    // pros::Task::delay(100);
+    // au->pidGlobalTurn(270);
+    // au->visionTranslate(0, 80, false, true);
     // driveUntilPushed();
     
-    if (redAlliance) {
-        captureFirstGoal();
-        captureSecondGoal();
-        captureThirdGoal();
-        captureFourthGoal();
-    } else {
-        captureFirstGoalStates();
-        captureSecondGoalStates();
-        captureThirdGoalStates();
-        captureFourthGoalBackwardStates();
-        captureFifthGoalStates();
-    }
+    // if (redAlliance) {
+    //     captureFirstGoal();
+    //     captureSecondGoal();
+    //     captureThirdGoal();
+    //     captureFourthGoal();
+    // } else {
+    //     captureFirstGoalStates();
+    //     captureSecondGoalStates();
+    //     captureThirdGoalStates();
+    //     captureFourthGoalBackwardStates();
+    //     captureFifthGoalStates();
+    // }
 }
 
 void ThreeGoalAuton::captureFirstGoal() {
@@ -65,8 +68,8 @@ void ThreeGoalAuton::captureSecondGoal() {
     au->translate(2050, 80, 270, true);
     au->pidGlobalTurn(180.0);
     AutonUtils::stopIntakes(mtrDefs);
-    au->translate(300, 80, 180.0, false);
-    mtrDefs->roller_t->move(-127);
+    au->translate(400, 80, 180.0, false);
+    mtrDefs->roller_t->move(-100);
     pros::Task::delay(900);
     au->translate(-300, 60, 180.0);
     mtrDefs->roller_t->move(0);
@@ -116,7 +119,7 @@ void ThreeGoalAuton::captureFirstGoalStates() {
 
 void ThreeGoalAuton::captureSecondGoalStates() {
     AutonUtils::startIntakes(mtrDefs);
-    au->visionTranslate(1550, 80, true, true);
+    au->visionTranslate(1700, 80, false, true);
     pros::Task::delay(100);
     indexOneTopTask->notify();
     au->pidGlobalTurn(270);
@@ -160,7 +163,7 @@ void ThreeGoalAuton::captureFourthGoalBackwardStates() {
     au->translate(-2350, 80, 270, true);
     pros::Task::delay(100);
     au->pidGlobalTurn(315);
-    au->translate(-1000, 80, 315, false);
+    au->translate(-1200, 80, 315, false);
     pros::Task::delay(100);
     au->translate(500, 80, 310, false);
 }
