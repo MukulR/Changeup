@@ -1,5 +1,5 @@
-#ifndef _THREEGOALAUTON_HPP_
-#define _THREEGOALAUTON_HPP_
+#ifndef _LRTAuton_HPP_
+#define _LRTAuton_HPP_
 
 class MotorDefs;
 class AutonUtils;
@@ -12,16 +12,17 @@ namespace pros {
 /**
  * Changeup Three goal game autonomous
  */
-class ThreeGoalAuton {
+class LRTAuton {
     private:
         MotorDefs *mtrDefs;
         Sensors *sensors;
         AutonUtils *au;
         bool redAlliance;
+        bool fiveGoal;
 
     public:
-        ThreeGoalAuton(MotorDefs *mtrDefs, bool ra);
-        ~ThreeGoalAuton();
+        LRTAuton(MotorDefs *mtrDefs, bool ra, bool fg);
+        ~LRTAuton();
         void runAuton();
     private:
         void captureFirstGoal();
@@ -40,4 +41,4 @@ class ThreeGoalAuton {
         void stopHoldInGoal();
 };
 
-#endif // _THREEGOALAUTON_HPP_
+#endif // _LRTAuton_HPP_

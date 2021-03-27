@@ -4,7 +4,7 @@
 #include "okapi/api.hpp"
 #include "motordefs.hpp"
 #include "psa.hpp"
-#include "tga.hpp"
+#include "lrta.hpp"
 #include "auton.hpp"
 
 using std::endl;
@@ -36,10 +36,15 @@ void autonomous() {
             break;
         case 1:
             {
-                ThreeGoalAuton tga(mtrDefs, redAlliance);
-                tga.runAuton();
+                LRTAuton lrta(mtrDefs, redAlliance, false);
+                lrta.runAuton();
             }
             break;
+        case 2:
+            {
+                LRTAuton lrta(mtrDefs, redAlliance, true);
+                lrta.runAuton();
+            }
         default:
             noAuton();
             break;

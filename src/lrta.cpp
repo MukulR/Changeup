@@ -1,7 +1,7 @@
 #include "autonselection.hpp"
 #include "auton_utils.hpp"
 #include "motordefs.hpp"
-#include "tga.hpp"
+#include "lrta.hpp"
 #include "sensors.hpp"
 
 const int TRANSLATE_VOLTAGE = 100;
@@ -9,46 +9,47 @@ const int TRANSLATE_VOLTAGE = 100;
 pros::Task *indexOneTopTask;
 
 
-ThreeGoalAuton::ThreeGoalAuton(MotorDefs *md, bool ra) {
+LRTAuton::LRTAuton(MotorDefs *md, bool ra, bool fg) {
     mtrDefs = md;
     redAlliance = ra;
+    fiveGoal = fg;
     sensors = new Sensors();
     au = new AutonUtils(mtrDefs, sensors);
 
     indexOneTopTask = new pros::Task(AutonUtils::indexOneTop, md);
 }
 
-ThreeGoalAuton::~ThreeGoalAuton() {
+LRTAuton::~LRTAuton() {
     delete sensors;
     delete au;
 
     delete indexOneTopTask;
 }
 
-void ThreeGoalAuton::runAuton() {
-    // au->signatureVisionTranslate(1400, 80, false, true);
-    AutonUtils::startIntakes(mtrDefs);
+void LRTAuton::runAuton() {
+    // au->signatureVisionTranslate(1400, 80, false, redAlliance);
+    // AutonUtils::startIntakes(mtrDefs);
     // au->visionTranslate(8000, 80, false, true);
     // pros::Task::delay(100);
     // au->pidGlobalTurn(270);
     // au->visionTranslate(0, 80, false, true);
     // driveUntilPushed();
-    
-    // if (redAlliance) {
-    //     captureFirstGoal();
-    //     captureSecondGoal();
-    //     captureThirdGoal();
-    //     captureFourthGoal();
-    // } else {
-    //     captureFirstGoalStates();
-    //     captureSecondGoalStates();
-    //     captureThirdGoalStates();
-    //     captureFourthGoalBackwardStates();
-    //     captureFifthGoalStates();
-    // }
+    // std::cout << fiveGoal << std::endl;
+    if (fiveGoal) {
+        captureFirstGoalStates();
+        captureSecondGoalStates();
+        captureThirdGoalStates();
+        captureFourthGoalBackwardStates();
+        captureFifthGoalStates();
+    } else {
+        captureFirstGoal();
+        captureSecondGoal();
+        captureThirdGoal();
+        captureFourthGoal();
+    }
 }
 
-void ThreeGoalAuton::captureFirstGoal() {
+void LRTAuton::captureFirstGoal() {
     au->startIntakes(mtrDefs);
     au->translate(300, 80, redAlliance ? 90.0 : 270.0, false);
     au->pidGlobalTurn(redAlliance ? 125 : 235);
@@ -62,7 +63,7 @@ void ThreeGoalAuton::captureFirstGoal() {
     mtrDefs->roller_t->move(0);
 }
 
-void ThreeGoalAuton::captureSecondGoal() {
+void LRTAuton::captureSecondGoal() {
     AutonUtils::startIntakes(mtrDefs);
     indexOneTopTask->notify();
     au->translate(2050, 80, 270, true);
@@ -76,7 +77,7 @@ void ThreeGoalAuton::captureSecondGoal() {
     au->pidGlobalTurn(270);
 }
 
-void ThreeGoalAuton::captureThirdGoal() {
+void LRTAuton::captureThirdGoal() {
     AutonUtils::startIntakes(mtrDefs);
     au->translate(2550, 80, 270, true);
     au->pidGlobalTurn(225);
@@ -90,7 +91,7 @@ void ThreeGoalAuton::captureThirdGoal() {
     au->translate(-600, 80, 219, false);
 }
 
-void ThreeGoalAuton::captureFourthGoal() {
+void LRTAuton::captureFourthGoal() {
     au->translate(-3050, 80, 219, true);
     au->setDriveVoltage(2, -100);
     while (sensors->imu->get_heading() < 271) {
@@ -101,13 +102,14 @@ void ThreeGoalAuton::captureFourthGoal() {
     au->setDriveVoltage(0, 0);
 }
 
-void ThreeGoalAuton::captureFirstGoalStates() {
+void LRTAuton::captureFirstGoalStates() {
     AutonUtils::startIntakes(mtrDefs);
     au->translate(300, 80, 270.0, false);
     au->pidGlobalTurn(225);
     AutonUtils::stopIntakes(mtrDefs);
 
-    au->translate(100, 80, 225, false);
+    au->translate(200, 80, 225, false);
+    au->setDriveVoltage(20, 20);
     AutonUtils::startOuttakeFast(mtrDefs);
     mtrDefs->roller_t->move(-127);
     pros::Task::delay(900);
@@ -117,7 +119,7 @@ void ThreeGoalAuton::captureFirstGoalStates() {
     au->pidGlobalTurn(0);
 }
 
-void ThreeGoalAuton::captureSecondGoalStates() {
+void LRTAuton::captureSecondGoalStates() {
     AutonUtils::startIntakes(mtrDefs);
     au->visionTranslate(1700, 80, false, true);
     pros::Task::delay(100);
@@ -134,8 +136,10 @@ void ThreeGoalAuton::captureSecondGoalStates() {
     AutonUtils::stopIntakes(mtrDefs);
 }
 
-void ThreeGoalAuton::captureThirdGoalStates() {
+void LRTAuton::captureThirdGoalStates() {
     au->translate(2650, 80, 163.0, false);
+    au->setDriveVoltage(20, 20);
+    pros::Task::delay(200);
     mtrDefs->roller_t->move(-127);
     pros::Task::delay(900);
 
@@ -143,7 +147,7 @@ void ThreeGoalAuton::captureThirdGoalStates() {
     pros::Task::delay(100);
 }
 
-void ThreeGoalAuton::captureFourthGoalStates() {
+void LRTAuton::captureFourthGoalStates() {
     au->pidGlobalTurn(90);
     au->translate(2300, 80, 90, true);
     pros::Task::delay(100);
@@ -158,9 +162,9 @@ void ThreeGoalAuton::captureFourthGoalStates() {
     au->translate(-600, 127, 135, false);
 }
 
-void ThreeGoalAuton::captureFourthGoalBackwardStates() {
+void LRTAuton::captureFourthGoalBackwardStates() {
     au->pidGlobalTurn(270);
-    au->translate(-2350, 80, 270, true);
+    au->translate(-2575, 80, 270, true);
     pros::Task::delay(100);
     au->pidGlobalTurn(315);
     au->translate(-1200, 80, 315, false);
@@ -168,9 +172,9 @@ void ThreeGoalAuton::captureFourthGoalBackwardStates() {
     au->translate(500, 80, 310, false);
 }
 
-void ThreeGoalAuton::captureFifthGoalStates() {
+void LRTAuton::captureFifthGoalStates() {
 
-    au->signatureVisionTranslate(3300, 80, false, true);
+    au->signatureVisionTranslate(3350, 80, false, redAlliance);
     au->setDriveVoltage(80, -15);
     while(sensors->imu->get_heading() < 330) {
         pros::Task::delay(10);
@@ -182,7 +186,7 @@ void ThreeGoalAuton::captureFifthGoalStates() {
 }
 
 
-// void ThreeGoalAuton::driveUntilPushed() {
+// void LRTAuton::driveUntilPushed() {
 //     au->setDriveVoltage(80, 80);
 //     while(!intake_bumper.get_value()) {
 //         pros::Task::delay(10);
