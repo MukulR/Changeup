@@ -10,11 +10,12 @@ using std::endl;
 // TODO: Move to Sensors.hpp
 pros::ADIAnalogIn line_top('D');
 pros::ADIAnalogIn line_mid('B');
-pros::ADIAnalogIn line_bot('G');
+pros::ADIAnalogIn line_bot({{15, 'H'}});
 pros::ADIAnalogIn line_drive_right('H');
 pros::ADIAnalogIn line_drive_left('C');
 pros::ADIDigitalIn limit_t('A');
-pros::ADIDigitalIn intake_bumper('F');
+pros::ADIDigitalIn intake_bumper('G');
+pros::ADIUltrasonic ultrasonic('E', 'F');
 
 bool indexingOneBall = false;
 
@@ -161,7 +162,7 @@ void AutonUtils::visionTranslate(int units, int speed, bool useLT, bool useBumpe
 
     // Reset drive encoders
     resetDriveEncoders();
-    while (useBumper ? !intake_bumper.get_value() : (useLT ? line_drive_right.get_value() < 550 : avgDriveEncoderValue() < fabs(units))) {
+    while (useBumper ? !intake_bumper.get_value() : (useLT ? line_drive_right.get_value() > 550 : avgDriveEncoderValue() < fabs(units))) {
     // while (avgDriveEncoderValue() < fabs(units) || (useLT && line_drive_right.get_value() < 550) || (useBumper && intake_bumper.get_value())) {
         // Run-away robot prevention!
         if(useLT && (avgDriveEncoderValue() > fabs(units))) {
@@ -267,6 +268,24 @@ void AutonUtils::signatureVisionTranslate(int units, int speed, bool useLT, bool
     setDriveVoltage(0, 0);
 }
 
+void AutonUtils::setDriveSpeed(int leftSpeed, int rightSpeed) {
+    mtrDefs->left_mtr_t->move(leftSpeed);
+    mtrDefs->left_mtr_b->move(leftSpeed);
+    mtrDefs->right_mtr_t->move(rightSpeed);
+    mtrDefs->right_mtr_b->move(rightSpeed);
+}
+
+void AutonUtils::distanceTranslate(int speed, int unitsLeft) {
+    setDriveSpeed(speed, speed);
+    while (ultrasonic.get_value() > unitsLeft + 40) {
+        std::cout << ultrasonic.get_value() / 10 << std::endl;
+        pros::Task::delay(10);
+    }
+    setDriveSpeed(-speed/2, -speed/2);
+    pros::Task::delay(100);
+    setDriveSpeed(0, 0);
+}
+
 void AutonUtils::pidGlobalTurn(double angle) {
     double imu_cur = sensors->imu->get_heading();
 
@@ -360,12 +379,7 @@ double AutonUtils::determineError(double imu_cur, double imu_desired, int direct
 
 
 // TODO: 
-void AutonUtils::setDriveSpeed(int leftSpeed, int rightSpeed) {
-    mtrDefs->left_mtr_t->move(leftSpeed);
-    mtrDefs->left_mtr_b->move(leftSpeed);
-    mtrDefs->right_mtr_t->move(rightSpeed);
-    mtrDefs->right_mtr_b->move(rightSpeed);
-}
+
 
 void AutonUtils::filter() {
     mtrDefs->roller_b->move(-80);
@@ -385,7 +399,7 @@ void AutonUtils::indexTwoBalls(void* param) {
         while(!ballAtTop()) {
 
         }
-        mtrDefs->roller_t->move(0);
+        mtrDefs->roller_t->move(-15);
         while(!ballAtMid()) {
 
         }
@@ -409,7 +423,7 @@ void AutonUtils::filterAndIndexTwoBalls(void* param) {
         while(!ballAtTop()) {
 
         }
-        mtrDefs->roller_t->move(0);
+        mtrDefs->roller_t->move(-15);
         while(!ballAtMid()) {
 
         }
@@ -433,6 +447,7 @@ void AutonUtils::filterAndIndexOneBall(void* param) {
 
         }
         stopRollers(mtrDefs);
+        mtrDefs->roller_t->move(-15);
     }
 }
 
@@ -663,7 +678,7 @@ void AutonUtils::shootBalls(void* param) {
 }
 
 void AutonUtils::cornerGoalSequence() {
-    mtrDefs->roller_t->move(-127);
+    mtrDefs->roller_t->move(-107);
     pros::Task::delay(400);
     mtrDefs->roller_b->move(-80);
     startIntakes(mtrDefs);
@@ -692,7 +707,7 @@ void AutonUtils::cornerGoalSequence() {
 }
 
 void AutonUtils::twoInOneOut(int moveBackDistance, double heading) {
-    mtrDefs->roller_t->move(-127);
+    mtrDefs->roller_t->move(-100);
     pros::Task::delay(400);
     mtrDefs->roller_b->move(-80);
     
@@ -732,7 +747,7 @@ void AutonUtils::nonCornerGoalSequence(int moveBackDistance, double heading) {
         
     }
     stopIntakes(mtrDefs);
-    mtrDefs->roller_t->move(-127);
+    mtrDefs->roller_t->move(-100);
     mtrDefs->roller_b->move(-80);
     while(!ballAtMid()) {
 

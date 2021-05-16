@@ -1,5 +1,7 @@
 #include "main.h"
 #include "motordefs.hpp"
+#include "auton_utils.hpp"
+#include  "sensors.hpp"
 
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 
@@ -10,6 +12,8 @@ pros::Optical optical (6);
 pros::ADIDigitalIn limit('A');
 
 MotorDefs mtrDefs;
+Sensors sensors;
+AutonUtils au(&mtrDefs, &sensors);
 
 bool detection_enabled = false;
 
@@ -124,7 +128,7 @@ void index(void *param){
 					pros::Task::delay(10);
 				}
 				mtrDefs.roller_b->move(0);
-				mtrDefs.roller_t->move(0);
+				mtrDefs.roller_t->move(detection_enabled ? -20 : 0);
 				mtrDefs.intake_l->move(0);
 				mtrDefs.intake_r->move(0);
 			}
@@ -157,7 +161,7 @@ void index(void *param){
 					}
 					pros::Task::delay(10);
 				}
-				mtrDefs.roller_t->move(0);
+				mtrDefs.roller_t->move(-10);
 			}
 		}
 		pros::Task::delay(10);
@@ -238,8 +242,8 @@ void control(void* param) {
 			pros::Task::delay(50);
 
 			mtrDefs.roller_b->move(-127);
-			mtrDefs.roller_t->move(-110);
-			pros::Task::delay(300);
+			mtrDefs.roller_t->move(-105);
+			pros::Task::delay(600);
 			mtrDefs.roller_b->move(0);
 			pros::Task::delay(600);
 			mtrDefs.roller_t->move(0);
@@ -247,6 +251,44 @@ void control(void* param) {
 		pros::Task::delay(10);	
 	}
 }
+
+void startRollers() {
+	mtrDefs.roller_t->move(-127);
+	mtrDefs.roller_b->move(-127);
+}
+
+void startIntakes() {
+	mtrDefs.intake_l->move(127);
+    mtrDefs.intake_r->move(-127);
+}
+
+void setDriveSpeed(int leftSpeed, int rightSpeed) {
+    mtrDefs.left_mtr_t->move(leftSpeed);
+    mtrDefs.left_mtr_b->move(leftSpeed);
+    mtrDefs.right_mtr_t->move(rightSpeed);
+    mtrDefs.right_mtr_b->move(rightSpeed);
+}
+
+void goalSequence(void* param) {
+	while (true) {
+		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
+			setDriveSpeed(-10, -10);
+			startRollers();
+			startIntakes();
+			pros::Task::delay(300);
+			while(line_t.get_value() > 2800)  {
+
+			}
+			stopAll();
+
+			mtrDefs.intake_l->move(60);
+    		mtrDefs.intake_r->move(-60);
+			setDriveSpeed(-30, -30);
+		}
+		pros::Task::delay(10);
+	}
+}
+
 
 void autoShoot(void* param) {
 	while(true) {
@@ -312,5 +354,6 @@ void opcontrol() {
 	pros::Task indexTask(index);
 	pros::Task autoShootTask(autoShoot);
 	pros::Task controlTask(control);
+	pros::Task goalSequenceTask(goalSequence);
 }
 

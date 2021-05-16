@@ -30,6 +30,7 @@ class AutonUtils {
 
         void visionTranslate(int units, int speed, bool useLT, bool useBumper = false);
         void signatureVisionTranslate(int units, int speed, bool useLT, bool blue);
+        void distanceTranslate(int speed, int unitsLeft);
         
         
         void oneShot();

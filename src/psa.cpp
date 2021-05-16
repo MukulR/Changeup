@@ -62,6 +62,7 @@ void getInfo(Sensors *sensors) {
 
 
 void ProgrammingSkillsAuton::runAuton() {
+    // au->distanceTranslate(-80, 840);
     captureFirstGoal();
     captureSecondGoal();
     captureThirdOrSeventhGoal(THIRD_GOAL);
@@ -80,7 +81,7 @@ void ProgrammingSkillsAuton::captureFirstGoal() {
     // mtrDefs->roller_t->move(0);
 
     // New push back
-    au->setDriveVoltage(-95, -95);
+    au->setDriveVoltage(-50, -50);
     pros::Task::delay(500);
     au->setDriveVoltage(0, 0);
     // End new
@@ -180,12 +181,14 @@ void ProgrammingSkillsAuton::captureFifthGoal() {
     au->visionTranslate(3800, 80, false);
     pros::Task::delay(100);
     // Translate now so we do not pickup the other red ball w/ vision
-    au->translate(-550, TRANSLATE_VOLTAGE, 245.0);
+    au->translate(-600, TRANSLATE_VOLTAGE, 245.0);
     // Turn to goal
     au->pidGlobalTurn(315);
+    AutonUtils::stopIntakes(mtrDefs);
     // Go to goal
     indexTwoBallsTask->notify();
-    au->translate(900, TRANSLATE_VOLTAGE, 315.0);
+    au->translate(950, TRANSLATE_VOLTAGE, 315.0);
+    au->setDriveSpeed(15, 15);
     // Score/remove balls
     au->cornerGoalSequence();
     // Face next goal
@@ -203,11 +206,10 @@ void ProgrammingSkillsAuton::captureSixthGoal() {
     // Turn to goal
     au->pidGlobalTurn(270);
     // pros::Task::delay(100);
-
+    indexTwoBallsTask->notify();
     au->visionTranslate(1650, 100, false);
     // move farther into the goal so that we can score
-    indexTwoBallsTask->notify();
-    au->translate(500, 50, 270.0);
+    au->translate(575, 50, 270.0);
     pros::Task::delay(100);
     // pros::Task::delay(500);
     AutonUtils::stopIntakes(mtrDefs);
@@ -232,7 +234,7 @@ void ProgrammingSkillsAuton::captureCenterGoal() {
     // pros::Task::delay(800);
     // au->setDriveVoltage(0, 0);
 
-    au->translate(1300, 60, 0, false);
+    au->translate(1200, 60, 0, false);
     // Turn intake to full speed to outtake the balls
     au->centerSequence();
 
@@ -336,7 +338,7 @@ void ProgrammingSkillsAuton::captureThirdOrSeventhGoal(int goalNumber) {
      // Move back from fence 
      switch (goalNumber) {
         case THIRD_GOAL:
-            au->translate(-550, TRANSLATE_VOLTAGE, 105.0);
+            au->translate(-500, TRANSLATE_VOLTAGE, 105.0);
             break;
         case SEVENTH_GOAL:
             au->translate(-500, TRANSLATE_VOLTAGE, 285.0);
@@ -358,7 +360,7 @@ void ProgrammingSkillsAuton::captureThirdOrSeventhGoal(int goalNumber) {
     AutonUtils::stopIntakes(mtrDefs);
     indexTwoBallsTask->notify();
     // Go to goal
-    au->translate(900, TRANSLATE_VOLTAGE);
+    au->translate(950, TRANSLATE_VOLTAGE);
     pros::Task::delay(50);
     // Score in goals, extract blue balls, and back up.
     au->cornerGoalSequence();

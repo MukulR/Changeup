@@ -1,6 +1,8 @@
 #ifndef _LRTAuton_HPP_
 #define _LRTAuton_HPP_
 
+#include <string>
+
 class MotorDefs;
 class AutonUtils;
 class Sensors;
@@ -18,10 +20,10 @@ class LRTAuton {
         Sensors *sensors;
         AutonUtils *au;
         bool redAlliance;
-        bool fiveGoal;
+        std::string autonType;
 
     public:
-        LRTAuton(MotorDefs *mtrDefs, bool ra, bool fg);
+        LRTAuton(MotorDefs *mtrDefs, bool ra, std::string at);
         ~LRTAuton();
         void runAuton();
     private:
@@ -30,12 +32,17 @@ class LRTAuton {
         void captureThirdGoal();
         void captureFourthGoal();
 
-        void captureFirstGoalStates();
-        void captureSecondGoalStates();
-        void captureThirdGoalStates();
-        void captureFourthGoalStates();
-        void captureFourthGoalBackwardStates();
-        void captureFifthGoalStates();
+        void captureFirstGoalHRE();
+        void captureSecondGoalHRE();
+        void captureThirdGoalHRE();
+        void captureFourthGoalHRE();
+        void captureFourthGoalBackwardHRE();
+        void captureFifthGoalHRE();
+
+        void captureFirstGoalHRBH();
+        void captureSecondGoalHRBH();
+        void captureThirdGoalHRBH();
+        void captureFourthGoalHRBH();
 
         void startHoldInGoal();
         void stopHoldInGoal();

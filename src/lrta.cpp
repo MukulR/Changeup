@@ -1,3 +1,5 @@
+#include <string>
+
 #include "autonselection.hpp"
 #include "auton_utils.hpp"
 #include "motordefs.hpp"
@@ -9,10 +11,10 @@ const int TRANSLATE_VOLTAGE = 100;
 pros::Task *indexOneTopTask;
 
 
-LRTAuton::LRTAuton(MotorDefs *md, bool ra, bool fg) {
+LRTAuton::LRTAuton(MotorDefs *md, bool ra, std::string at) {
     mtrDefs = md;
     redAlliance = ra;
-    fiveGoal = fg;
+    autonType = at;
     sensors = new Sensors();
     au = new AutonUtils(mtrDefs, sensors);
 
@@ -35,19 +37,34 @@ void LRTAuton::runAuton() {
     // au->visionTranslate(0, 80, false, true);
     // driveUntilPushed();
     // std::cout << fiveGoal << std::endl;
-    if (fiveGoal) {
-        captureFirstGoalStates();
-        captureSecondGoalStates();
-        captureThirdGoalStates();
-        captureFourthGoalBackwardStates();
-        captureFifthGoalStates();
-    } else {
+    if (autonType == "HR") { // Home Row
         captureFirstGoal();
         captureSecondGoal();
         captureThirdGoal();
         captureFourthGoal();
+    } else if (autonType == "HRE") { // Home Row + E
+        captureFirstGoalHRE();
+        captureSecondGoalHRE();
+        captureThirdGoalHRE();
+        captureFourthGoalHRE();
+        captureFifthGoalHRE();
+    } else if (autonType == "HRBH") { // Home Row + b/h
+        std::cout << "yo" << std::endl;
+        captureFirstGoalHRBH();
+        captureSecondGoalHRBH();
+        captureThirdGoalHRBH();
+        captureFourthGoalHRBH();
+    } else if (autonType == "MID") { // Home Row + mid
+
     }
 }
+
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// -------------------------HOME ROW FUNCTIONS---------------------------------
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+
 
 void LRTAuton::captureFirstGoal() {
     au->startIntakes(mtrDefs);
@@ -102,7 +119,15 @@ void LRTAuton::captureFourthGoal() {
     au->setDriveVoltage(0, 0);
 }
 
-void LRTAuton::captureFirstGoalStates() {
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// -------------------------HOME ROW + E FUNCTIONS-----------------------------
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+
+
+
+void LRTAuton::captureFirstGoalHRE() {
     AutonUtils::startIntakes(mtrDefs);
     au->translate(300, 80, 270.0, false);
     au->pidGlobalTurn(225);
@@ -119,7 +144,7 @@ void LRTAuton::captureFirstGoalStates() {
     au->pidGlobalTurn(0);
 }
 
-void LRTAuton::captureSecondGoalStates() {
+void LRTAuton::captureSecondGoalHRE() {
     AutonUtils::startIntakes(mtrDefs);
     au->visionTranslate(1700, 80, false, true);
     pros::Task::delay(100);
@@ -136,7 +161,7 @@ void LRTAuton::captureSecondGoalStates() {
     AutonUtils::stopIntakes(mtrDefs);
 }
 
-void LRTAuton::captureThirdGoalStates() {
+void LRTAuton::captureThirdGoalHRE() {
     au->translate(2650, 80, 163.0, false);
     au->setDriveVoltage(20, 20);
     pros::Task::delay(200);
@@ -147,22 +172,7 @@ void LRTAuton::captureThirdGoalStates() {
     pros::Task::delay(100);
 }
 
-void LRTAuton::captureFourthGoalStates() {
-    au->pidGlobalTurn(90);
-    au->translate(2300, 80, 90, true);
-    pros::Task::delay(100);
-    au->pidGlobalTurn(135);
-    AutonUtils::startIntakes(mtrDefs);
-    au->translate(425, 127, -1);
-    AutonUtils::indexTopBlocking(mtrDefs);
-    AutonUtils::stopIntakes(mtrDefs);
-    au->translate(300, 80, -1, false);
-    mtrDefs->roller_t->move(-127);
-    pros::Task::delay(900);
-    au->translate(-600, 127, 135, false);
-}
-
-void LRTAuton::captureFourthGoalBackwardStates() {
+void LRTAuton::captureFourthGoalHRE() {
     au->pidGlobalTurn(270);
     au->translate(-2575, 80, 270, true);
     pros::Task::delay(100);
@@ -172,7 +182,7 @@ void LRTAuton::captureFourthGoalBackwardStates() {
     au->translate(500, 80, 310, false);
 }
 
-void LRTAuton::captureFifthGoalStates() {
+void LRTAuton::captureFifthGoalHRE() {
 
     au->signatureVisionTranslate(3350, 80, false, redAlliance);
     au->setDriveVoltage(80, -15);
@@ -185,15 +195,70 @@ void LRTAuton::captureFifthGoalStates() {
     pros::Task::delay(200);
 }
 
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// -------------------------FIVE GOAL MID FUNCTIONS----------------------------
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
 
-// void LRTAuton::driveUntilPushed() {
-//     au->setDriveVoltage(80, 80);
-//     while(!intake_bumper.get_value()) {
-//         pros::Task::delay(10);
-//     }
-//     indexOneTopTask->notify();
-//     au->setDriveVoltage(-70, -70);
-//     pros::Task::delay(150);
-//     au->setDriveVoltage(0,0);
-//     au->pidGlobalTurn(270);
-// }
+void LRTAuton::captureFirstGoalHRBH() {
+    au->startIntakes(mtrDefs);
+    au->translate(300, 80, 90.0, false);
+    au->pidGlobalTurn(125);
+    au->stopIntakes(mtrDefs);
+    au->translate(100, 80, 125, false);
+
+    mtrDefs->roller_t->move(-127);
+    pros::Task::delay(900);
+    au->translate(-600, 127, 125, false);
+    au->pidGlobalTurn(270);
+    mtrDefs->roller_t->move(0);
+}
+
+void LRTAuton::captureSecondGoalHRBH() {
+    indexOneTopTask->notify();
+    au->translate(2050, 80, 270, true);
+    au->pidGlobalTurn(180.0);
+    au->translate(400, 80, 180.0, false);
+
+    au->startIntakes(mtrDefs);
+    au->startRollers(mtrDefs);
+    pros::Task::delay(900);
+    while (!AutonUtils::ballAtTop()) {
+        pros::Task::delay(10);
+    }    
+    while(!AutonUtils::ballAtBottom()) {
+        pros::Task::delay(10);
+    }
+    au->stopIntakes(mtrDefs);
+    au->stopRollers(mtrDefs);
+
+    mtrDefs->roller_t->move(-127);
+    au->startOuttakeFast(mtrDefs);
+    pros::Task::delay(900);
+    au->translate(-250, 80, 180, true);
+    au->pidGlobalTurn(270.0);
+}
+
+void LRTAuton::captureThirdGoalHRBH() {
+    AutonUtils::startIntakes(mtrDefs);
+    indexOneTopTask->notify();
+    au->translate(2500, 80, 270, true);
+    au->pidGlobalTurn(225);
+    au->translate(800, 80, 225, false);
+    au->setDriveVoltage(20, 20);
+    AutonUtils::stopIntakes(mtrDefs);
+    mtrDefs->roller_t->move(-127);
+    pros::Task::delay(900);
+    mtrDefs->roller_t->move(0);
+    au->translate(-950, 80, 225, true);
+    au->pidGlobalTurn(315);
+}
+
+void LRTAuton::captureFourthGoalHRBH() {
+    au->translate(1550, 80, 335, false);
+    AutonUtils::startOuttakeFast(mtrDefs);
+    pros::Task::delay(500);
+    au->translate(-1000, 80, 335, false);
+}
+

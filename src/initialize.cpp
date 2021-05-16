@@ -14,8 +14,8 @@
  *          shoot opponent's top flag, climb on platform
  */
  
-static const char *btnm_map[] = {"Skills", "Three Goal", "Five Goal", "\n", ""};
-static const char *auton_names[] = {"Skills", "Three Goal", "Five Goal"};
+static const char *btnm_map[] = {"Skills", "Home Row", "HRE", "HRBH", "\n", "Middle",""};
+static const char *auton_names[] = {"Skills", "Home Row", "HRE", "HRBH", "Middle"};
 static const char *alliance_map[] = {"Red", "Blue", ""};
 
 int autonSelected = 2;  // by default no auton
@@ -98,7 +98,7 @@ void competition_initialize() {
 	lv_obj_t *btnm = lv_btnm_create(lv_scr_act(), NULL);
 	lv_btnm_set_map(btnm, btnm_map);
 	lv_btnm_set_action(btnm, btnm_action);
-	lv_obj_set_size(btnm, LV_HOR_RES - 40, LV_VER_RES / 3);
+	lv_obj_set_size(btnm, LV_HOR_RES - 40, 100);
 	lv_obj_align(btnm, title, LV_ALIGN_OUT_BOTTOM_MID, 0, 20);
 
 	lv_obj_t *allianceM = lv_btnm_create(lv_scr_act(), NULL);

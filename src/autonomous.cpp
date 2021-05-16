@@ -36,13 +36,23 @@ void autonomous() {
             break;
         case 1:
             {
-                LRTAuton lrta(mtrDefs, redAlliance, false);
+                LRTAuton lrta(mtrDefs, redAlliance, "HR");
                 lrta.runAuton();
             }
             break;
         case 2:
             {
-                LRTAuton lrta(mtrDefs, redAlliance, true);
+                LRTAuton lrta(mtrDefs, redAlliance, "HRE");
+                lrta.runAuton();
+            }
+        case 3:
+            {
+                LRTAuton lrta(mtrDefs, redAlliance, "HRBH");
+                lrta.runAuton();
+            }
+        case 4:
+            {
+                LRTAuton lrta(mtrDefs, redAlliance, "MID");
                 lrta.runAuton();
             }
         default:
