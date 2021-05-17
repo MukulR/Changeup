@@ -54,8 +54,14 @@ void LRTAuton::runAuton() {
         captureSecondGoalHRBH();
         captureThirdGoalHRBH();
         captureFourthGoalHRBH();
-    } else if (autonType == "MID") { // Home Row + mid
+    } else if (autonType == "MID") { // Middle Goal
 
+    } else if (autonType == "HRBHE") { // Home Row + B/H + Middle
+        captureFirstGoalHRBHE();
+        captureSecondGoalHRBHE();
+        captureThirdGoalHRBHE();
+        captureFourthGoalHRBHE();
+        captureFifthGoalHRBHE();
     }
 }
 
@@ -197,7 +203,7 @@ void LRTAuton::captureFifthGoalHRE() {
 
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
-// -------------------------FIVE GOAL MID FUNCTIONS----------------------------
+// -------------------------HOME ROW + B/H FUNCTIONS---------------------------
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 
@@ -260,5 +266,72 @@ void LRTAuton::captureFourthGoalHRBH() {
     AutonUtils::startOuttakeFast(mtrDefs);
     pros::Task::delay(500);
     au->translate(-1000, 80, 335, false);
+    pros::Task::delay(300);
 }
 
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// -------------------------HOME ROW + B/H + E FUNCTIONS-----------------------
+// ----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+
+void LRTAuton::captureFirstGoalHRBHE() {
+    AutonUtils::startIntakes(mtrDefs);
+    au->setDriveVoltage(-127, 0);
+    pros::Task::delay(500);
+    au->pidGlobalTurn(15);
+}
+
+void LRTAuton::captureSecondGoalHRBHE() {
+    au->visionTranslate(1700, 80, false, true);
+    indexOneTopTask->notify();
+    au->translate(-500, 80, 45, true);
+    au->pidGlobalTurn(315);
+
+    AutonUtils::startOuttakeFast(mtrDefs);
+    mtrDefs->roller_b->move(40);
+    au->translate(300, 80, 315, false);
+    pros::Task::delay(500);
+    AutonUtils::stopIntakes(mtrDefs);
+    mtrDefs->roller_b->move(-30);
+    AutonUtils::startOuttake(mtrDefs);
+
+    au->translate(-300, 80, 315, false);
+
+}
+
+void LRTAuton::captureThirdGoalHRBHE() {
+    au->setDriveVoltage(-60, 20);
+    while(sensors->imu->get_heading() > 254) {
+        pros::Task::delay(10);
+    }
+    mtrDefs->roller_b->move(0);
+
+    au->translate(-1500, 80, 254, false);
+    pros::Task::delay(600);
+}
+
+void LRTAuton::captureFourthGoalHRBHE() {
+    au->setDriveVoltage(-30, 100);
+    while (sensors->imu->get_heading() > 163) {
+        pros::Task::delay(10);
+    }
+    au->setDriveVoltage(0, 0);
+
+    indexOneTopTask->notify();
+    au->translate(2450, 80, 163.0, false);
+    au->setDriveVoltage(20, 20);
+    pros::Task::delay(200);
+    mtrDefs->roller_t->move(-127);
+    pros::Task::delay(900);
+
+    au->translate(-250, 80, 180, true);
+    pros::Task::delay(100);
+}
+
+void LRTAuton::captureFifthGoalHRBHE() {
+    au->pidGlobalTurn(90);
+    au->translate(2000, 80, 90, false);
+    au->pidGlobalTurn(135);
+    au->visionTranslate(1200, 80, false, false);
+}

@@ -14,8 +14,8 @@
  *          shoot opponent's top flag, climb on platform
  */
  
-static const char *btnm_map[] = {"Skills", "Home Row", "HRE", "HRBH", "\n", "Middle",""};
-static const char *auton_names[] = {"Skills", "Home Row", "HRE", "HRBH", "Middle"};
+static const char *btnm_map[] = {"Skills", "Home Row", "HRE", "HRBH", "\n", "Middle", "HRBHE", ""};
+static const char *auton_names[] = {"Skills", "Home Row", "HRE", "HRBH", "Middle", "HRBHE"};
 static const char *alliance_map[] = {"Red", "Blue", ""};
 
 int autonSelected = 2;  // by default no auton

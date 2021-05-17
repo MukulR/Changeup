@@ -36,13 +36,18 @@ class LRTAuton {
         void captureSecondGoalHRE();
         void captureThirdGoalHRE();
         void captureFourthGoalHRE();
-        void captureFourthGoalBackwardHRE();
         void captureFifthGoalHRE();
 
         void captureFirstGoalHRBH();
         void captureSecondGoalHRBH();
         void captureThirdGoalHRBH();
         void captureFourthGoalHRBH();
+
+        void captureFirstGoalHRBHE();
+        void captureSecondGoalHRBHE();
+        void captureThirdGoalHRBHE();
+        void captureFourthGoalHRBHE();
+        void captureFifthGoalHRBHE();
 
         void startHoldInGoal();
         void stopHoldInGoal();

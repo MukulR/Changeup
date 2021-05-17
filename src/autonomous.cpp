@@ -55,6 +55,11 @@ void autonomous() {
                 LRTAuton lrta(mtrDefs, redAlliance, "MID");
                 lrta.runAuton();
             }
+        case 5:
+            {
+                LRTAuton lrta(mtrDefs, redAlliance, "HRBHE");
+                lrta.runAuton();
+            }
         default:
             noAuton();
             break;
