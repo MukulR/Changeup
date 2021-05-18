@@ -29,7 +29,7 @@ class AutonUtils {
         double determineError(double imu_cur, double imu_desired, int direction);
 
         void visionTranslate(int units, int speed, bool useLT, bool useBumper = false);
-        void signatureVisionTranslate(int units, int speed, bool useLT, bool blue);
+        void signatureVisionTranslate(int units, int speed, bool useLT, bool useBumper, bool blue);
         void distanceTranslate(int speed, int unitsLeft);
         
         

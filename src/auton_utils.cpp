@@ -205,7 +205,7 @@ void AutonUtils::visionTranslate(int units, int speed, bool useLT, bool useBumpe
     setDriveVoltage(0, 0);
 }
 
-void AutonUtils::signatureVisionTranslate(int units, int speed, bool useLT, bool blue) {
+void AutonUtils::signatureVisionTranslate(int units, int speed, bool useLT, bool useBumper, bool blue) {
     //pros::vision_object_s_t obj;
 
     const int RED_SIG_ID = 1;
@@ -226,7 +226,7 @@ void AutonUtils::signatureVisionTranslate(int units, int speed, bool useLT, bool
     // Reset drive encoders
     resetDriveEncoders();
 
-    while (avgDriveEncoderValue() < fabs(units) || (useLT && line_drive_right.get_value() < 550)) {
+    while (useBumper ? !intake_bumper.get_value() : (useLT ? line_drive_right.get_value() > 550 : avgDriveEncoderValue() < fabs(units))) {
         // Run-away robot prevention!
         if(useLT && (avgDriveEncoderValue() > fabs(units))) {
             break;
@@ -258,8 +258,8 @@ void AutonUtils::signatureVisionTranslate(int units, int speed, bool useLT, bool
 
     // brake
     setDriveVoltage(-50, -50);
-    if(useLT) {
-        pros::delay(75);
+    if(useLT || useBumper) {
+        pros::delay(100);
     } else {
         pros::delay(50);
     }
@@ -551,8 +551,8 @@ void AutonUtils::startIntakes(MotorDefs* mtrDefs) {
 }
 
 void AutonUtils::startIntakesSlow(MotorDefs* mtrDefs) {
-    mtrDefs->intake_l->move(60);
-    mtrDefs->intake_r->move(-60);
+    mtrDefs->intake_l->move(40);
+    mtrDefs->intake_r->move(-40);
 }
 
 void AutonUtils::startOuttake(MotorDefs* mtrDefs) {

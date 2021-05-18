@@ -62,6 +62,7 @@ void LRTAuton::runAuton() {
         captureThirdGoalHRBHE();
         captureFourthGoalHRBHE();
         captureFifthGoalHRBHE();
+        captureSixthGoalHRBHE();        
     }
 }
 
@@ -188,9 +189,10 @@ void LRTAuton::captureFourthGoalHRE() {
     au->translate(500, 80, 310, false);
 }
 
+
 void LRTAuton::captureFifthGoalHRE() {
 
-    au->signatureVisionTranslate(3350, 80, false, redAlliance);
+    au->signatureVisionTranslate(3350, 80, false, false, redAlliance);
     au->setDriveVoltage(80, -15);
     while(sensors->imu->get_heading() < 330) {
         pros::Task::delay(10);
@@ -276,16 +278,19 @@ void LRTAuton::captureFourthGoalHRBH() {
 // ----------------------------------------------------------------------------
 
 void LRTAuton::captureFirstGoalHRBHE() {
-    AutonUtils::startIntakes(mtrDefs);
-    au->setDriveVoltage(-127, 0);
+    au->setDriveVoltage(0, 80);
     pros::Task::delay(500);
-    au->pidGlobalTurn(15);
+    au->setDriveVoltage(0,0);
+    AutonUtils::startOuttakeFast(mtrDefs);
+    au->translate(-500, 80, 225, true);
+    au->pidGlobalTurn(0);
 }
 
 void LRTAuton::captureSecondGoalHRBHE() {
+    AutonUtils::startIntakes(mtrDefs);
     au->visionTranslate(1700, 80, false, true);
     indexOneTopTask->notify();
-    au->translate(-500, 80, 45, true);
+    au->translate(-650, 80, 45, true);
     au->pidGlobalTurn(315);
 
     AutonUtils::startOuttakeFast(mtrDefs);
@@ -302,36 +307,53 @@ void LRTAuton::captureSecondGoalHRBHE() {
 
 void LRTAuton::captureThirdGoalHRBHE() {
     au->setDriveVoltage(-60, 20);
-    while(sensors->imu->get_heading() > 254) {
+    while(sensors->imu->get_heading() > 253) {
         pros::Task::delay(10);
     }
     mtrDefs->roller_b->move(0);
 
-    au->translate(-1500, 80, 254, false);
+    au->translate(-1500, 80, 253, false);
     pros::Task::delay(600);
 }
 
 void LRTAuton::captureFourthGoalHRBHE() {
     au->setDriveVoltage(-30, 100);
-    while (sensors->imu->get_heading() > 163) {
+    while (sensors->imu->get_heading() > 166) {
         pros::Task::delay(10);
     }
     au->setDriveVoltage(0, 0);
 
     indexOneTopTask->notify();
-    au->translate(2450, 80, 163.0, false);
+    au->translate(2450, 110, 166.0, false);
     au->setDriveVoltage(20, 20);
     pros::Task::delay(200);
     mtrDefs->roller_t->move(-127);
-    pros::Task::delay(900);
+    pros::Task::delay(500);
 
     au->translate(-250, 80, 180, true);
     pros::Task::delay(100);
 }
 
 void LRTAuton::captureFifthGoalHRBHE() {
-    au->pidGlobalTurn(90);
-    au->translate(2000, 80, 90, false);
-    au->pidGlobalTurn(135);
-    au->visionTranslate(1200, 80, false, false);
+    au->pidGlobalTurn(270);
+    if (redAlliance) {
+        au->translate(-2500, 115, 270, false);
+    } else {
+        au->translate(-2650, 115, 270, false);
+    }
+    au->pidGlobalTurn(315);
+    au->translate(-1000, 100, 315, false);
+}
+
+void LRTAuton::captureSixthGoalHRBHE() {
+    au->translate(500, 115, 310, false);
+    au->signatureVisionTranslate(3350, 80, false, false, redAlliance);
+    au->setDriveVoltage(80, -15);
+    while(sensors->imu->get_heading() < 315) {
+        pros::Task::delay(10);
+    }
+    au->setDriveVoltage(-15, 80);
+    pros::Task::delay(50);
+    au->setDriveVoltage(0,0);
+    pros::Task::delay(200);
 }
