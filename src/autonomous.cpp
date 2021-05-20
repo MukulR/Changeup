@@ -27,6 +27,9 @@ void noAuton(){}
 
 void autonomous() {
     MotorDefs* mtrDefs = new MotorDefs();
+    LRTAuton lrta(mtrDefs, redAlliance);
+    lrta.runAuton();
+    /*
     switch (autonSelected) {
         case 0:
             {
@@ -63,5 +66,5 @@ void autonomous() {
         default:
             noAuton();
             break;
-    }    
+    }    */
 } 

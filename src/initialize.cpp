@@ -14,15 +14,15 @@
  *          shoot opponent's top flag, climb on platform
  */
  
-static const char *btnm_map[] = {"Skills", "Home Row", "HRE", "HRBH", "\n", "Middle", "HRBHE", ""};
-static const char *auton_names[] = {"Skills", "Home Row", "HRE", "HRBH", "Middle", "HRBHE"};
+// static const char *btnm_map[] = {"Skills", "Home Row", "HRE", "HRBH", "\n", "Middle", "HRBHE", ""};
+// static const char *auton_names[] = {"Skills", "Home Row", "HRE", "HRBH", "Middle", "HRBHE"};
 static const char *alliance_map[] = {"Red", "Blue", ""};
 
-int autonSelected = 2;  // by default no auton
+// int autonSelected = 2;  // by default no auton
 bool redAlliance = false;
 
 pros::Imu *inertial_sensor;
-
+/*
 static lv_res_t btnm_action(lv_obj_t *btnm, const char *txt) {
    printf("btnm_action Called \n");
    for (int i = 0; i < sizeof(auton_names) / sizeof(auton_names[0]); i++) {
@@ -36,9 +36,9 @@ static lv_res_t btnm_action(lv_obj_t *btnm, const char *txt) {
       lv_btnm_set_toggle(btnm, true, autonSelected);
    }
 
-   return LV_RES_OK; /*Return OK because the button matrix is not deleted*/
+   return LV_RES_OK; 
 }
-
+*/
 static lv_res_t btnm_action_color(lv_obj_t *btnm, const char *txt) {
    lv_btnm_set_toggle(btnm, true, 1);
    lv_btnm_set_toggle(btnm, true, 2);
@@ -52,8 +52,9 @@ static lv_res_t btnm_action_color(lv_obj_t *btnm, const char *txt) {
 		redAlliance = false;
    }
 
-   return LV_RES_OK; /*Return OK because the button matrix is not deleted*/
+   return LV_RES_OK; 
 }
+
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -81,29 +82,29 @@ void disabled() {}
  */
 void competition_initialize() {
    std::cout << "Initializing IMU" << std::endl;
+   // pros::lcd::initialize();
    // Initialize and calibrate imu/gyro here.
    inertial_sensor = new pros::Imu(12);
    inertial_sensor->reset();
 
    pros::Task::delay(3000);
-   std::cout << "Finished initializing IMU" << std::endl;
-   std::cout << inertial_sensor->get_heading() << std::endl;
   
-
+   // pros::lcd::print(0, "%s", "Finished initializing IMU");
+   
 	lv_theme_alien_init(0, NULL);
 	lv_obj_t *title = lv_label_create(lv_scr_act(), NULL);
-	lv_label_set_text(title, "Auton Selection");
+	lv_label_set_text(title, "Alliance Selection");
 	lv_obj_align(title, NULL, LV_ALIGN_IN_TOP_MID, 0, 10);
 
-	lv_obj_t *btnm = lv_btnm_create(lv_scr_act(), NULL);
-	lv_btnm_set_map(btnm, btnm_map);
-	lv_btnm_set_action(btnm, btnm_action);
-	lv_obj_set_size(btnm, LV_HOR_RES - 40, 100);
-	lv_obj_align(btnm, title, LV_ALIGN_OUT_BOTTOM_MID, 0, 20);
+	//lv_obj_t *btnm = lv_btnm_create(lv_scr_act(), NULL);
+	// lv_btnm_set_map(btnm, btnm_map);
+	// lv_btnm_set_action(btnm, btnm_action);
+	// lv_obj_set_size(btnm, LV_HOR_RES - 40, 100);
+	// lv_obj_align(btnm, title, LV_ALIGN_OUT_BOTTOM_MID, 0, 20);
 
 	lv_obj_t *allianceM = lv_btnm_create(lv_scr_act(), NULL);
 	lv_btnm_set_map(allianceM, alliance_map);
 	lv_btnm_set_action(allianceM, btnm_action_color);
 	lv_obj_set_size(allianceM, LV_HOR_RES - 40, 50);
-	lv_obj_align(allianceM, btnm, LV_ALIGN_OUT_BOTTOM_MID, 0, 20);
+	lv_obj_align(allianceM, title, LV_ALIGN_OUT_BOTTOM_MID, 0, 20);
 }

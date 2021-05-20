@@ -165,7 +165,7 @@ void AutonUtils::visionTranslate(int units, int speed, bool useLT, bool useBumpe
     while (useBumper ? !intake_bumper.get_value() : (useLT ? line_drive_right.get_value() > 550 : avgDriveEncoderValue() < fabs(units))) {
     // while (avgDriveEncoderValue() < fabs(units) || (useLT && line_drive_right.get_value() < 550) || (useBumper && intake_bumper.get_value())) {
         // Run-away robot prevention!
-        if(useLT && (avgDriveEncoderValue() > fabs(units))) {
+        if(useLT && avgDriveEncoderValue() > fabs(units)) {
             break;
         }
 
@@ -187,8 +187,6 @@ void AutonUtils::visionTranslate(int units, int speed, bool useLT, bool useBumpe
         left_speed = speed + speed_correction;
         right_speed = speed - speed_correction;
         
-        //std::cout << "LSPEED: " << left_speed << " RSPEED: " << right_speed << " dir " << turn_direction << "\n";
-
         setDriveVoltage(left_speed, right_speed);
         pros::Task::delay(10);
     }
@@ -196,7 +194,7 @@ void AutonUtils::visionTranslate(int units, int speed, bool useLT, bool useBumpe
     // brake
     setDriveVoltage(-50, -50);
     if(useLT || useBumper) {
-        pros::delay(100);
+        pros::delay(150);
     } else {
         pros::delay(50);
     }
@@ -206,8 +204,6 @@ void AutonUtils::visionTranslate(int units, int speed, bool useLT, bool useBumpe
 }
 
 void AutonUtils::signatureVisionTranslate(int units, int speed, bool useLT, bool useBumper, bool blue) {
-    //pros::vision_object_s_t obj;
-
     const int RED_SIG_ID = 1;
     const int BLUE_SIG_ID = 2;
     pros::vision_signature_s_t RED_SIG = pros::Vision::signature_from_utility(RED_SIG_ID, 7057, 10137, 8597, -1205, 239, -483, 3.700, 0);
@@ -233,7 +229,7 @@ void AutonUtils::signatureVisionTranslate(int units, int speed, bool useLT, bool
         }
         
         pros::vision_object_s_t obj = sensors->vision->get_by_sig(0, blue ? BLUE_SIG_ID : RED_SIG_ID);
-        std::cout << (obj.signature) << std::endl;
+        
         des_left_coord = (315 / 2) - (obj.width / 2);
 
         turn_direction = des_left_coord - obj.left_coord;
@@ -244,13 +240,10 @@ void AutonUtils::signatureVisionTranslate(int units, int speed, bool useLT, bool
         } else {
             speed_correction = fabs(des_left_coord - obj.left_coord) / 2.0;
         }
-
         speed_correction = speed_correction * turn_direction;
 
         left_speed = speed + speed_correction;
         right_speed = speed - speed_correction;
-        
-        //std::cout << "LSPEED: " << left_speed << " RSPEED: " << right_speed << " dir " << turn_direction << "\n";
 
         setDriveVoltage(left_speed, right_speed);
         pros::Task::delay(10);

@@ -1,8 +1,6 @@
 #ifndef _LRTAuton_HPP_
 #define _LRTAuton_HPP_
 
-#include <string>
-
 class MotorDefs;
 class AutonUtils;
 class Sensors;
@@ -20,10 +18,9 @@ class LRTAuton {
         Sensors *sensors;
         AutonUtils *au;
         bool redAlliance;
-        std::string autonType;
 
     public:
-        LRTAuton(MotorDefs *mtrDefs, bool ra, std::string at);
+        LRTAuton(MotorDefs *mtrDefs, bool ra);
         ~LRTAuton();
         void runAuton();
     private:

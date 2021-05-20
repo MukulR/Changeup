@@ -1,5 +1,3 @@
-#include <string>
-
 #include "autonselection.hpp"
 #include "auton_utils.hpp"
 #include "motordefs.hpp"
@@ -11,10 +9,9 @@ const int TRANSLATE_VOLTAGE = 100;
 pros::Task *indexOneTopTask;
 
 
-LRTAuton::LRTAuton(MotorDefs *md, bool ra, std::string at) {
+LRTAuton::LRTAuton(MotorDefs *md, bool ra) {
     mtrDefs = md;
     redAlliance = ra;
-    autonType = at;
     sensors = new Sensors();
     au = new AutonUtils(mtrDefs, sensors);
 
@@ -29,41 +26,23 @@ LRTAuton::~LRTAuton() {
 }
 
 void LRTAuton::runAuton() {
-    // au->signatureVisionTranslate(1400, 80, false, redAlliance);
-    // AutonUtils::startIntakes(mtrDefs);
-    // au->visionTranslate(8000, 80, false, true);
-    // pros::Task::delay(100);
-    // au->pidGlobalTurn(270);
-    // au->visionTranslate(0, 80, false, true);
-    // driveUntilPushed();
-    // std::cout << fiveGoal << std::endl;
-    if (autonType == "HR") { // Home Row
-        captureFirstGoal();
-        captureSecondGoal();
-        captureThirdGoal();
-        captureFourthGoal();
-    } else if (autonType == "HRE") { // Home Row + E
-        captureFirstGoalHRE();
-        captureSecondGoalHRE();
-        captureThirdGoalHRE();
-        captureFourthGoalHRE();
-        captureFifthGoalHRE();
-    } else if (autonType == "HRBH") { // Home Row + b/h
-        std::cout << "yo" << std::endl;
-        captureFirstGoalHRBH();
-        captureSecondGoalHRBH();
-        captureThirdGoalHRBH();
-        captureFourthGoalHRBH();
-    } else if (autonType == "MID") { // Middle Goal
+    // Home Row & Goal E
+    captureFirstGoalHRE();
+    captureSecondGoalHRE();
+    captureThirdGoalHRE();
+    captureFourthGoalHRE();
+    captureFifthGoalHRE();
 
-    } else if (autonType == "HRBHE") { // Home Row + B/H + Middle
-        captureFirstGoalHRBHE();
-        captureSecondGoalHRBHE();
-        captureThirdGoalHRBHE();
-        captureFourthGoalHRBHE();
-        captureFifthGoalHRBHE();
-        captureSixthGoalHRBHE();        
-    }
+
+    // Home Row, Goal E & Either Goal B or H Depending on alliance color
+    /*
+    captureFirstGoalHRBHE();
+    captureSecondGoalHRBHE();
+    captureThirdGoalHRBHE();
+    captureFourthGoalHRBHE();
+    captureFifthGoalHRBHE();
+    captureSixthGoalHRBHE();
+    */
 }
 
 // ----------------------------------------------------------------------------
@@ -140,7 +119,7 @@ void LRTAuton::captureFirstGoalHRE() {
     au->pidGlobalTurn(225);
     AutonUtils::stopIntakes(mtrDefs);
 
-    au->translate(200, 80, 225, false);
+    au->translate(100, 80, 225, false);
     au->setDriveVoltage(20, 20);
     AutonUtils::startOuttakeFast(mtrDefs);
     mtrDefs->roller_t->move(-127);
@@ -158,7 +137,7 @@ void LRTAuton::captureSecondGoalHRE() {
     indexOneTopTask->notify();
     au->pidGlobalTurn(270);
     pros::Task::delay(50);
-    au->translate(-900, 80, 270.0, false);
+    au->translate(-1100, 80, 270.0, false);
     pros::Task::delay(300);
     au->setDriveVoltage(-30, 100);
     while (sensors->imu->get_heading() > 163) {
@@ -169,19 +148,19 @@ void LRTAuton::captureSecondGoalHRE() {
 }
 
 void LRTAuton::captureThirdGoalHRE() {
-    au->translate(2650, 80, 163.0, false);
-    au->setDriveVoltage(20, 20);
+    au->translate(2550, 80, 163.0, false);
+    au->setDriveVoltage(15, 15);
     pros::Task::delay(200);
     mtrDefs->roller_t->move(-127);
     pros::Task::delay(900);
 
-    au->translate(-250, 80, 180, true);
+    au->translate(-250, 80, -1.0, true);
     pros::Task::delay(100);
 }
 
 void LRTAuton::captureFourthGoalHRE() {
     au->pidGlobalTurn(270);
-    au->translate(-2575, 80, 270, true);
+    au->translate(-2750, 80, 270, true);
     pros::Task::delay(100);
     au->pidGlobalTurn(315);
     au->translate(-1200, 80, 315, false);
@@ -191,16 +170,17 @@ void LRTAuton::captureFourthGoalHRE() {
 
 
 void LRTAuton::captureFifthGoalHRE() {
-
+    au->translate(500, 115, 310, false);
     au->signatureVisionTranslate(3350, 80, false, false, redAlliance);
     au->setDriveVoltage(80, -15);
-    while(sensors->imu->get_heading() < 330) {
+    while(sensors->imu->get_heading() < 315) {
         pros::Task::delay(10);
     }
+    mtrDefs->intake_l->move(-10);
+    mtrDefs->intake_r->move(10);
     au->setDriveVoltage(-15, 80);
     pros::Task::delay(50);
     au->setDriveVoltage(0,0);
-    pros::Task::delay(200);
 }
 
 // ----------------------------------------------------------------------------
