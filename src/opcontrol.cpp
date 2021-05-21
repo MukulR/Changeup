@@ -185,8 +185,8 @@ void control(void* param) {
 		}
 
 		if (master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
-			mtrDefs.roller_t->move(-80);
-			mtrDefs.roller_b->move(-80);
+			mtrDefs.roller_t->move(-100);
+			mtrDefs.roller_b->move(-100);
 			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_X)) {
 				pros::Task::delay(10);
 			}
@@ -272,18 +272,13 @@ void setDriveSpeed(int leftSpeed, int rightSpeed) {
 void goalSequence(void* param) {
 	while (true) {
 		if (master.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)) {
-			setDriveSpeed(-10, -10);
-			startRollers();
-			startIntakes();
-			pros::Task::delay(300);
-			while(line_t.get_value() > 2800)  {
-
+			mtrDefs.roller_t->move(-80);
+			mtrDefs.roller_b->move(-80);
+			while(master.get_digital(pros::E_CONTROLLER_DIGITAL_UP)) {
+				pros::Task::delay(10);
 			}
-			stopAll();
-
-			mtrDefs.intake_l->move(60);
-    		mtrDefs.intake_r->move(-60);
-			setDriveSpeed(-30, -30);
+			mtrDefs.roller_t->move(0);
+			mtrDefs.roller_b->move(0);
 		}
 		pros::Task::delay(10);
 	}

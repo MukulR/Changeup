@@ -26,6 +26,13 @@ LRTAuton::~LRTAuton() {
 }
 
 void LRTAuton::runAuton() {
+    // Just home row
+    // captureFirstGoal();
+    // captureSecondGoal();
+    // captureThirdGoal();
+    // captureFirstGoal();
+
+
     // Home Row & Goal E
     captureFirstGoalHRE();
     captureSecondGoalHRE();
@@ -85,7 +92,7 @@ void LRTAuton::captureThirdGoal() {
     au->translate(2550, 80, 270, true);
     au->pidGlobalTurn(225);
     pros::Task::delay(100);
-    au->translate(300, 80, -1, true);
+    au->translate(400, 80, -1, true);
     AutonUtils::indexTopBlocking(mtrDefs);
     AutonUtils::stopIntakes(mtrDefs);
     au->translate(300, 80, -1, true);
@@ -171,7 +178,7 @@ void LRTAuton::captureFourthGoalHRE() {
 
 void LRTAuton::captureFifthGoalHRE() {
     au->translate(500, 115, 310, false);
-    au->signatureVisionTranslate(3350, 80, false, false, redAlliance);
+    au->signatureVisionTranslate(3150, 80, false, false, redAlliance);
     au->setDriveVoltage(80, -15);
     while(sensors->imu->get_heading() < 315) {
         pros::Task::delay(10);
